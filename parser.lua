@@ -22,14 +22,15 @@ local grammar = P {
 	"program",
 	program = V"declaration"^0,
 	declaration = WSO * ( V"module" + V"assert" + V"import" + V"vardecl" + V"typedecl" ) * WSO,
-	module = P"module" * WSO * V"name" * (P"." * V"name")^0 * WSO * P"{" * WSO * V"program" * WSO * P"}",
-	import = P"import" * WSO * V"name" * (P"." * V"name")^0 * WSO * P";",
+	module = P"module" * WSO * V"exname" * WSO * P"{" * WSO * V"program" * WSO * P"}",
+	import = P"import" * WSO * V"exname" * (WSO * P"as" * WSO * V"name")^-1 * WSO * P";",
 	vardecl = (P"export" * WS)^-1 * (P"var" + P"const") * WS * V"param" * WSO * P";",
 	typedecl = (P"export" * WS)^-1 * P"type" * WS * V"name" * WSO * P"=" * WSO * V"type" * WSO * P";",
 	assert = P"assert" * WS * V"expr" * P";",
 	name = (R("AZ", "az") + S"_")^1,
-	type = (P"(" * WSO * V"type" * WSO * P")") + V"fndecl" + V"record" + V"gentype" + V"name",
-	gentype = V"name" * WSO * P"<" * V"exprlist" * WSO * P">",
+	exname = V"name" * (P"." * V"name")^0,
+	type = (P"(" * WSO * V"type" * WSO * P")") + V"fndecl" + V"record" + V"gentype" + V"exname",
+	gentype = V"exname" * WSO * P"<" * V"exprlist" * WSO * P">",
 	record = P"record" * WSO * P"(" * WSO * V"paramlist" * WSO * P")",
 	fndecl = P"fn" * WSO * P"(" * WSO * (V"paramlist" * WSO)^-1 * P")" * (WSO * P"->" * WSO * V"type")^-1,
 	paramlist = V"param" * (WSO * P"," * WSO * V"param")^0,
@@ -39,7 +40,7 @@ local grammar = P {
 						(P"=" * WSO * V"expr")
 					),
 	exprlist = V"expr" * (WSO * P"," * WSO * V"expr")^0,
-	expr = V"number" + V"name",
+	expr = V"number" + V"exname",
 	number = V"hexint" + V"real" + V"integer",
 	integer = S("+-")^-1 * R("09")^1,
 	hexint = S("+-")^-1 * P"0x" * R("09", "af", "AF")^1,
@@ -67,6 +68,10 @@ local ast = parse
 import std;
 import std.io;
 import std.io.network;
+
+import std as foo;
+import std.io as bar;
+import std.io.network as baz;
 
 assert true;
 
@@ -126,12 +131,13 @@ module numbers
 module types
 {
 	type foo = int;
+	type foo = std.io.socket;
 	type foo = int<0,1,wrapping>;
 	
-	type foo = enum<first,second,third>;
+	type foo = enum<first,second.third,fourth>;
 	type foo = record(foo : bar);
 	type foo = record(foo = 10);
-	type foo = record(foo = 10, bar : int, baz : int = 10);
+	type foo = record(foo = 10, bar : std.io.socket, baz : int = 10);
 	type foo = record(foo : bar, bam : baz, moo : int<10>);
 	
 	type foo = fn();
@@ -139,6 +145,7 @@ module types
 	type foo = fn(i : int, j : int);
 
 	type foo = fn() -> int;
+	type foo = fn() -> std.io.socket;
 	type foo = fn(i : int) -> int;
 	type foo = fn(i : int, j : int) -> int;
 	
