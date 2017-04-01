@@ -90,13 +90,6 @@ import foo.bar.member; # importiert einen einzelnen Member
 import foo.bar as baz; # Benennt ein Modul lokal um
 import foo.bar.member as bam; # Importiert einen umbenannten Member
 
-# Wenn importierte Member und lokale Member einen
-# Symbolnamen teilen, muss der Name explizit angegeben
-# werden
-# Der globale Namespace kann mit einem führenden Punkt angegeben
-# werden:
-var name : .type; # '.type' ist hier ein globaler Typ
-
 # Generische Deklarationen werden mit dem Schlüsselwort 'generic'
 # eingeleitet. Hierbei können nur Variablen, Konstanten und Typen
 # als generisch deklariert werden, Module dürfen nicht generisch sein.
@@ -122,7 +115,8 @@ export type num = int;
  ! Kapitel: Ausdrücke                                                        !
  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
 
-
+# Arrayliteral:
+var arr = [ 1, 2, 3, 4 ];
 
 #!
  Für numerische Typen werden die Standardoperatoren bereitgestellt:

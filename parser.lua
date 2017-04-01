@@ -37,14 +37,14 @@ local grammar = P {
 	param = V"name" * WSO * (
 						(P":" * WSO * V"type" * WSO * P"=" * WSO * V"expr") +
 						(P":" * WSO * V"type") + 
-						(P"=" * WSO * V"expr")
-					),
+						(P"=" * WSO * V"expr")),
 	exprlist = V"expr" * (WSO * P"," * WSO * V"expr")^0,
-	expr = V"number" + V"exname",
+	expr = V"array" + V"number" + V"exname",
 	number = V"hexint" + V"real" + V"integer",
 	integer = S("+-")^-1 * R("09")^1,
 	hexint = S("+-")^-1 * P"0x" * R("09", "af", "AF")^1,
 	real = S("+-")^-1 * R("09")^1 * P"." * R("09")^1,
+	array = P"[" * (WSO * V"exprlist")^-1 * WSO * P"]",
 }
 
 function parse(str)
@@ -114,20 +114,6 @@ module vardecl
 	export const foo : int = 10;
 }
 
-#!
- ! This module tests all possible numeric literal types
- !#
-module numbers
-{
-	assert 10;
-	assert 0xB00B5;
-	assert 1.0;
-	
-	assert -10;
-	assert -0xDEADB005;
-	assert -1.0;
-}
-
 module types
 {
 	type foo = int;
@@ -155,6 +141,34 @@ module types
 	
 	export type foo = int;
 	export type foo = int<0,1,clamping>;
+}
+
+#!
+ ! This module tests all possible types of expression
+ !# 
+module expressions
+{
+	#!
+	 ! This module tests all possible numeric literal types
+	 !#
+	module numbers
+	{
+		assert 10;
+		assert 0xB00B5;
+		assert 1.0;
+		
+		assert -10;
+		assert -0xDEADB005;
+		assert -1.0;
+	}
+
+	module arrays
+	{
+		assert [];
+		assert [ 1 ];
+		assert [ 1, 2, 3 ];
+		assert [ 1, name, 3 ];
+	}
 }
 ]]
 
