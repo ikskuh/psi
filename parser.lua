@@ -39,7 +39,9 @@ local grammar = P {
 						(P":" * WSO * V"type") + 
 						(P"=" * WSO * V"expr")),
 	exprlist = V"expr" * (WSO * P"," * WSO * V"expr")^0,
-	expr = V"array" + V"number" + V"exname",
+	expr = V"brackexpr" + V"unop_expr" + V"array" + V"number" + V"exname",
+	brackexpr = (P"(" * WSO * V"expr" * WSO * P")"),
+	unop_expr = S"+-" * V"expr",
 	number = V"hexint" + V"real" + V"integer",
 	integer = S("+-")^-1 * R("09")^1,
 	hexint = S("+-")^-1 * P"0x" * R("09", "af", "AF")^1,
@@ -49,13 +51,38 @@ local grammar = P {
 
 function parse(str)
 	local ast = grammar:match(str)
-	print(#str, ast)
 	-- Check if match could be found
 	if ast ~= nil then
 		-- Check if we mathed entire input string
 		if (ast==(#str+1)) then
 			return ast
 		else
+			
+			local start,ende,c
+			c = 3
+			for st=ast,1,-1 do
+				if str:sub(st,st) == "\n" then
+					c = c - 1
+				end
+				if c <= 0 then
+					break
+				end
+				start = st
+			end
+			
+			c = 3
+			for en=ast,#str do
+				if str:sub(en,en) == "\n" then
+					c = c - 1
+				end
+				if c <= 0 then
+					break
+				end
+				ende = en
+			end
+			
+			print(str:sub(start, ast - 1) .. "[!]" .. str:sub(ast, ende))
+			
 			error("Parse error! Didn't match all input.")
 		end
 	else
@@ -169,7 +196,24 @@ module expressions
 		assert [ 1, 2, 3 ];
 		assert [ 1, name, 3 ];
 	}
+	
+	module unary_operators
+	{
+		assert -name;
+		assert -(+(name));
+	}
+	
+	module binary_operators
+	{
+		
+	}
+	
+	assert 10;
+	assert ( 10 );
+	assert ( -10 );
 }
+
+
 ]]
 
 print(ast)
