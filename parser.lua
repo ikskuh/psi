@@ -39,14 +39,15 @@ local grammar = P {
 						(P":" * WSO * V"type") + 
 						(P"=" * WSO * V"expr")),
 	exprlist = V"expr" * (WSO * P"," * WSO * V"expr")^0,
-	expr = V"brackexpr" + V"unop_expr" + V"array" + V"number" + V"exname",
+	expr = V"brackexpr" + V"unop_expr" + V"array" + V"number" + V"exname" + V"string",
 	brackexpr = (P"(" * WSO * V"expr" * WSO * P")"),
-	unop_expr = S"+-" * V"expr",
+	unop_expr = S"+-~" * V"expr",
 	number = V"hexint" + V"real" + V"integer",
 	integer = S("+-")^-1 * R("09")^1,
 	hexint = S("+-")^-1 * P"0x" * R("09", "af", "AF")^1,
 	real = S("+-")^-1 * R("09")^1 * P"." * R("09")^1,
 	array = P"[" * (WSO * V"exprlist")^-1 * WSO * P"]",
+	string = P('"') * (1 - P('"'))^0 * P('"'),
 }
 
 function parse(str)
@@ -200,20 +201,36 @@ module expressions
 	module unary_operators
 	{
 		assert -name;
+		assert +name;
+		assert ~name;
 		assert -(+(name));
 	}
 	
 	module binary_operators
 	{
-		
+		# asset 10 + 10;
+		# asset 10 * 10;
+		# asset 10 - 10;
+		# asset 10 / 10;
+		# asset 10 % 10;
+		# asset 10 ^ 10;
+		# asset 10 >= 10;
+		# asset 10 <= 10;
+		# asset 10 > 10;
+		# asset 10 < 10;
+		# asset 10 == 10;
+		# asset 10 != 10;
+		# asset 10 = 10;
+		# asset 10 & 10;
+		# asset 10 | 10;
+		# asset 10 ! 10;
+		# asset 10 .. 10;
 	}
 	
 	assert 10;
 	assert ( 10 );
 	assert ( -10 );
 }
-
-
 ]]
 
 print(ast)

@@ -118,7 +118,23 @@ export type num = int;
 # Arrayliteral:
 var arr = [ 1, 2, 3, 4 ];
 
+# Operatoren:
 #!
+-- Stärkste Bindung
+ + - ~ (Unäre Operatoren)
+ ^
+ * / %
+ + - .. (Binäre Operatoren)
+ > >= < <=
+ == !=
+ & | -> (Implies)
+ = += -= *= /= %= &= |=
+-- Schwächste Bindung !#
+
+#!
+ Jeder Typ besitzt folgende Operatoren:
+ = assignment
+ 
  Für numerische Typen werden die Standardoperatoren bereitgestellt:
  - unary minus, negates
  + addition
