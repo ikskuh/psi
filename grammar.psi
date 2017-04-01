@@ -1,0 +1,39 @@
+
+
+# Line Comments can be done with a hash
+
+(*
+ * Multiline comments can be done in pascal-style
+ *)
+
+ 
+# # Global Declarations
+# Psi supports two types of global declarations:
+# - Type Declarations
+# - Variable Declarations
+# Type declarations have the form
+type name = declaration;
+# and variable declarations the form
+var name = expression;
+# or
+var name : type = expression;
+
+
+generic var x<i:int> : int = 10 * i;
+
+
+
+# Modules can either be nested
+module foo
+{
+	module bar
+	{
+		var x : int;
+	}
+}
+
+# or separated by dot:
+module foo.bar
+{
+	var x : int;
+}
