@@ -295,3 +295,8 @@ module instructions
 		generic type foo<i:int> = i;
 	};
 }
+
+const main = fn(args : array<string>) -> int
+{
+	return 0;
+};

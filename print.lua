@@ -1,7 +1,9 @@
+require "opairs"
+
 function print(...)
 	local INDENT = "  "
 	local function put(val)
-		if val == nil then
+		if type(val) == "nil" then
 			io.write("nil")
 			return
 		end
@@ -14,7 +16,7 @@ function print(...)
 				end
 				fag = true
 			end
-			for i,v in pairs(val) do
+			for i,v in opairs(val) do
 				if type(i) ~= "number" then
 					prefix()
 					if type(i) == "string" and i:match("^[%w_]+$") then
@@ -36,7 +38,7 @@ function print(...)
 		elseif type(val) == "string" then
 			io.write("\""..val.."\"")
 		else
-			io.write(tostring(val or "nil"))
+			io.write(tostring(val))
 		end
 	end
 	local t = table.pack(...)
