@@ -35,11 +35,11 @@ local binops =
 -- Define the ruleset for Psi
 local ruleset = {
 	"program",
-	program = V"declaration"^0,
-	declaration = WSO * ( V"module" + V"assert" + V"import" + V"decl") * WSO,
+	program = (WSO * (V"declaration" + V"module") * WSO)^0,
+	declaration = V"assert" + V"import" + V"objdecl",
 	module = P"module" * WSO * V"exname" * WSO * P"{" * WSO * V"program" * WSO * P"}",
 	import = P"import" * WSO * V"exname" * (WSO * P"as" * WSO * V"name")^-1 * WSO * P";",
-	decl = (P"export" * WS)^-1 * (V"genvardecl" + V"gentypedecl" + V"vardecl" + V"typedecl"),
+	objdecl = (P"export" * WS)^-1 * (V"genvardecl" + V"gentypedecl" + V"vardecl" + V"typedecl"),
 	vardecl = (P"var" + P"const") * WS * V"param" * WSO * P";",
 	typedecl = P"type" * WS * V"name" * WSO * P"=" * WSO * V"type" * WSO * P";",
 	genvardecl = P"generic" * WS * (P"var" + P"const") * WS * V"name" * WSO * V"genparams" * WSO * V"paramspec" * WSO * P";",

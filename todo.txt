@@ -14,5 +14,3 @@ Grammatik-TODO-Liste:
 		- for
 		- loop-until (syntax ausdenken)
 		- select
-		
-- Generische Deklaration
