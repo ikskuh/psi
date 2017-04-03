@@ -208,23 +208,24 @@ module expressions
 	
 	module binary_operators
 	{
-		# asset 10 + 10;
-		# asset 10 * 10;
-		# asset 10 - 10;
-		# asset 10 / 10;
-		# asset 10 % 10;
-		# asset 10 ^ 10;
+		# asset 10 +  10;
+		# asset 10 *  10;
+		# asset 10 -  10;
+		# asset 10 /  10;
+		# asset 10 %  10;
+		# asset 10 ** 10;
 		# asset 10 >= 10;
 		# asset 10 <= 10;
-		# asset 10 > 10;
-		# asset 10 < 10;
+		# asset 10 >  10;
+		# asset 10 <  10;
 		# asset 10 == 10;
 		# asset 10 != 10;
-		# asset 10 = 10;
-		# asset 10 & 10;
-		# asset 10 | 10;
-		# asset 10 ! 10;
-		# asset 10 .. 10;
+		# asset 10 =  10;
+		# asset 10 &  10;
+		# asset 10 |  10;
+		# asset 10 ^  10;
+		# asset 10 -> 10;
+		# asset 10 -- 10;
 	}
 	
 	assert 10;

@@ -121,28 +121,30 @@ var arr = [ 1, 2, 3, 4 ];
 # Operatoren:
 #!
 -- Stärkste Bindung
- + - ~ (Unäre Operatoren)
- ^
+ **
  * / %
  + - .. (Binäre Operatoren)
  > >= < <=
  == !=
- & | -> (Implies)
- = += -= *= /= %= &= |=
--- Schwächste Bindung !#
+ & | ^ -> (Implies)
+ = += -= *= /= %= &= |= ..=
+-- Schwächste Bindung
+!#
+
+
 
 #!
  Jeder Typ besitzt folgende Operatoren:
  = assignment
  
  Für numerische Typen werden die Standardoperatoren bereitgestellt:
- - unary minus, negates
- + addition
- - subtraction
- * multiplication
- / division
- % modulo division
- ^ exponentiation
+ -  unary minus, negates
+ +  addition
+ -  subtraction
+ *  multiplication
+ /  division
+ %  modulo division
+ ** exponentiation
  >= mequal
  <= lequal
  >  more than
@@ -152,20 +154,20 @@ var arr = [ 1, 2, 3, 4 ];
  
  Zusätzlich werden für Integer-Typen
  folgende Standardoperatoren bereitgestellt:
- & binary and
- | binary or
- ~ binary not
- ! binary xor
+ &  binary and
+ |  binary or
+ ~  binary not
+ ^  binary xor
 
  String-Operatoren:
- .. concatenation
- ^  repetition (string^int -> string repeated int times)
+ -- concatenation
+ ** repetition (string^int -> string repeated int times)
  
  Boolean-Operatoren:
- & logic and
- | logic or
- ~ logic not
- ! logic xor
- 
+ &  logic and
+ |  logic or
+ ~  logic not
+ ^  logic xor
+ -> logic implication
  
 !#
