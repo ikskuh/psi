@@ -36,11 +36,15 @@ local binops =
 local ruleset = {
 	"program",
 	program = V"declaration"^0,
-	declaration = WSO * ( V"module" + V"assert" + V"import" + V"vardecl" + V"typedecl" ) * WSO,
+	declaration = WSO * ( V"module" + V"assert" + V"import" + V"decl") * WSO,
 	module = P"module" * WSO * V"exname" * WSO * P"{" * WSO * V"program" * WSO * P"}",
 	import = P"import" * WSO * V"exname" * (WSO * P"as" * WSO * V"name")^-1 * WSO * P";",
-	vardecl = (P"export" * WS)^-1 * (P"var" + P"const") * WS * V"param" * WSO * P";",
-	typedecl = (P"export" * WS)^-1 * P"type" * WS * V"name" * WSO * P"=" * WSO * V"type" * WSO * P";",
+	decl = (P"export" * WS)^-1 * (V"genvardecl" + V"gentypedecl" + V"vardecl" + V"typedecl"),
+	vardecl = (P"var" + P"const") * WS * V"param" * WSO * P";",
+	typedecl = P"type" * WS * V"name" * WSO * P"=" * WSO * V"type" * WSO * P";",
+	genvardecl = P"generic" * WS * (P"var" + P"const") * WS * V"name" * WSO * V"genparams" * WSO * V"paramspec" * WSO * P";",
+	gentypedecl = P"generic" * WS * P"type" * WS * V"name" * WSO * V"genparams" * WSO * P"=" * WSO * V"type" * WSO * P";",
+	genparams = P"<" * WSO * V"paramlist" * WSO * P">",
 	assert = P"assert" * WS * V"expr" * P";",
 	name = (R("AZ", "az") + S"_")^1,
 	exname = V"name" * (P"." * V"name")^0,
@@ -49,7 +53,8 @@ local ruleset = {
 	record = P"record" * WSO * P"(" * WSO * V"paramlist" * WSO * P")",
 	fndecl = P"fn" * WSO * P"(" * WSO * (V"paramlist" * WSO)^-1 * P")" * (WSO * P"->" * WSO * V"type")^-1,
 	paramlist = V"param" * (WSO * P"," * WSO * V"param")^0,
-	param = V"name" * WSO * (
+	param = V"name" * WSO * V"paramspec",
+	paramspec = (
 						(P":" * WSO * V"type" * WSO * P"=" * WSO * V"expr") +
 						(P":" * WSO * V"type") + 
 						(P"=" * WSO * V"expr")),

@@ -76,6 +76,33 @@ module types
 	export type foo = int<0,1,clamping>;
 }
 
+	
+module gendecl
+{
+	generic var foo<i:int> : int;
+	generic var foo<i:int,j:string> = 10;
+	generic var foo<i:int,j:string,foo:bar> : int = 10;
+	
+	generic const foo<i:int,j:string> : int;
+	generic const foo<i:int,j:string> = 10;
+	generic const foo<i:int,j:string> : int = 10;
+	
+	export generic var foo<i:int,j:string> : int;
+	export generic var foo<i:int,j:string> = 10;
+	export generic var foo<i:int,j:string> : int = 10;
+	
+	export generic const foo<i:int,j:string> : int;
+	export generic const foo<i:int,j:string> = 10;
+	export generic const foo<i:int,j:string> : int = 10;
+	
+	generic type foo<i:int,j:string> = int;
+	generic type foo<i:int,j:string> = std.io.socket;
+	generic type foo<i:int,j:string> = int<0,1,wrapping>;
+	
+	export generic type foo<i:int,j:string> = int;
+	export generic type foo<i:int,j:string> = int<0,1,clamping>;
+}
+
 #!
  ! This module tests all possible numeric literal types
  !#
