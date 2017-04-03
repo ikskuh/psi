@@ -21,6 +21,7 @@ local WSO = WS^0
 -- List of binary operators with precedence
 local binops = 
 {
+	-- Highest precedence (binds most)
 	{ "**" },
 	{ "*", "/", "%" },
 	{ "+", "-", "--" },
@@ -28,6 +29,7 @@ local binops =
 	{ "==", "!=" },
 	{ "&", "|", "^", "->" },
 	{ "+=", "-=", "*=", "/=", "%=", "|=", "--=", "=" },
+	-- Lowest precedence (binds least)
 }
 
 -- Define the ruleset for Psi
