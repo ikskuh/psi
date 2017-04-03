@@ -80,7 +80,7 @@ local ruleset = {
 	string = P('"') * (1 - P('"'))^0 * P('"'),
 	func = V"fndecl" * WSO * (V"body" + P"=>" * WSO * V"expr"),
 	body = P"{" * (WSO * V"instr")^0 * WSO * P"}",
-	instr = V"if_instr" + V"for_instr" + V"loop_instr" + V"while_instr" + V"goto_instr" + V"return_instr" + V"singleword_instr" + V"expr_instr" + V"body" + P";",
+	instr = V"if_instr" + V"select_instr" + V"for_instr" + V"loop_instr" + V"while_instr" + V"goto_instr" + V"return_instr" + V"singleword_instr" + V"expr_instr" + V"body" + P";",
 	
 	expr_instr = V"expr" * WSO * P";",
 	if_instr = P"if" * packCondition(V"expr") * V"instr" * (WSO * P"else" * WSO * V"instr")^-1,
@@ -90,6 +90,10 @@ local ruleset = {
 	goto_instr = P"goto" * WS * V"expr" * WSO * P";",
 	loop_instr = P"loop" * WSO * V"instr" * WSO * P"until" * packCondition(V"expr"),
 	singleword_instr = (P"break" + P"continue" + P"next") * WSO * P";",
+	select_instr = P"select" * packCondition(V"expr") * P"{" * WSO * (
+									WSO * (P"otherwise" + (P"when" * WS * V"expr")) * WSO * P":" + 
+									WSO * V"instr" * WSO
+								 )^0 * WSO * P"}"
 }
 -- Autogenerate rulesets for binary operators
 -- with precedence:

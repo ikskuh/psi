@@ -265,3 +265,23 @@ module instructions
 		until bar
 	};
 }
+
+assert fn()
+{
+	select(expr)
+	{
+		
+		when foo:
+			print("foo");
+			break; # Breakout
+		when bar:
+			print("bar");
+			next; # Fallthrough
+		when baz:
+			print("baz");
+			goto foo; # Switch case *badumtss*
+		otherwise:
+			print("???");
+			break;
+	}
+};
