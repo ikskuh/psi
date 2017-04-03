@@ -4,7 +4,4 @@ Grammatik-TODO-Liste:
 
 - Funktionen
   - Instruktionen
-		- while
-		- for
-		- loop-until (syntax ausdenken)
 		- select

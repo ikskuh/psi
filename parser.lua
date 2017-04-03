@@ -32,6 +32,11 @@ local binops =
 	-- Lowest precedence (binds least)
 }
 
+local function packCondition(cond)
+	return (WS * cond * WS) + 
+				 (WSO * P"(" * WSO * cond * WSO * P")" * WSO)
+end
+
 -- Define the ruleset for Psi
 local ruleset = {
 	"program",
@@ -75,12 +80,15 @@ local ruleset = {
 	string = P('"') * (1 - P('"'))^0 * P('"'),
 	func = V"fndecl" * WSO * (V"body" + P"=>" * WSO * V"expr"),
 	body = P"{" * (WSO * V"instr")^0 * WSO * P"}",
-	instr = V"if_instr" + V"goto_instr" + V"return_instr" + V"singleword_instr" + V"expr_instr" + V"body" + P";",
+	instr = V"if_instr" + V"for_instr" + V"loop_instr" + V"while_instr" + V"goto_instr" + V"return_instr" + V"singleword_instr" + V"expr_instr" + V"body" + P";",
 	
 	expr_instr = V"expr" * WSO * P";",
-	if_instr = P"if" * WS * WSO * V"expr" * WS * V"instr" * (WSO * P"else" * WSO * V"instr")^-1,
+	if_instr = P"if" * packCondition(V"expr") * V"instr" * (WSO * P"else" * WSO * V"instr")^-1,
+	while_instr = P"while" * packCondition(V"expr") * V"instr",
+	for_instr = P"for" * packCondition(V"name" * WS * P"in" * WS * V"expr") * V"instr",
 	return_instr = P"return" * (WS * V"expr")^-1 * WSO * P";",
 	goto_instr = P"goto" * WS * V"expr" * WSO * P";",
+	loop_instr = P"loop" * WSO * V"instr" * WSO * P"until" * packCondition(V"expr"),
 	singleword_instr = (P"break" + P"continue" + P"next") * WSO * P";",
 }
 -- Autogenerate rulesets for binary operators

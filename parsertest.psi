@@ -242,4 +242,26 @@ module instructions
 			
 		}
 	};
+	
+	assert fn()
+	{
+		while true
+			;
+		while(true);
+	};
+
+	assert fn()
+	{
+		for(i in bar)
+			return;
+		for i in bar
+			return;
+	};
+	
+	assert fn()
+	{
+		loop
+			;
+		until bar
+	};
 }
