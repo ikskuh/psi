@@ -21,14 +21,7 @@ local WSO = WS^0
 
 local testsource = 
 [==[
-import std;
 
-module vars
-{
-	var idefix = 10;
-	var idefix : int;
-	var idefix : real = 10.0;
-}
 ]==]
 
 -- List of binary operators with precedence
@@ -75,6 +68,7 @@ end
 function captures.vardecl(const, param)
 	return { 
 		_TYPE = "vardecl",
+		isGeneric = false,
 		isConst = (const == "const"),
 		name = param.name,
 		type = param.type,
@@ -82,19 +76,35 @@ function captures.vardecl(const, param)
 	}
 end
 
-function captures.typedecl(...)
-	-- print("type", ...)
-	return { }
+function captures.typedecl(name, type)
+	return {
+		_TYPE = "typedecl",
+		isGeneric = false,
+		name = name,
+		type = type,
+	}
 end
 
-function captures.genvardecl(...)
-	-- print("genvar", ...)
-	return { }
+function captures.genvardecl(name, params, info)
+	return { 
+		_TYPE = "vardecl",
+		isGeneric = true,
+		isConst = (const == "const"),
+		name = name,
+		type = info.type,
+		value = info.value,
+		params = params
+	}
 end
 
-function captures.gentypedecl(...)
-	-- print("gentype", ...)
-	return { }
+function captures.gentypedecl(name, params, type)
+	return { 
+		_TYPE = "typedecl",
+		isGeneric = true,
+		name = name,
+		type = type,
+		params = params,
+	}
 end
 
 function captures.assert(expr)
@@ -153,6 +163,7 @@ function captures.string(val)
 end
 
 function captures.module(name, prg)
+	print(name, prg, foo)
 	return {
 		_TYPE = "module",
 		name = name,
@@ -166,21 +177,23 @@ local ruleset = {
 	program = Ct((WSO * (V"declaration" + V"module") * WSO)^0),
 	declaration = (V"assert" + V"import" + V"objdecl") / id,
 	module = (P"module" * WSO * V"exname" * WSO * P"{" * WSO * V"program" * WSO * P"}") / captures.module,
-	import = (P"import" * WSO * C(V"exname") * (WSO * P"as" * WSO * C(V"name"))^-1 * WSO * P";") / captures.import,
+	import = (P"import" * WSO * V"exname" * (WSO * P"as" * WSO * V"name")^-1 * WSO * P";") / captures.import,
 	objdecl = (((P"export" * WS)^-1) / exists * (V"genvardecl" + V"gentypedecl" + V"vardecl" + V"typedecl")) / captures.objectdecl,
 	vardecl = (C(P"var" + P"const") * WS * V"param" * WSO * P";") / captures.vardecl,
 	typedecl = (P"type" * WS * V"name" * WSO * P"=" * WSO * V"type" * WSO * P";") / captures.typedecl,
 	genvardecl = (P"generic" * WS * (P"var" + P"const") * WS * V"name" * WSO * V"genparams" * WSO * V"paramspec" * WSO * P";") / captures.genvardecl,
 	gentypedecl = (P"generic" * WS * P"type" * WS * V"name" * WSO * V"genparams" * WSO * P"=" * WSO * V"type" * WSO * P";") / captures.gentypedecl,
 	genparams = P"<" * WSO * V"paramlist" * WSO * P">",
-	assert = (P"assert" * WS * C(V"expr") * WSO * P";") / captures.assert,
+	assert = (P"assert" * WS * V"expr" * WSO * P";") / captures.assert,
+	
 	name = C((R("AZ", "az") + S"_")^1),
-	exname = V"name" * (P"." * V"name")^0,
+	exname = Ct(V"name" * (P"." * V"name")^0),
+	
 	type = ((P"(" * WSO * V"type" * WSO * P")") + V"fndecl" + V"record" + V"gentype" + V"exname") / captures.type,
 	gentype = V"exname" * WSO * P"<" * V"exprlist" * WSO * P">",
 	record = P"record" * WSO * P"(" * WSO * V"paramlist" * WSO * P")",
 	fndecl = P"fn" * WSO * P"(" * WSO * (V"paramlist" * WSO)^-1 * P")" * (WSO * P"->" * WSO * V"type")^-1,
-	paramlist = V"param" * (WSO * P"," * WSO * V"param")^0,
+	paramlist = Ct(V"param" * (WSO * P"," * WSO * V"param")^0),
 	param = (V"name" * WSO * V"paramspec") / captures.param,
 	paramspec =
 						(P":" * WSO * V"type" * WSO * P"=" * WSO * V"expr") / captures.paramspec +
