@@ -1,6 +1,20 @@
 require "opairs"
+inspect = require "inspect"
 
 function print(...)
+	
+	local packed = table.pack(...)
+	
+	for i,v in ipairs(packed) do
+		if i > 1 then
+			io.write("\t")
+		end
+		io.write(inspect(v))
+	end
+	io.write("\n")
+	return
+	
+	--[[
 	local INDENT = "  "
 	local function put(val)
 		if type(val) == "nil" then
@@ -49,5 +63,6 @@ function print(...)
 		put(v)
 	end
 	io.write("\n")
+	]]
 end
 return print

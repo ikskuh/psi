@@ -19,10 +19,15 @@ local WS_comment_short = (P("#") * (1 - P("\n"))^0)
 local WS  = (WS_blank + WS_comment_long + WS_comment_short)^1
 local WSO = WS^0
 
+--[[
 local testsource = 
 [==[
-
+module foo
+{
+	import std;
+}
 ]==]
+--]]
 
 -- List of binary operators with precedence
 local binops = 
@@ -50,126 +55,7 @@ local function exists(foo)
 	return foo ~= ""
 end
 
-local captures = { }
-
-function captures.import(mod, alias)
-	return {
-		_TYPE = "import",
-		module = mod,
-		alias = alias
-	}
-end
-
-function captures.objectdecl(exported, obj)
-	obj.isExported = exported
-	return obj
-end
-
-function captures.vardecl(const, param)
-	return { 
-		_TYPE = "vardecl",
-		isGeneric = false,
-		isConst = (const == "const"),
-		name = param.name,
-		type = param.type,
-		value = param.value,
-	}
-end
-
-function captures.typedecl(name, type)
-	return {
-		_TYPE = "typedecl",
-		isGeneric = false,
-		name = name,
-		type = type,
-	}
-end
-
-function captures.genvardecl(name, params, info)
-	return { 
-		_TYPE = "vardecl",
-		isGeneric = true,
-		isConst = (const == "const"),
-		name = name,
-		type = info.type,
-		value = info.value,
-		params = params
-	}
-end
-
-function captures.gentypedecl(name, params, type)
-	return { 
-		_TYPE = "typedecl",
-		isGeneric = true,
-		name = name,
-		type = type,
-		params = params,
-	}
-end
-
-function captures.assert(expr)
-	return {
-		_TYPE = "assertion",
-		expression = expr,
-	}
-end
-
-function captures.param(name, spec)
-	return { 
-		_TYPE = "param",
-		name = name,
-		type = spec.type,
-		value = spec.value,
-	}
-end
-
-function captures.paramspec(type, value)
-	if type._TYPE == "expression" then
-		value = type
-		type = nil
-	end
-	return {
-		type = type,
-		value = value,
-	}
-end
-
-function captures.type(...)
-	-- print("type", ...)
-	return {
-		_TYPE = "type",
-	}
-end
-
-function captures.expr(...)
-	print("expr", ...)
-	return {
-		_TYPE = "expression",
-	}
-end
-
-function captures.number(val)
-	return {
-		_TYPE = "number",
-		value = tonumber(val)
-	}
-end
-
-function captures.string(val)
-	return {
-		_TYPE = "string",
-		value = tostring(val)
-	}
-end
-
-function captures.module(name, prg)
-	print(name, prg, foo)
-	return {
-		_TYPE = "module",
-		name = name,
-		contents = prg
-	}
-end
+captures = require "ast-captures"
 
 -- Define the ruleset for Psi
 local ruleset = {
@@ -189,17 +75,19 @@ local ruleset = {
 	name = C((R("AZ", "az") + S"_")^1),
 	exname = Ct(V"name" * (P"." * V"name")^0),
 	
-	type = ((P"(" * WSO * V"type" * WSO * P")") + V"fndecl" + V"record" + V"gentype" + V"exname") / captures.type,
-	gentype = V"exname" * WSO * P"<" * V"exprlist" * WSO * P">",
-	record = P"record" * WSO * P"(" * WSO * V"paramlist" * WSO * P")",
-	fndecl = P"fn" * WSO * P"(" * WSO * (V"paramlist" * WSO)^-1 * P")" * (WSO * P"->" * WSO * V"type")^-1,
+	type = ((P"(" * WSO * V"type" * WSO * P")") + V"fndecl" + V"record" + V"gentype" + V"exname" / captures.namedType) / captures.type,
+	gentype = (V"exname" * WSO * P"<" * V"exprlist" * WSO * P">") / captures.gentyperef,
+	record = (P"record" * WSO * P"(" * WSO * V"paramlist" * WSO * P")") / captures.recordtype,
+	fndecl = (P"fn" * WSO * P"(" * WSO * (V"paramlist" * WSO)^-1 * P")" * (WSO * P"->" * WSO * V"type")^-1) / captures.funsig,
+	
 	paramlist = Ct(V"param" * (WSO * P"," * WSO * V"param")^0),
 	param = (V"name" * WSO * V"paramspec") / captures.param,
 	paramspec =
 						(P":" * WSO * V"type" * WSO * P"=" * WSO * V"expr") / captures.paramspec +
 						(P":" * WSO * V"type") / captures.paramspec + 
 						(P"=" * WSO * V"expr") / captures.paramspec,
-	exprlist = V"expr" * (WSO * P"," * WSO * V"expr")^0,
+	
+	exprlist = Ct(V"expr" * (WSO * P"," * WSO * V"expr")^0),
 	-- 'expr' and all 'binop_l*_expr' are generated below
 	--expr = V"binop_l0_expr",
 	binop_l0_expr = (V"unop_expr" + V"func" + V"fncall" + V"literal" + V"brackexpr") / captures.expr,
@@ -308,7 +196,7 @@ local f = io.open("parsertest.psi", "r")
 local src = f:read("*all")
 f:close()
 
-src = testsource
+src = testsource or src
 
 -- local ast = parse(src)
 local ast = grammar:match(src)
