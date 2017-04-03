@@ -1,7 +1,0 @@
-
-
-Grammatik-TODO-Liste:
-
-- Funktionen
-  - Instruktionen
-		- select

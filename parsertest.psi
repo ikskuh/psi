@@ -270,7 +270,6 @@ assert fn()
 {
 	select(expr)
 	{
-		
 		when foo:
 			print("foo");
 			break; # Breakout
