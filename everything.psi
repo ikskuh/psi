@@ -123,11 +123,11 @@ var arr = [ 1, 2, 3, 4 ];
 -- Stärkste Bindung
  **
  * / %
- + - .. (Binäre Operatoren)
+ + - -- (Binäre Operatoren)
  > >= < <=
  == !=
  & | ^ -> (Implies)
- = += -= *= /= %= &= |= ..=
+ = += -= *= /= %= &= |= --=
 -- Schwächste Bindung
 !#
 
@@ -162,6 +162,9 @@ var arr = [ 1, 2, 3, 4 ];
  String-Operatoren:
  -- concatenation
  ** repetition (string^int -> string repeated int times)
+ 
+ Array-Operatoren:
+ -- concatenation
  
  Boolean-Operatoren:
  &  logic and

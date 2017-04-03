@@ -18,7 +18,20 @@ local WS_comment_short = (P("#") * (1 - P("\n"))^0)
 local WS  = (WS_blank + WS_comment_long + WS_comment_short)^1
 local WSO = WS^0
 
-local grammar = P {
+-- List of binary operators with precedence
+local binops = 
+{
+	{ "**" },
+	{ "*", "/", "%" },
+	{ "+", "-", "--" },
+	{ ">=", ">", "<=", "<" },
+	{ "==", "!=" },
+	{ "&", "|", "^", "->" },
+	{ "+=", "-=", "*=", "/=", "%=", "|=", "--=", "=" },
+}
+
+-- Define the ruleset for Psi
+local ruleset = {
 	"program",
 	program = V"declaration"^0,
 	declaration = WSO * ( V"module" + V"assert" + V"import" + V"vardecl" + V"typedecl" ) * WSO,
@@ -39,9 +52,14 @@ local grammar = P {
 						(P":" * WSO * V"type") + 
 						(P"=" * WSO * V"expr")),
 	exprlist = V"expr" * (WSO * P"," * WSO * V"expr")^0,
-	expr = V"brackexpr" + V"unop_expr" + V"array" + V"number" + V"exname" + V"string",
+	-- 'expr' and all 'binop_l*_expr' are generated below
+	--expr = V"binop_l0_expr",
+	binop_l0_expr = V"unop_expr" + V"literal" + V"brackexpr",
+	
 	brackexpr = (P"(" * WSO * V"expr" * WSO * P")"),
-	unop_expr = S"+-~" * V"expr",
+	unop_expr = V"unop" * WSO * V"binop_l2_expr",
+	unop = S"+-~",
+	literal = V"array" + V"number" + V"exname" + V"string",
 	number = V"hexint" + V"real" + V"integer",
 	integer = S("+-")^-1 * R("09")^1,
 	hexint = S("+-")^-1 * P"0x" * R("09", "af", "AF")^1,
@@ -49,6 +67,31 @@ local grammar = P {
 	array = P"[" * (WSO * V"exprlist")^-1 * WSO * P"]",
 	string = P('"') * (1 - P('"'))^0 * P('"'),
 }
+-- Autogenerate rulesets for binary operators
+-- with precedence:
+for i=1,#binops do
+	local function getExprLevelName(l)
+		if l == #binops then
+			return "expr"
+		else
+			return string.format("binop_l%1d_expr", l)
+		end
+	end
+	local ops = binops[i]
+	local expr = getExprLevelName(i)
+	local subexpr = getExprLevelName(i - 1)
+	local opname = string.format("binop_l%1d", i)
+
+	ruleset[opname] = P(ops[1])
+	for j=2,#ops do
+		ruleset[opname] = ruleset[opname] + P(ops[j])
+	end
+	
+	ruleset[expr] = V(subexpr) * (WSO * V(opname) * WSO * V(subexpr))^0
+end
+
+-- Compile the grammar
+local grammar = P(ruleset)
 
 function parse(str)
 	local ast = grammar:match(str)
@@ -172,65 +215,66 @@ module types
 }
 
 #!
- ! This module tests all possible types of expression
- !# 
-module expressions
+ ! This module tests all possible numeric literal types
+ !#
+module numbers
 {
-	#!
-	 ! This module tests all possible numeric literal types
-	 !#
-	module numbers
-	{
-		assert 10;
-		assert 0xB00B5;
-		assert 1.0;
-		
-		assert -10;
-		assert -0xDEADB005;
-		assert -1.0;
-	}
+	assert 10;
+	assert 0xB00B5;
+	assert 1.0;
+	
+	assert -10;
+	assert -0xDEADB005;
+	assert -1.0;
+}
 
-	module arrays
-	{
-		assert [];
-		assert [ 1 ];
-		assert [ 1, 2, 3 ];
-		assert [ 1, name, 3 ];
-	}
-	
-	module unary_operators
-	{
-		assert -name;
-		assert +name;
-		assert ~name;
-		assert -(+(name));
-	}
-	
-	module binary_operators
-	{
-		# asset 10 +  10;
-		# asset 10 *  10;
-		# asset 10 -  10;
-		# asset 10 /  10;
-		# asset 10 %  10;
-		# asset 10 ** 10;
-		# asset 10 >= 10;
-		# asset 10 <= 10;
-		# asset 10 >  10;
-		# asset 10 <  10;
-		# asset 10 == 10;
-		# asset 10 != 10;
-		# asset 10 =  10;
-		# asset 10 &  10;
-		# asset 10 |  10;
-		# asset 10 ^  10;
-		# asset 10 -> 10;
-		# asset 10 -- 10;
-	}
-	
+module arrays
+{
+	assert [];
+	assert [ 1 ];
+	assert [ 1, 2, 3 ];
+	assert [ 1, name, 3 ];
+}
+
+module unary_operators
+{
+	assert -name;
+	assert +name;
+	assert ~name;
+	assert -(+(name));
+}
+
+module binary_operators
+{
+	assert 10 + 10;
+	assert 10 + 10**10 + 10**foo**bar;
+	assert 10 *  10;
+	assert 10 -  10;
+	assert 10 /  10;
+	assert 10 %  10;
+	assert 10 ** 10;
+	assert 10 >= 10;
+	assert 10 <= 10;
+	assert 10 >  10;
+	assert 10 <  10;
+	assert 10 == 10;
+	assert 10 != 10;
+	assert 10 =  10;
+	assert 10 &  10;
+	assert 10 |  10;
+	assert 10 ^  10;
+	assert 10 -> 10;
+	assert 10 -- 10;
+}
+
+module brackexp
+{
 	assert 10;
 	assert ( 10 );
 	assert ( -10 );
+	assert -( 10 );
+	assert -( ( 10 ) );
+	assert -( -10 );
 }
 ]]
 
