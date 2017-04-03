@@ -56,11 +56,11 @@ local ruleset = {
 	exprlist = V"expr" * (WSO * P"," * WSO * V"expr")^0,
 	-- 'expr' and all 'binop_l*_expr' are generated below
 	--expr = V"binop_l0_expr",
-	binop_l0_expr = V"unop_expr" + V"literal" + V"brackexpr",
-	
+	binop_l0_expr = V"unop_expr" + V"fncall" + V"literal" + V"brackexpr",
 	brackexpr = (P"(" * WSO * V"expr" * WSO * P")"),
 	unop_expr = V"unop" * WSO * V"binop_l2_expr",
 	unop = S"+-~",
+	fncall = V"exname" * WSO * P"(" * WSO * (V"exprlist" * WSO)^-1 * P")",
 	literal = V"array" + V"number" + V"exname" + V"string",
 	number = V"hexint" + V"real" + V"integer",
 	integer = S("+-")^-1 * R("09")^1,
@@ -136,149 +136,11 @@ function parse(str)
 	end
 end
 
-local ast = parse 
-[[
-import std;
-import std.io;
-import std.io.network;
+local f = io.open("parsertest.psi", "r")
+local src = f:read("*all")
+f:close()
 
-import std as foo;
-import std.io as bar;
-import std.io.network as baz;
-
-assert true;
-
-#!
- ! Module testing and nesting
- !#
-module std
-{
-	var foo : int;
-	module io
-	{
-		var foo = 10;
-	}
-	
-	module io.network
-	{
-		# Foo!
-	}
-}
-
-#!
- ! This module contains all possible variants of variable declarations
- !#
-module vardecl
-{
-	var foo : int;
-	var foo = 10;
-	var foo : int = 10;
-	
-	const foo : int;
-	const foo = 10;
-	const foo : int = 10;
-	
-	export var foo : int;
-	export var foo = 10;
-	export var foo : int = 10;
-	
-	export const foo : int;
-	export const foo = 10;
-	export const foo : int = 10;
-}
-
-module types
-{
-	type foo = int;
-	type foo = std.io.socket;
-	type foo = int<0,1,wrapping>;
-	
-	type foo = enum<first,second.third,fourth>;
-	type foo = record(foo : bar);
-	type foo = record(foo = 10);
-	type foo = record(foo = 10, bar : std.io.socket, baz : int = 10);
-	type foo = record(foo : bar, bam : baz, moo : int<10>);
-	
-	type foo = fn();
-	type foo = fn(i : int);
-	type foo = fn(i : int, j : int);
-
-	type foo = fn() -> int;
-	type foo = fn() -> std.io.socket;
-	type foo = fn(i : int) -> int;
-	type foo = fn(i : int, j : int) -> int;
-	
-	type foo = fn() -> fn();
-	type foo = fn() -> fn() -> fn();
-	type foo = fn() -> fn() -> fn() -> int;
-	
-	export type foo = int;
-	export type foo = int<0,1,clamping>;
-}
-
-#!
- ! This module tests all possible numeric literal types
- !#
-module numbers
-{
-	assert 10;
-	assert 0xB00B5;
-	assert 1.0;
-	
-	assert -10;
-	assert -0xDEADB005;
-	assert -1.0;
-}
-
-module arrays
-{
-	assert [];
-	assert [ 1 ];
-	assert [ 1, 2, 3 ];
-	assert [ 1, name, 3 ];
-}
-
-module unary_operators
-{
-	assert -name;
-	assert +name;
-	assert ~name;
-	assert -(+(name));
-}
-
-module binary_operators
-{
-	assert 10 + 10;
-	assert 10 + 10**10 + 10**foo**bar;
-	assert 10 *  10;
-	assert 10 -  10;
-	assert 10 /  10;
-	assert 10 %  10;
-	assert 10 ** 10;
-	assert 10 >= 10;
-	assert 10 <= 10;
-	assert 10 >  10;
-	assert 10 <  10;
-	assert 10 == 10;
-	assert 10 != 10;
-	assert 10 =  10;
-	assert 10 &  10;
-	assert 10 |  10;
-	assert 10 ^  10;
-	assert 10 -> 10;
-	assert 10 -- 10;
-}
-
-module brackexp
-{
-	assert 10;
-	assert ( 10 );
-	assert ( -10 );
-	assert -( 10 );
-	assert -( ( 10 ) );
-	assert -( -10 );
-}
-]]
+local ast = parse(src)
 
 print(ast)
 

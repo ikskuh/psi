@@ -30,6 +30,8 @@ type zahl = int;      # Umbennenung
 type bit  = int<0,1>; # Instanzierung
 type time = record(hour : int, minute : int); # Neudefinition
 
+# TODO: Prüfung, ob Operatorüberladung trivial möglich...
+
 # Es kann auch benutzerdefinierte Operatoren geben,
 # diese dürfen nur aus Zeichen bestehen, welche die ctype
 # Bedingung `isprint(c) && !isalnum(c) && !isspace(c)`
@@ -158,6 +160,7 @@ var arr = [ 1, 2, 3, 4 ];
  |  binary or
  ~  binary not
  ^  binary xor
+ -> numeric iterator range
 
  String-Operatoren:
  -- concatenation
@@ -174,3 +177,41 @@ var arr = [ 1, 2, 3, 4 ];
  -> logic implication
  
 !#
+
+
+
+#!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+ ! Kapitel: Kontrollfluss                                                    !
+ !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!#
+
+if(expr) { }
+if(expr) { } else { }
+
+while(expr) { }
+
+loop { } until(expr)
+
+for(var in expr) { }
+
+break;
+return;
+return expr;
+continue;
+
+expr;
+
+select(expr)
+{
+	when foo:
+		print("foo");
+		break; # Breakout
+	when bar:
+		print("bar");
+		next; # Fallthrough
+	when baz:
+		print("baz");
+		goto foo; # Switch case *badumtss*
+	otherwise:
+		print('???');
+		break;
+}

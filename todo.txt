@@ -1,0 +1,18 @@
+
+
+Grammatik-TODO-Liste:
+
+- Funktionen
+  - Funktionsliteral
+  - Instruktionen
+		- { Block }
+		- break / continue
+		- return, return <expr>
+		- expr
+		- if, if-else
+		- while
+		- for
+		- loop-until (syntax ausdenken)
+		- select
+		
+- Generische Deklaration
