@@ -264,23 +264,34 @@ module instructions
 			;
 		until bar
 	};
-}
 
-assert fn()
-{
-	select(expr)
+	assert fn()
 	{
-		when foo:
-			print("foo");
-			break; # Breakout
-		when bar:
-			print("bar");
-			next; # Fallthrough
-		when baz:
-			print("baz");
-			goto foo; # Switch case *badumtss*
-		otherwise:
-			print("???");
-			break;
-	}
-};
+		select(expr)
+		{
+			when foo:
+				print("foo");
+				break; # Breakout
+			when bar:
+				print("bar");
+				next; # Fallthrough
+			when baz:
+				print("baz");
+				goto foo; # Switch case *badumtss*
+			otherwise:
+				print("???");
+				break;
+		}
+	};
+	
+	assert fn()
+	{
+		var foo : bar;
+		var foo = 10;
+		var foo : bar = 10;
+		
+		type foo = bar;
+		
+		generic type foo<i:int> = i;
+	};
+}
