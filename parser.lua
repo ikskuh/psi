@@ -75,7 +75,9 @@ local ruleset = {
 	string = P('"') * (1 - P('"'))^0 * P('"'),
 	func = V"fndecl" * WSO * (V"body" + P"=>" * WSO * V"expr"),
 	body = P"{" * (WSO * V"instr")^0 * WSO * P"}",
-	instr = P";",
+	instr = V"expr_instr" + V"body" + P";",
+	
+	expr_instr = V"expr" * WSO * P";",
 }
 -- Autogenerate rulesets for binary operators
 -- with precedence:

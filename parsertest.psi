@@ -204,4 +204,24 @@ module instructions
 		;
 		;
 	};
+	
+	assert fn()
+	{
+		{ }
+		{ ; }
+		{ { } }
+		{ { ; } }
+	};
+	
+	assert fn()
+	{
+		10;
+		10 * 10;
+		a = 10;
+	};
+	
+	assert fn()
+	{
+		
+	};
 }
