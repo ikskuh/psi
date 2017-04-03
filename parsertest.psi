@@ -222,6 +222,24 @@ module instructions
 	
 	assert fn()
 	{
-		
+		break;
+		continue;
+		next;
+		return;
+		return foo;
+		goto foo;
+	};
+	
+	assert fn()
+	{
+		if a=b return b;
+		if true
+			return b;
+		else
+			return c;
+		if true
+		{
+			
+		}
 	};
 }

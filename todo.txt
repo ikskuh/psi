@@ -4,9 +4,6 @@ Grammatik-TODO-Liste:
 
 - Funktionen
   - Instruktionen
-		- break / continue
-		- return, return <expr>
-		- if, if-else
 		- while
 		- for
 		- loop-until (syntax ausdenken)

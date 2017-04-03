@@ -75,9 +75,13 @@ local ruleset = {
 	string = P('"') * (1 - P('"'))^0 * P('"'),
 	func = V"fndecl" * WSO * (V"body" + P"=>" * WSO * V"expr"),
 	body = P"{" * (WSO * V"instr")^0 * WSO * P"}",
-	instr = V"expr_instr" + V"body" + P";",
+	instr = V"if_instr" + V"goto_instr" + V"return_instr" + V"singleword_instr" + V"expr_instr" + V"body" + P";",
 	
 	expr_instr = V"expr" * WSO * P";",
+	if_instr = P"if" * WS * WSO * V"expr" * WS * V"instr" * (WSO * P"else" * WSO * V"instr")^-1,
+	return_instr = P"return" * (WS * V"expr")^-1 * WSO * P";",
+	goto_instr = P"goto" * WS * V"expr" * WSO * P";",
+	singleword_instr = (P"break" + P"continue" + P"next") * WSO * P";",
 }
 -- Autogenerate rulesets for binary operators
 -- with precedence:
