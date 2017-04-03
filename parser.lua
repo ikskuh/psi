@@ -45,7 +45,7 @@ local ruleset = {
 	genvardecl = P"generic" * WS * (P"var" + P"const") * WS * V"name" * WSO * V"genparams" * WSO * V"paramspec" * WSO * P";",
 	gentypedecl = P"generic" * WS * P"type" * WS * V"name" * WSO * V"genparams" * WSO * P"=" * WSO * V"type" * WSO * P";",
 	genparams = P"<" * WSO * V"paramlist" * WSO * P">",
-	assert = P"assert" * WS * V"expr" * P";",
+	assert = P"assert" * WS * V"expr" * WSO * P";",
 	name = (R("AZ", "az") + S"_")^1,
 	exname = V"name" * (P"." * V"name")^0,
 	type = (P"(" * WSO * V"type" * WSO * P")") + V"fndecl" + V"record" + V"gentype" + V"exname",
@@ -61,7 +61,7 @@ local ruleset = {
 	exprlist = V"expr" * (WSO * P"," * WSO * V"expr")^0,
 	-- 'expr' and all 'binop_l*_expr' are generated below
 	--expr = V"binop_l0_expr",
-	binop_l0_expr = V"unop_expr" + V"fncall" + V"literal" + V"brackexpr",
+	binop_l0_expr = V"unop_expr" + V"func" + V"fncall" + V"literal" + V"brackexpr",
 	brackexpr = (P"(" * WSO * V"expr" * WSO * P")"),
 	unop_expr = V"unop" * WSO * V"binop_l2_expr",
 	unop = S"+-~",
@@ -73,6 +73,9 @@ local ruleset = {
 	real = S("+-")^-1 * R("09")^1 * P"." * R("09")^1,
 	array = P"[" * (WSO * V"exprlist")^-1 * WSO * P"]",
 	string = P('"') * (1 - P('"'))^0 * P('"'),
+	func = V"fndecl" * WSO * (V"body" + P"=>" * WSO * V"expr"),
+	body = P"{" * (WSO * V"instr")^0 * WSO * P"}",
+	instr = P";",
 }
 -- Autogenerate rulesets for binary operators
 -- with precedence:

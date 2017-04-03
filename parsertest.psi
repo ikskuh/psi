@@ -174,3 +174,34 @@ module brackexp
 	assert -( ( 10 ) );
 	assert -( -10 );
 }
+
+module functions
+{
+	# Explicit function body
+	assert fn() {};
+	assert fn(i : int) {};
+	assert fn(i : int, j : int) {};
+	assert fn(i : int) -> int {};
+	assert fn(i : int, j : int) -> int {};
+	
+	# Expression function body
+	assert fn() => 0;
+	assert fn(i : int) => 0;
+	assert fn(i : int, j : int) => 0;
+	assert fn(i : int) -> int => 0;
+	assert fn(i : int, j : int) -> int => 0;
+}
+
+module instructions
+{
+	assert fn()
+	{
+		;
+	};
+	
+	assert fn()
+	{
+		;
+		;
+	};
+}
