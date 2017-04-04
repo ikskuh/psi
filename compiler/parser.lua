@@ -22,7 +22,7 @@ local WSO = WS^0
 ---[[
 local testsource = 
 [==[
-assert f[first,second].bar'baz[2];
+assert f.x()'length;
 ]==]
 --]]
 
@@ -90,13 +90,17 @@ local ruleset = {
 	--expr = V"binop_l0_expr",
 	
 	-- Handwritten binary operator for indexing fields and metafields
-	binop_l0_expr = (V"binop_end" * ((C(S".'") * V"name") / captures.fieldindex + (P"[" * WSO * V"exprlist" * WSO * P"]") / captures.arrayindex)^0) / captures.indexer,
-	binop_end = (V"unop_expr" + V"func" + V"fncall" + V"literal" + V"brackexpr") / id,
+	binop_l0_expr = (V"binop_end" * (
+										(C(S".'") * V"name") / captures.fieldindex + 
+										(P"[" * WSO * V"exprlist" * WSO * P"]") / captures.arrayindex + 
+										(P"(" * WSO * (V"exprlist" * WSO)^-1 * P")") / captures.fncall
+									)^0) / captures.indexer,
+	binop_end = (V"unop_expr" + V"func" + V"literal" + V"brackexpr") / id,
 	
 	brackexpr = (P"(" * WSO * V"expr" * WSO * P")") / id,
 	unop_expr = (V"unop" * WSO * V"binop_l0_expr") / captures.unop,
 	unop = C(S"+-~"),
-	fncall = (V"exname" * WSO * P"(" * WSO * (V"exprlist" * WSO)^-1 * P")") / captures.fncall,
+	-- fncall = (V"exname" * WSO * ) / captures.fncall,
 	literal = V"array" + V"number" + V"name" / captures.variableref + V"string",
 	number = (V"hexint" + V"real" + V"integer") / id,
 	integer = C(S("+-")^-1 * R("09")^1) / captures.number,

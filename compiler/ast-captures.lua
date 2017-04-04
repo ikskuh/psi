@@ -145,15 +145,6 @@ function captures.funsig(params, returntype)
 	}
 end
 
-function captures.fncall(name, args)
-	return {
-		_TYPE = "expression",
-		type = "call",
-		name = name,
-		arguments = args,
-	}
-end
-
 function captures.unop(op, value)
 	return {
 		_TYPE = "expression",
@@ -216,10 +207,7 @@ function captures.indexer(...)
 	local t = table.pack(...)
 	if #t==1 then
 		return t[1]
-	elseif #t%2==0 then
-		error("Invalid field indexer!")
 	end
-	print("index", t)
 	local function mkindex(value, index)
 		return {
 			_TYPE = "expression",
@@ -250,29 +238,18 @@ function captures.fieldindex(...)
 		type = (t[1] == ".") and "field" or "meta",
 		field = t[2]
 	}
---[[
-	print("fldindex", t)
-	if #t==1 then
-		return t[1]
-	elseif #t%2==0 then
-		error("Invalid field indexer!")
+end
+
+function captures.fncall(args, ...)
+	-- print("fncall", args, ...)
+	if type(args) == "string" then
+		args = { }
 	end
-	local function mkindex(value, type, index)
-		return {
-			_TYPE = "expression",
-			type = "index",
-			indexer = type,
-			value = value,
-			index = index,
-		}
-	end
-	
-	local expr = mkindex(t[1],t[2],t[3])
-	for i=4,#t,2 do
-		expr = mkindex(expr, t[i], t[i+1])
-	end
-	return expr
---]]
+	return {
+		type = "call",
+		name = name,
+		arguments = args,
+	}
 end
 
 function captures.variableref(name)
