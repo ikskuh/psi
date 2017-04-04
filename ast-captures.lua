@@ -87,13 +87,6 @@ function captures.type(t)
 	return t
 end
 
-function captures.expr(...)
-	print("expr", ...)
-	return {
-		_TYPE = "expression",
-	}
-end
-
 function captures.number(val)
 	return {
 		_TYPE = "expression",
@@ -104,7 +97,8 @@ end
 
 function captures.string(val)
 	return {
-		_TYPE = "string",
+		_TYPE = "expression",
+		type = "string",
 		value = tostring(val)
 	}
 end
@@ -146,7 +140,7 @@ function captures.funsig(params, returntype)
 	return {
 		_TYPE = "type",
 		type = "function",
-		params = params,
+		params = params or { },
 		returntype = returntype
 	}
 end
@@ -215,6 +209,154 @@ function captures.array(values)
 		_TYPE = "expression",
 		type = "array",
 		values = values
+	}
+end
+
+function captures.metaindex(expr, index)
+	return {
+		_TYPE = "metaindex",
+		expression = expr,
+		index = index
+	}
+end
+
+function captures.variableref(name)
+	return {
+		_TYPE = "expression",
+		type = "variable",
+		name = name,
+	}
+end
+
+function captures.func(sig, body)
+	return {
+		_TYPE = "expression",
+		type = "function",
+		signature = sig,
+		body = body,
+	}
+end
+
+function captures.exprinstr(expr)
+	return {
+		_TYPE = "instruction",
+		type = "expression",
+		expression = expr,
+	}
+end
+
+function captures.ifinstr(cond, yes, no)
+	return {
+		_TYPE = "instruction",
+		type = "conditional",
+		condition = cond,
+		positive = yes,
+		negative = no
+	}
+end
+
+function captures.whileinstr(cond, body)
+	return {
+		_TYPE = "instruction",
+		type = "while",
+		condition = cond,
+		body = body,
+	}
+end
+
+function captures.forinstr(var, expr, body)
+	return {
+		_TYPE = "instruction",
+		type = "for",
+		variable = var,
+		expression = expr,
+		body = body,
+	}
+end
+
+function captures.returninstr(expr)
+	if expr._TYPE ~= "expression" then
+		expr = nil
+	end
+	return {
+			_TYPE = "instruction",
+			type = "return",
+			expression = expr
+		}
+end
+
+function captures.gotoinstr(expr)
+	return {
+		_TYPE = "instruction",
+		type = "goto",
+		expression = expr
+	}
+end
+
+function captures.loopinstr(body, cond)
+	return {
+		_TYPE = "instruction",
+		type = "loop-until",
+		condition = cond,
+		body = body,
+	}
+end
+
+function captures.wordinstr(word)
+	return {
+		_TYPE = "instruction",
+		type = word
+	}
+end
+
+function captures.selectinstr(expr, ...)
+	local t = table.pack(...)
+	local options = { }
+	local option
+	
+	for i=1,#t do
+		if t[i]._TYPE == "selector" then
+			option = t[i]
+			table.insert(options, option)
+		elseif t[i]._TYPE == "instruction" then
+			
+			table.insert(option.contents, t[i])
+		else
+			print(i, t[i])
+			error("Invalid selector!")
+		end
+	end
+	
+	return {
+		_TYPE = "instruction",
+		type = "select",
+		selector = expr,
+		options = options
+	}
+end
+
+function captures.otherwise()
+	return {
+		_TYPE = "selector",
+		isDefault = true,
+		contents = { },
+	}
+end
+
+function captures.when(expr)
+	return {
+		_TYPE = "selector",
+		isDefault = false,
+		expression = expr,
+		contents = { },
+	}
+end
+
+function captures.bodyinstr(body)
+	return {
+		_TYPE = "instruction",
+		type = "body",
+		contents = body
 	}
 end
 

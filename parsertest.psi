@@ -296,7 +296,7 @@ module instructions
 	};
 }
 
-const main = fn(args : array<string>) -> int
+export const main = fn(args : array<string>) -> int
 {
 	return 0;
 };

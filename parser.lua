@@ -19,10 +19,20 @@ local WS_comment_short = (P("#") * (1 - P("\n"))^0)
 local WS  = (WS_blank + WS_comment_long + WS_comment_short)^1
 local WSO = WS^0
 
----[[
+--[[
 local testsource = 
 [==[
-assert 10+2-3;
+assert fn(i : int)
+{
+	select(foo)
+	{
+		when true:
+			body_a;
+			body_b;
+		otherwise:
+			body_bodac;
+	}
+};
 ]==]
 --]]
 
@@ -32,7 +42,7 @@ local binops =
 	-- Highest precedence (binds most)
 	{ "**" },
 	{ "*", "/", "%" },
-	{ "+", "-", "--" },
+	{ "+", "--", "-" },
 	{ ">=", ">", "<=", "<" },
 	{ "==", "!=" },
 	{ "&", "|", "^", "->" },
@@ -88,12 +98,13 @@ local ruleset = {
 	exprlist = Ct(V"expr" * (WSO * P"," * WSO * V"expr")^0),
 	-- 'expr' and all 'binop_l*_expr' are generated below
 	--expr = V"binop_l0_expr",
-	binop_l0_expr = (V"unop_expr" + V"func" + V"fncall" + V"literal" + V"brackexpr") / id,
+	binop_l0_expr = (V"metaindex" + V"unop_expr" + V"func" + V"fncall" + V"literal" + V"brackexpr") / id,
 	brackexpr = (P"(" * WSO * V"expr" * WSO * P")") / id,
 	unop_expr = (V"unop" * WSO * V"binop_l0_expr") / captures.unop,
 	unop = C(S"+-~"),
+	metaindex = ((V"exname" / captures.variableref + V"brackexpr") * P"'" * V"name") / captures.metaindex,
 	fncall = (V"exname" * WSO * P"(" * WSO * (V"exprlist" * WSO)^-1 * P")") / captures.fncall,
-	literal = V"array" + V"number" + V"exname" + V"string",
+	literal = V"array" + V"number" + V"exname" / captures.variableref + V"string",
 	number = (V"hexint" + V"real" + V"integer") / id,
 	integer = C(S("+-")^-1 * R("09")^1) / captures.number,
 	hexint = C(S("+-")^-1 * P"0x" * R("09", "af", "AF")^1) / captures.number,
@@ -103,22 +114,22 @@ local ruleset = {
 	
 	
 	
-	func = V"fndecl" * WSO * (V"body" + P"=>" * WSO * V"expr"),
-	body = P"{" * (WSO * V"instr")^0 * WSO * P"}",
-	instr = V"declaration" + V"if_instr" + V"select_instr" + V"for_instr" + V"loop_instr" + V"while_instr" + V"goto_instr" + V"return_instr" + V"singleword_instr" + V"expr_instr" + V"body" + P";",
+	func = (V"fndecl" * WSO * (V"body" + P"=>" * WSO * V"expr" / captures.exprinstr)) / captures.func,
+	body = Ct(P"{" * (WSO * V"instr")^0 * WSO * P"}"),
+	instr = V"declaration" + V"if_instr" + V"select_instr" + V"for_instr" + V"loop_instr" + V"while_instr" + V"goto_instr" + V"return_instr" + V"singleword_instr" + V"expr_instr" + V"body"/captures.bodyinstr + P";",
 	
-	expr_instr = V"expr" * WSO * P";",
-	if_instr = P"if" * packCondition(V"expr") * V"instr" * (WSO * P"else" * WSO * V"instr")^-1,
-	while_instr = P"while" * packCondition(V"expr") * V"instr",
-	for_instr = P"for" * packCondition(V"name" * WS * P"in" * WS * V"expr") * V"instr",
-	return_instr = P"return" * (WS * V"expr")^-1 * WSO * P";",
-	goto_instr = P"goto" * WS * V"expr" * WSO * P";",
-	loop_instr = P"loop" * WSO * V"instr" * WSO * P"until" * packCondition(V"expr"),
-	singleword_instr = (P"break" + P"continue" + P"next") * WSO * P";",
-	select_instr = P"select" * packCondition(V"expr") * P"{" * WSO * (
-									WSO * (P"otherwise" + (P"when" * WS * V"expr")) * WSO * P":" + 
+	expr_instr = (V"expr" * WSO * P";") / captures.exprinstr,
+	if_instr = (P"if" * packCondition(V"expr") * V"instr" * (WSO * P"else" * WSO * V"instr")^-1) / captures.ifinstr,
+	while_instr = (P"while" * packCondition(V"expr") * V"instr") / captures.whileinstr,
+	for_instr = (P"for" * packCondition(V"name" * WS * P"in" * WS * V"expr") * V"instr") / captures.forinstr,
+	return_instr = (P"return" * (WS * V"expr")^-1 * WSO * P";") / captures.returninstr,
+	goto_instr = (P"goto" * WS * V"expr" * WSO * P";") / captures.gotoinstr,
+	loop_instr = (P"loop" * WSO * V"instr" * WSO * P"until" * packCondition(V"expr")) / captures.loopinstr,
+	singleword_instr = (C(P"break" + P"continue" + P"next") * WSO * P";") / captures.wordinstr,
+	select_instr = (P"select" * packCondition(V"expr") * P"{" * WSO * (
+									WSO * (P"otherwise" / captures.otherwise + (P"when" * WS * V"expr") / captures.when) * WSO * P":" + 
 									WSO * V"instr" * WSO
-								 )^0 * WSO * P"}"
+								 )^0 * WSO * P"}") / captures.selectinstr
 }
 -- Autogenerate rulesets for binary operators
 -- with precedence:
