@@ -1,0 +1,31 @@
+#!
+ ! Implementation of calculating a fibonacci number with
+ ! both recursive and iterative approach.
+ !#
+import std;
+import std.io;
+
+# Recursive implementation
+export const fib_recursive = fn(n : uint) -> uint
+{
+	if(n < 2)
+		return n;
+	else
+		return fib_recursive(n - 1) + fib_recursive(n - 2);
+};
+
+# Iterative implementation
+export const fib_iterative = fn(n : uint) -> uint
+{
+	if (n == 0)
+		return 0;
+	var prev : uint = 0;
+	var next : uint = 1;
+	for (i in 1 -> x-1)
+	{
+		var sum = prev + next;
+		prev = next;
+		next = sum;
+	}
+	return next;
+};

@@ -19,10 +19,14 @@ local WS_comment_short = (P("#") * (1 - P("\n"))^0)
 local WS  = (WS_blank + WS_comment_long + WS_comment_short)^1
 local WSO = WS^0
 
----[[
+--[[
 local testsource = 
 [==[
-assert f.x()'length;
+assert fn()
+{
+	for (i in 1 -> x-1)
+		bar;
+};
 ]==]
 --]]
 
@@ -100,7 +104,7 @@ local ruleset = {
 	brackexpr = (P"(" * WSO * V"expr" * WSO * P")") / id,
 	unop_expr = (V"unop" * WSO * V"binop_l0_expr") / captures.unop,
 	unop = C(S"+-~"),
-	-- fncall = (V"exname" * WSO * ) / captures.fncall,
+	
 	literal = V"array" + V"number" + V"name" / captures.variableref + V"string",
 	number = (V"hexint" + V"real" + V"integer") / id,
 	integer = C(S("+-")^-1 * R("09")^1) / captures.number,
@@ -108,8 +112,6 @@ local ruleset = {
 	real = C(S("+-")^-1 * R("09")^1 * P"." * R("09")^1) / captures.number,
 	array = (P"[" * (WSO * V"exprlist")^-1 * WSO * P"]") / captures.array,
 	string = P('"') * C((1 - P('"'))^0) * P('"') / captures.string,
-	
-	
 	
 	func = (V"fndecl" * WSO * (V"body" + P"=>" * WSO * V"expr" / captures.exprinstr)) / captures.func,
 	body = Ct(P"{" * (WSO * V"instr")^0 * WSO * P"}"),
@@ -198,16 +200,21 @@ function parse(str)
 	end
 end
 
-local f = io.open("../samples/parsertest.psi", "r")
-local src = f:read("*all")
-f:close()
+if testsource then
+	local ast = grammar:match(testsource)
+	if ast then
+		io.write(inspect(ast), "\n")
+	end
+	print("success:", ast ~= nil)
+else
+	local f = io.open("../samples/parsertest.psi", "r")
+	local src = f:read("*all")
+	f:close()
 
-src = testsource or src
-
--- local ast = parse(src)
-local ast = grammar:match(src)
-
-print("success:", ast ~= nil)
-if ast then
-	io.write(inspect(ast), "\n")
+	local ast = grammar:match(src)
+	local success = (ast ~= nil) and (ast[#ast].name == "main")
+	if ast then
+		io.write(inspect(ast), "\n")
+	end
+	print("success:", success)
 end

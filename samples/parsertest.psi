@@ -198,6 +198,22 @@ module functions
 	assert fn(i : int, j : int) -> int => 0;
 }
 
+module indexers
+{
+	assert foo[10];
+	assert foo[10, 20];
+	assert foo.bar;
+	assert foo'baz;
+	
+	assert foo[0].bar;
+	assert foo.bar[0];
+	assert foo'bar[0];
+	assert foo[0]'bar;
+	
+	assert foo'bar.baz;
+	assert foo.bar'baz;
+}
+
 module instructions
 {
 	assert fn()
