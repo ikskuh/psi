@@ -318,6 +318,29 @@ module instructions
 	};
 }
 
+module operators
+{
+	unary operator '+' = fn(i : int)
+	{
+
+	};
+	
+	binary operator '+' = fn(i : int, j:int) -> int
+	{
+
+	};
+
+	export unary operator '->' = fn(i : int)
+	{
+
+	};
+	
+	export binary operator '**' = fn(i : int, j:int) -> int
+	{
+
+	};
+}
+
 export const main = fn(args : array<string>) -> int
 {
 	return 0;

@@ -19,16 +19,7 @@ local WS_comment_short = (P("#") * (1 - P("\n"))^0)
 local WS  = (WS_blank + WS_comment_long + WS_comment_short)^1
 local WSO = WS^0
 
---[[
-local testsource = 
-[==[
-assert fn()
-{
-	for (i in 1 -> x-1)
-		bar;
-};
-]==]
---]]
+local testsource = true
 
 -- List of binary operators with precedence
 local binops = 
@@ -59,6 +50,20 @@ end
 
 captures = require "ast-captures"
 
+local totaloplist = { }
+for i=1,#binops do
+	for j=1,#binops[i] do
+		table.insert(totaloplist, binops[i][j])
+	end
+end
+
+table.sort(totaloplist)
+
+ANYOPERATOR = P(totaloplist[1])
+for i=#totaloplist,2,-1 do
+	ANYOPERATOR = ANYOPERATOR + P(totaloplist[i])
+end
+
 -- Define the ruleset for Psi
 local ruleset = {
 	"program",
@@ -66,7 +71,8 @@ local ruleset = {
 	declaration = (V"assert" + V"import" + V"objdecl") / id,
 	module = (P"module" * WSO * V"exname" * WSO * P"{" * WSO * V"program" * WSO * P"}") / captures.module,
 	import = (P"import" * WSO * V"exname" * (WSO * P"as" * WSO * V"name")^-1 * WSO * P";") / captures.import,
-	objdecl = (((P"export" * WS)^-1) / exists * (V"genvardecl" + V"gentypedecl" + V"vardecl" + V"typedecl")) / captures.objectdecl,
+	objdecl = (((P"export" * WS)^-1) / exists * (V"opdecl" + V"genvardecl" + V"gentypedecl" + V"vardecl" + V"typedecl")) / captures.objectdecl,
+	opdecl = (C(P"unary" + P"binary") * WS * P"operator" * WS * P"'" * C(ANYOPERATOR) * P"'" * WSO * P"=" * WSO * V"func" * WSO * P";") / captures.operator,
 	vardecl = (C(P"var" + P"const") * WS * V"param" * WSO * P";") / captures.vardecl,
 	typedecl = (P"type" * WS * V"name" * WSO * P"=" * WSO * V"type" * WSO * P";") / captures.typedecl,
 	genvardecl = (P"generic" * WS * (P"var" + P"const") * WS * V"name" * WSO * V"genparams" * WSO * V"paramspec" * WSO * P";") / captures.genvardecl,
@@ -200,21 +206,13 @@ function parse(str)
 	end
 end
 
-if testsource then
-	local ast = grammar:match(testsource)
-	if ast then
-		io.write(inspect(ast), "\n")
-	end
-	print("success:", ast ~= nil)
-else
-	local f = io.open("../samples/parsertest.psi", "r")
-	local src = f:read("*all")
-	f:close()
+local f = io.open(testsource and "test.psi" or "../samples/parsertest.psi", "r")
+local src = f:read("*all")
+f:close()
 
-	local ast = grammar:match(src)
-	local success = (ast ~= nil) and (ast[#ast].name == "main")
-	if ast then
-		io.write(inspect(ast), "\n")
-	end
-	print("success:", success)
+local ast = grammar:match(src)
+local success = (ast ~= nil) and (#ast > 0) and (ast[#ast].name == "main")
+if ast then
+	io.write(inspect(ast), "\n")
 end
+print("success:", success)

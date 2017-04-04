@@ -391,4 +391,13 @@ function captures.bodyinstr(body)
 	}
 end
 
+function captures.operator(type, operator, func)
+	return {
+		_TYPE = "operator-decl",
+		type = type,
+		operator = operator,
+		func = func
+	}
+end
+
 return captures

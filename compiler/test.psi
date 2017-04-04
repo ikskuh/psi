@@ -1,0 +1,19 @@
+export unary operator '->' = fn(i : int)
+{
+
+};
+
+export binary operator '**' = fn(i : int, j:int) -> int
+{
+
+};
+
+unary operator '+' = fn(i : int)
+{
+
+};
+
+binary operator '+' = fn(i : int, j:int) -> int
+{
+
+};

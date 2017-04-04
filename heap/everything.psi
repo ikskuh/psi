@@ -41,23 +41,23 @@ type time = record(hour : int, minute : int); # Neudefinition
 # Operatoren können unär (prefix) oder binär (infix) sein.
 
 # Example 1: String trimming
-	unary operator '~' = fn(str : string) → string
-	{
-		return std.trim(str);
-	};
-	# Now it is possible to trim a string by prepending ~
-	var trimmed = ~" ↤     ↦    ";
+unary operator '~' = fn(str : string) → string
+{
+	return std.trim(str);
+};
+# Now it is possible to trim a string by prepending ~
+var trimmed = ~" ↤     ↦    ";
 
 # Example 2: String repetition
-	binary operator '*' = fn(str : string, count : int) → string
-	{
-		var res = ""; # Implicit type
-		# -> is a range operator and returns an iteratables
-		for(i in 1 -> count) {
-			res = res .. str;
-		}
-		return res;
-	};
+binary operator '*' = fn(str : string, count : int) → string
+{
+	var res = ""; # Implicit type
+	# -> is a range operator and returns an iteratables
+	for(i in 1 -> count) {
+		res = res .. str;
+	}
+	return res;
+};
 
 
 
