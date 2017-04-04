@@ -22,7 +22,7 @@ local WSO = WS^0
 ---[[
 local testsource = 
 [==[
-generic type positive_int<max : int> = int<1, max>;
+assert f()'bar.baz;
 ]==]
 --]]
 
@@ -88,13 +88,16 @@ local ruleset = {
 	exprlist = Ct(V"expr" * (WSO * P"," * WSO * V"expr")^0),
 	-- 'expr' and all 'binop_l*_expr' are generated below
 	--expr = V"binop_l0_expr",
-	binop_l0_expr = (V"metaindex" + V"unop_expr" + V"func" + V"fncall" + V"literal" + V"brackexpr") / id,
+	
+	-- Handwritten binary operator for indexing fields and metafields
+	binop_l0_expr = (V"binop_end" * (C(S".'") * V"name")^0) / captures.fieldindex,
+	binop_end = (V"unop_expr" + V"func" + V"fncall" + V"literal" + V"brackexpr") / id,
+	
 	brackexpr = (P"(" * WSO * V"expr" * WSO * P")") / id,
 	unop_expr = (V"unop" * WSO * V"binop_l0_expr") / captures.unop,
 	unop = C(S"+-~"),
-	metaindex = ((V"exname" / captures.variableref + V"brackexpr") * P"'" * V"name") / captures.metaindex,
 	fncall = (V"exname" * WSO * P"(" * WSO * (V"exprlist" * WSO)^-1 * P")") / captures.fncall,
-	literal = V"array" + V"number" + V"exname" / captures.variableref + V"string",
+	literal = V"array" + V"number" + V"name" / captures.variableref + V"string",
 	number = (V"hexint" + V"real" + V"integer") / id,
 	integer = C(S("+-")^-1 * R("09")^1) / captures.number,
 	hexint = C(S("+-")^-1 * P"0x" * R("09", "af", "AF")^1) / captures.number,

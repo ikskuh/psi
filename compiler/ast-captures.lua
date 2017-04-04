@@ -212,12 +212,28 @@ function captures.array(values)
 	}
 end
 
-function captures.metaindex(expr, index)
-	return {
-		_TYPE = "metaindex",
-		expression = expr,
-		index = index
-	}
+function captures.fieldindex(...)
+	local t = table.pack(...)
+	if #t==1 then
+		return t[1]
+	elseif #t%2==0 then
+		error("Invalid binop!")
+	end
+	local function mkindex(value, type, index)
+		return {
+			_TYPE = "expression",
+			type = "index",
+			indexer = type,
+			value = value,
+			index = index,
+		}
+	end
+	
+	local expr = mkindex(t[1],t[2],t[3])
+	for i=4,#t,2 do
+		expr = mkindex(expr, t[i], t[i+1])
+	end
+	return expr
 end
 
 function captures.variableref(name)
