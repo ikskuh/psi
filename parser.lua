@@ -19,13 +19,10 @@ local WS_comment_short = (P("#") * (1 - P("\n"))^0)
 local WS  = (WS_blank + WS_comment_long + WS_comment_short)^1
 local WSO = WS^0
 
---[[
+---[[
 local testsource = 
 [==[
-module foo
-{
-	import std;
-}
+assert 10+2-3;
 ]==]
 --]]
 
@@ -48,7 +45,8 @@ local function packCondition(cond)
 				 (WSO * P"(" * WSO * cond * WSO * P")" * WSO)
 end
 
-local function id(foo)
+local function id(foo,...)
+	-- print("id", foo, ...)
 	return foo
 end
 local function exists(foo)
@@ -90,17 +88,17 @@ local ruleset = {
 	exprlist = Ct(V"expr" * (WSO * P"," * WSO * V"expr")^0),
 	-- 'expr' and all 'binop_l*_expr' are generated below
 	--expr = V"binop_l0_expr",
-	binop_l0_expr = (V"unop_expr" + V"func" + V"fncall" + V"literal" + V"brackexpr") / captures.expr,
-	brackexpr = (P"(" * WSO * V"expr" * WSO * P")"),
-	unop_expr = V"unop" * WSO * V"binop_l2_expr",
-	unop = S"+-~",
-	fncall = V"exname" * WSO * P"(" * WSO * (V"exprlist" * WSO)^-1 * P")",
+	binop_l0_expr = (V"unop_expr" + V"func" + V"fncall" + V"literal" + V"brackexpr") / id,
+	brackexpr = (P"(" * WSO * V"expr" * WSO * P")") / id,
+	unop_expr = (V"unop" * WSO * V"binop_l0_expr") / captures.unop,
+	unop = C(S"+-~"),
+	fncall = (V"exname" * WSO * P"(" * WSO * (V"exprlist" * WSO)^-1 * P")") / captures.fncall,
 	literal = V"array" + V"number" + V"exname" + V"string",
-	number = C(V"hexint" + V"real" + V"integer") / id,
+	number = (V"hexint" + V"real" + V"integer") / id,
 	integer = C(S("+-")^-1 * R("09")^1) / captures.number,
 	hexint = C(S("+-")^-1 * P"0x" * R("09", "af", "AF")^1) / captures.number,
 	real = C(S("+-")^-1 * R("09")^1 * P"." * R("09")^1) / captures.number,
-	array = P"[" * (WSO * V"exprlist")^-1 * WSO * P"]",
+	array = (P"[" * (WSO * V"exprlist")^-1 * WSO * P"]") / captures.array,
 	string = P('"') * C((1 - P('"'))^0) * P('"') / captures.string,
 	
 	
@@ -142,9 +140,9 @@ for i=1,#binops do
 		ruleset[opname] = ruleset[opname] + P(ops[j])
 	end
 	
-	ruleset[opname] = C(ruleset[opname]) / captures.expr
+	ruleset[opname] = C(ruleset[opname])
 	
-	ruleset[expr] = V(subexpr) * (WSO * V(opname) * WSO * V(subexpr))^0
+	ruleset[expr] = (V(subexpr) * (WSO * V(opname) * WSO * V(subexpr))^0) / captures.binop
 end
 
 -- Compile the grammar

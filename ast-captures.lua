@@ -1,5 +1,3 @@
-
-
 local captures = { }
 
 function captures.import(mod, alias)
@@ -98,7 +96,8 @@ end
 
 function captures.number(val)
 	return {
-		_TYPE = "number",
+		_TYPE = "expression",
+		type = "number",
 		value = tonumber(val)
 	}
 end
@@ -149,6 +148,73 @@ function captures.funsig(params, returntype)
 		type = "function",
 		params = params,
 		returntype = returntype
+	}
+end
+
+function captures.fncall(name, args)
+	return {
+		_TYPE = "expression",
+		type = "call",
+		name = name,
+		arguments = args,
+	}
+end
+
+function captures.unop(op, value)
+	return {
+		_TYPE = "expression",
+		type = "unary-operator",
+		operator = op,
+		value = value,
+	}
+end
+
+function captures.binop(...)
+	local t = table.pack(...)
+	if #t==1 then
+		return t[1]
+	elseif #t%2==0 then
+		error("Invalid binop!")
+	end
+	local function mkop(lhs, op, rhs)
+		return {
+			_TYPE = "expression",
+			type = "binary-operator",
+			lhs = lhs,
+			operator = op,
+			rhs = rhs,
+		}
+	end
+	
+	local function reverse(tbl)
+		for i=1, math.floor(#tbl / 2) do
+			tbl[i], tbl[#tbl - i + 1] = tbl[#tbl - i + 1], tbl[i]
+		end
+	end
+
+	local rightRecursive = true
+	
+	if rightRecursive then
+		local expr = mkop(t[1],t[2],t[3])
+		for i=4,#t,2 do
+			expr = mkop(expr, t[i], t[i+1])
+		end
+		return expr
+	else
+		reverse(t)
+		local expr = mkop(t[3],t[2],t[1])
+		for i=4,#t,2 do
+			expr = mkop(t[i+1], t[i], expr)
+		end
+		return expr
+	end
+end
+
+function captures.array(values)
+	return {
+		_TYPE = "expression",
+		type = "array",
+		values = values
 	}
 end
 
