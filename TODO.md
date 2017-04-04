@@ -1,9 +1,9 @@
 # TODO
 
 ## Syntax Level
+- Change function call expressions into `<expr>(…)`
 - Add declaration of overloaded operators
 - Add restrictions for functions with `with`
-- Add array indexer with `[]`
 
 ## Semantic Level
 - Define language semantics (how?!)

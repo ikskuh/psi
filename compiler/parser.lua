@@ -22,7 +22,7 @@ local WSO = WS^0
 ---[[
 local testsource = 
 [==[
-assert f()'bar.baz;
+assert f[first,second].bar'baz[2];
 ]==]
 --]]
 
@@ -90,7 +90,7 @@ local ruleset = {
 	--expr = V"binop_l0_expr",
 	
 	-- Handwritten binary operator for indexing fields and metafields
-	binop_l0_expr = (V"binop_end" * (C(S".'") * V"name")^0) / captures.fieldindex,
+	binop_l0_expr = (V"binop_end" * ((C(S".'") * V"name") / captures.fieldindex + (P"[" * WSO * V"exprlist" * WSO * P"]") / captures.arrayindex)^0) / captures.indexer,
 	binop_end = (V"unop_expr" + V"func" + V"fncall" + V"literal" + V"brackexpr") / id,
 	
 	brackexpr = (P"(" * WSO * V"expr" * WSO * P")") / id,
