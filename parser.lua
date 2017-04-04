@@ -19,20 +19,10 @@ local WS_comment_short = (P("#") * (1 - P("\n"))^0)
 local WS  = (WS_blank + WS_comment_long + WS_comment_short)^1
 local WSO = WS^0
 
---[[
+---[[
 local testsource = 
 [==[
-assert fn(i : int)
-{
-	select(foo)
-	{
-		when true:
-			body_a;
-			body_b;
-		otherwise:
-			body_bodac;
-	}
-};
+generic type positive_int<max : int> = int<1, max>;
 ]==]
 --]]
 
@@ -46,7 +36,7 @@ local binops =
 	{ ">=", ">", "<=", "<" },
 	{ "==", "!=" },
 	{ "&", "|", "^", "->" },
-	{ "+=", "-=", "*=", "/=", "%=", "|=", "--=", "=" },
+	{ "+=", "-=", "*=", "/=", "%=", "|=", "--=", ":=", "=" },
 	-- Lowest precedence (binds least)
 }
 

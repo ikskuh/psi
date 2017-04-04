@@ -319,7 +319,6 @@ function captures.selectinstr(expr, ...)
 			option = t[i]
 			table.insert(options, option)
 		elseif t[i]._TYPE == "instruction" then
-			
 			table.insert(option.contents, t[i])
 		else
 			print(i, t[i])

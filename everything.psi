@@ -176,6 +176,9 @@ var arr = [ 1, 2, 3, 4 ];
  ^  logic xor
  -> logic implication
  
+ Pointer / Referenztypen:
+ := reference assignment
+ 
 !#
 
 
