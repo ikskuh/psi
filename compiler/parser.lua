@@ -191,7 +191,7 @@ function parse(str)
 	end
 end
 
-local f = io.open("parsertest.psi", "r")
+local f = io.open("../samples/parsertest.psi", "r")
 local src = f:read("*all")
 f:close()
 

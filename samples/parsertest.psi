@@ -1,3 +1,9 @@
+#!
+ ! This file is some kind of unit test for
+ ! the parser and contains each syntactic structure
+ ! the language has.
+ !#
+
 import std;
 import std.io;
 import std.io.network;
