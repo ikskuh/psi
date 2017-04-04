@@ -1,0 +1,7 @@
+import std;
+import std.io;
+
+const main = fn(args : array<string>) -> int
+{
+	print("Hello, World!");
+};

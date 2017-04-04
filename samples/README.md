@@ -6,3 +6,9 @@ impression on how the language looks and feels.
 ## `parsertest.psi`
 This file is some kind of unit test for the parser. It contains all syntactical
 structures the language provides.
+
+
+
+
+> hello world, ein- und ausgabe, iteration, lese- schreibzugriff,
+> einzigartige sprachfeatures und syntactic sugar eventl.
