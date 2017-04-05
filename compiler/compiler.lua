@@ -42,8 +42,8 @@ local files, options = getopt({
 	}
 }, ...)
 
-print(files)
-print(options)
+-- print(files)
+-- print(options)
 
 if options["test"] then
 	local src = loadFile("../samples/parsertest.psi")
@@ -55,4 +55,17 @@ if options["test"] then
 		print("Test failed!")
 		print(ast)
 	end
+end
+
+for i,file in ipairs(files) do
+	local source, err = loadFile(file)
+	if source == nil then
+		error(err)
+	end
+	local ast = parse(source)
+	if ast == nil then
+		error("Failed to parse " .. file .. "!")
+	end
+	
+	-- Process AST here
 end

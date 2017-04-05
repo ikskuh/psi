@@ -2,6 +2,8 @@
 
 ## Syntax Level
 - Add restrictions for functions with `with`
+- Add named parameters with `(1,2,index:10)`
+- Apply type semantics to AST on parsing (syntax sugar)
 
 ## Semantic Level
 - Define language semantics (how?!)
@@ -13,6 +15,7 @@
 
 ## Documentation
 - Document syntax
+	- `type foo = bar` is equivalent to `const foo : type = bar`
 - Document semantics (how?!)
 - Document compiler
 	

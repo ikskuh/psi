@@ -15,6 +15,7 @@ local AST =
 	INSTRUCTION = uniq(),
 	OPERATORDECL = uniq(),
 	EXPRESSIONLIST = uniq(),
+	COMPOUNDNAME = uniq(),
 	PARAMSPEC = uniq(),
 	PARAMLIST = uniq(),
 	SELECTOR = uniq(),

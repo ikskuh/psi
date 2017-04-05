@@ -1,9 +1,12 @@
-const main = fn()
+import std.io;
+import foo as bar;
+
+type foo = bar;
+const foo : type = bar;
+
+generic var x<i:int> : int;
+
+const main = fn(args : array<string>) -> int
 {
-	var i : int;
+	return 0;
 };
-
-type foo = int;
-type bar = record(i : int);
-
-var foo = record(i:int);

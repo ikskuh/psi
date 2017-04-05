@@ -25,7 +25,7 @@ local binops =
 	{ "+", "--", "-" },
 	{ ">=", ">", "<=", "<" },
 	{ "==", "!=" },
-	{ "&", "|", "^", "<->", "->" },
+	{ "&", "|", "^", "->" },
 	{ "+=", "-=", "*=", "/=", "%=", "|=", "--=", ":=", "=" },
 	-- Lowest precedence (binds least)
 }
@@ -75,7 +75,7 @@ local ruleset = {
 	assert = (P"assert" * WS * V"expr" * WSO * P";") / captures.assert,
 	
 	name = C((R("AZ", "az") + S"_")^1),
-	exname = Ct(V"name" * (P"." * V"name")^0),
+	exname = Ct(V"name" * (P"." * V"name")^0) / captures.exname,
 	
 	type = ((P"(" * WSO * V"type" * WSO * P")") + V"fndecl" + V"record" + V"gentype" + V"exname" / captures.namedType) / captures.type,
 	gentype = (V"exname" * WSO * P"<" * V"exprlist" * WSO * P">") / captures.gentyperef,

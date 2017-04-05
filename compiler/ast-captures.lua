@@ -19,7 +19,7 @@ end
 function captures.import(mod, alias)
 	return {
 		[AST] = AST.IMPORT,
-		module = mod,
+		module = checkType(mod, AST.COMPOUNDNAME),
 		alias = alias
 	}
 end
@@ -450,6 +450,12 @@ function captures.typeexpr(type)
 		type = "type",
 		reference = checkType(type, AST.TYPE),
 	}
+end
+
+function captures.exname(name)
+	assert(type(name)=="table")
+	name[AST] = AST.COMPOUNDNAME
+	return name
 end
 
 return captures
