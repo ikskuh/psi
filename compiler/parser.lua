@@ -1,9 +1,6 @@
 local lpeg = require "lpeg"
 local re = require "re"
 
-require "print"
-inspect = require "inspect"
-
 local P = lpeg.P
 local S = lpeg.S
 local R = lpeg.R
@@ -19,8 +16,6 @@ local WS_comment_short = (P("#") * (1 - P("\n"))^0)
 local WS  = (WS_blank + WS_comment_long + WS_comment_short)^1
 local WSO = WS^0
 
-local testsource = true
-
 -- List of binary operators with precedence
 local binops = 
 {
@@ -30,7 +25,7 @@ local binops =
 	{ "+", "--", "-" },
 	{ ">=", ">", "<=", "<" },
 	{ "==", "!=" },
-	{ "&", "|", "^", "->" },
+	{ "&", "|", "^", "<->", "->", "<-" },
 	{ "+=", "-=", "*=", "/=", "%=", "|=", "--=", ":=", "=" },
 	-- Lowest precedence (binds least)
 }
@@ -41,14 +36,13 @@ local function packCondition(cond)
 end
 
 local function id(foo,...)
-	-- print("id", foo, ...)
 	return foo
 end
 local function exists(foo)
 	return foo ~= ""
 end
 
-captures = require "ast-captures"
+local captures = require "ast-captures"
 
 local totaloplist = { }
 for i=1,#binops do
@@ -59,7 +53,7 @@ end
 
 table.sort(totaloplist)
 
-ANYOPERATOR = P(totaloplist[1])
+local ANYOPERATOR = P(totaloplist[1])
 for i=#totaloplist,2,-1 do
 	ANYOPERATOR = ANYOPERATOR + P(totaloplist[i])
 end
@@ -164,55 +158,12 @@ end
 -- Compile the grammar
 local grammar = P(ruleset)
 
-function parse(str)
+local function parse(str)
 	local ast = grammar:match(str)
-	
-	-- Check if match could be found
-	if ast ~= nil then
-		-- Check if we mathed entire input string
-		if (ast==(#str+1)) then
-			return ast
-		else
-			
-			local start,ende,c
-			c = 3
-			for st=ast,1,-1 do
-				if str:sub(st,st) == "\n" then
-					c = c - 1
-				end
-				if c <= 0 then
-					break
-				end
-				start = st
-			end
-			
-			c = 3
-			for en=ast,#str do
-				if str:sub(en,en) == "\n" then
-					c = c - 1
-				end
-				if c <= 0 then
-					break
-				end
-				ende = en
-			end
-			
-			print(str:sub(start, ast - 1) .. "[!]" .. str:sub(ast, ende))
-			
-			error("Parse error! Didn't match all input.")
-		end
-	else
-		print("Parse error!")
+	if ast == nil then
+		error("Failed to parse source!", 2)
 	end
+	return ast
 end
 
-local f = io.open(testsource and "test.psi" or "../samples/parsertest.psi", "r")
-local src = f:read("*all")
-f:close()
-
-local ast = grammar:match(src)
-local success = (ast ~= nil) and (#ast > 0) and (ast[#ast].name == "main")
-if ast then
-	io.write(inspect(ast), "\n")
-end
-print("success:", success)
+return parse

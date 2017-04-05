@@ -168,6 +168,8 @@ module binary_operators
 	assert 10 |  10;
 	assert 10 ^  10;
 	assert 10 -> 10;
+	assert 10 <- 10;
+	assert 10 <-> 10;
 	assert 10 -- 10;
 }
 

@@ -1,7 +1,6 @@
 # TODO
 
 ## Syntax Level
-- Add declaration of overloaded operators
 - Add restrictions for functions with `with`
 
 ## Semantic Level

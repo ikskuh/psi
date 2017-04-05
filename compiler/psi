@@ -1,1 +1,2 @@
-#!/usr/bin/lua parser.lua
+#!/bin/bash
+lua -e 'SHELLSCRIPT=true' -- compiler.lua "$@"
