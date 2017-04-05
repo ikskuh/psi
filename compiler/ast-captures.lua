@@ -1,8 +1,24 @@
+local AST =require"ast"
+
+local function checkType(obj, type, optional)
+	if obj == nil and optional then
+		return nil
+	end
+	assert(obj[AST] == type, "Invalid type: "..tostring(obj[AST]).." != "..tostring(type))
+	return obj
+end
+
 local captures = { }
+
+function captures.program(list)
+	assert(type(list)=="table", "Program must be a table!")
+	list[AST] = AST.PROGRAM
+	return list
+end
 
 function captures.import(mod, alias)
 	return {
-		_TYPE = "import",
+		[AST] = AST.IMPORT,
 		module = mod,
 		alias = alias
 	}
@@ -14,82 +30,93 @@ function captures.objectdecl(exported, obj)
 end
 
 function captures.vardecl(const, param)
+	checkType(param, AST.PARAM)
+	if param.type == nil and param.value == nil then
+		error("Variable must have either type or value!")
+	end
 	return { 
-		_TYPE = "vardecl",
+		[AST] = AST.VARDECL,
 		isGeneric = false,
 		isConst = (const == "const"),
 		name = param.name,
-		type = param.type,
-		value = param.value,
+		type = checkType(param.type, AST.TYPE, true),
+		value = checkType(param.value, AST.EXPRESSION, true)
 	}
 end
 
 function captures.typedecl(name, type)
 	return {
-		_TYPE = "typedecl",
+		[AST] = AST.TYPEDECL,
 		isGeneric = false,
 		name = name,
-		type = type,
+		type = checkType(type, AST.TYPE),
 	}
 end
 
 function captures.genvardecl(name, params, info)
+	checkType(info, AST.PARAMSPEC)
+	if info.type == nil and info.value == nil then
+		error("Variable must have either type or value!")
+	end
 	return { 
-		_TYPE = "vardecl",
+		[AST] = AST.VARDECL,
 		isGeneric = true,
 		isConst = (const == "const"),
 		name = name,
-		type = info.type,
-		value = info.value,
-		params = params
+		type = checkType(info.type, AST.TYPE, true),
+		value = checkType(info.value, AST.EXPRESSION, true),
+		params = checkType(params, AST.PARAMLIST),
 	}
 end
 
 function captures.gentypedecl(name, params, type)
 	return { 
-		_TYPE = "typedecl",
+		[AST] = AST.TYPEDECL,
 		isGeneric = true,
 		name = name,
-		type = type,
-		params = params,
+		type = checkType(type, AST.TYPE),
+		params = checkType(params, AST.PARAMLIST),
 	}
 end
 
 function captures.assert(expr)
 	return {
-		_TYPE = "assertion",
-		expression = expr,
+		[AST] = AST.ASSERTION,
+		expression = checkType(expr, AST.EXPRESSION),
 	}
 end
 
 function captures.param(name, spec)
 	return { 
-		_TYPE = "param",
+		[AST] = AST.PARAM,
 		name = name,
-		type = spec.type,
-		value = spec.value,
+		type = checkType(spec.type, AST.TYPE, true),
+		value = checkType(spec.value, AST.EXPRESSION, true),
 	}
 end
 
 function captures.paramspec(type, value)
-	if type._TYPE == "expression" then
+	if type[AST] == AST.EXPRESSION then
 		value = type
 		type = nil
 	end
+	if type == nil and value == nil then
+		error("Typespec needs at least a type or a value!")
+	end
 	return {
-		type = type,
-		value = value,
+		[AST] = AST.PARAMSPEC,
+		type = checkType(type, AST.TYPE, true),
+		value = checkType(value, AST.EXPRESSION, true),
 	}
 end
 
 function captures.type(t)
-	assert(t._TYPE == "type", "type must be a type!")
-	return t
+	return checkType(t, AST.TYPE)
 end
 
 function captures.number(val)
 	return {
-		_TYPE = "expression",
+		[AST] = AST.EXPRESSION,
 		type = "number",
 		value = tonumber(val)
 	}
@@ -97,7 +124,7 @@ end
 
 function captures.string(val)
 	return {
-		_TYPE = "expression",
+		[AST] = AST.EXPRESSION,
 		type = "string",
 		value = tostring(val)
 	}
@@ -105,15 +132,15 @@ end
 
 function captures.module(name, prg)
 	return {
-		_TYPE = "module",
+		[AST] = AST.MODULE,
 		name = name,
-		contents = prg
+		contents = checkType(prg, AST.PROGRAM)
 	}
 end
 
 function captures.namedType(name)
 	return {
-		_TYPE = "type",
+		[AST] = AST.TYPE,
 		type = "reference",
 		name = name,
 	}
@@ -121,7 +148,7 @@ end
 
 function captures.recordtype(list)
 	return {
-		_TYPE = "type",
+		[AST] = AST.TYPE,
 		type = "record",
 		fields = list
 	}
@@ -129,7 +156,7 @@ end
 
 function captures.gentyperef(name, exprlist)
 	return {
-		_TYPE = "type",
+		[AST] = AST.TYPE,
 		type = "generic-reference",
 		name = name,
 		args = exprlist
@@ -138,7 +165,7 @@ end
 
 function captures.funsig(params, returntype)
 	return {
-		_TYPE = "type",
+		[AST] = AST.TYPE,
 		type = "function",
 		params = params or { },
 		returntype = returntype
@@ -147,7 +174,7 @@ end
 
 function captures.unop(op, value)
 	return {
-		_TYPE = "expression",
+		[AST] = AST.EXPRESSION,
 		type = "unary-operator",
 		operator = op,
 		value = value,
@@ -163,7 +190,7 @@ function captures.binop(...)
 	end
 	local function mkop(lhs, op, rhs)
 		return {
-			_TYPE = "expression",
+			[AST] = AST.EXPRESSION,
 			type = "binary-operator",
 			lhs = lhs,
 			operator = op,
@@ -197,7 +224,7 @@ end
 
 function captures.array(values)
 	return {
-		_TYPE = "expression",
+		[AST] = AST.EXPRESSION,
 		type = "array",
 		values = values
 	}
@@ -210,7 +237,7 @@ function captures.indexer(...)
 	end
 	local function mkindex(value, index)
 		return {
-			_TYPE = "expression",
+			[AST] = AST.EXPRESSION,
 			type = "index",
 			value = value,
 			index = index,
@@ -240,8 +267,7 @@ function captures.fieldindex(...)
 	}
 end
 
-function captures.fncall(args, ...)
-	-- print("fncall", args, ...)
+function captures.fncall(args)
 	if type(args) == "string" then
 		args = { }
 	end
@@ -254,7 +280,7 @@ end
 
 function captures.variableref(name)
 	return {
-		_TYPE = "expression",
+		[AST] = AST.EXPRESSION,
 		type = "variable",
 		name = name,
 	}
@@ -262,81 +288,81 @@ end
 
 function captures.func(sig, body)
 	return {
-		_TYPE = "expression",
+		[AST] = AST.EXPRESSION,
 		type = "function",
-		signature = sig,
-		body = body,
+		signature = checkType(sig, AST.TYPE),
+		body = checkType(body, AST.INSTRUCTION),
 	}
 end
 
 function captures.exprinstr(expr)
 	return {
-		_TYPE = "instruction",
+		[AST] = AST.INSTRUCTION,
 		type = "expression",
-		expression = expr,
+		expression = checkType(expr, AST.EXPRESSION),
 	}
 end
 
 function captures.ifinstr(cond, yes, no)
 	return {
-		_TYPE = "instruction",
+		[AST] = AST.INSTRUCTION,
 		type = "conditional",
-		condition = cond,
-		positive = yes,
-		negative = no
+		condition = checkType(cond, AST.EXPRESSION),
+		positive = checkType(yes, AST.INSTRUCTION),
+		negative = checkType(no, AST.INSTRUCTION, true)
 	}
 end
 
 function captures.whileinstr(cond, body)
 	return {
-		_TYPE = "instruction",
+		[AST] = AST.INSTRUCTION,
 		type = "while",
-		condition = cond,
-		body = body,
+		condition = checkType(cond, AST.EXPRESSION),
+		body = checkType(body, AST.INSTRUCTION),
 	}
 end
 
 function captures.forinstr(var, expr, body)
 	return {
-		_TYPE = "instruction",
+		[AST] = AST.INSTRUCTION,
 		type = "for",
 		variable = var,
-		expression = expr,
-		body = body,
+		expression = checkType(expr, AST.EXPRESSION),
+		body = checkType(body, AST.INSTRUCTION),
 	}
 end
 
 function captures.returninstr(expr)
-	if expr._TYPE ~= "expression" then
+	if expr[AST] ~= AST.EXPRESSION then
 		expr = nil
 	end
 	return {
-			_TYPE = "instruction",
+			[AST] = AST.INSTRUCTION,
 			type = "return",
-			expression = expr
+			expression = checkType(expr, AST.EXPRESSION, true)
 		}
 end
 
 function captures.gotoinstr(expr)
 	return {
-		_TYPE = "instruction",
+		[AST] = AST.INSTRUCTION,
 		type = "goto",
-		expression = expr
+		expression = checkType(expr, AST.EXPRESSION)
 	}
 end
 
 function captures.loopinstr(body, cond)
 	return {
-		_TYPE = "instruction",
+		[AST] = AST.INSTRUCTION,
 		type = "loop-until",
-		condition = cond,
-		body = body,
+		condition = checkType(cond, AST.EXPRESSION),
+		body = checkType(body, AST.INSTRUCTION),
 	}
 end
 
 function captures.wordinstr(word)
 	return {
-		_TYPE = "instruction",
+		[AST] = AST.INSTRUCTION,
 		type = word
 	}
 end
@@ -347,10 +373,10 @@ function captures.selectinstr(expr, ...)
 	local option
 	
 	for i=1,#t do
-		if t[i]._TYPE == "selector" then
+		if t[i][AST] == AST.SELECTOR then
 			option = t[i]
 			table.insert(options, option)
-		elseif t[i]._TYPE == "instruction" then
+		elseif t[i][AST] == AST.INSTRUCTION then
 			table.insert(option.contents, t[i])
 		else
 			print(i, t[i])
@@ -359,45 +385,63 @@ function captures.selectinstr(expr, ...)
 	end
 	
 	return {
-		_TYPE = "instruction",
+		[AST] = AST.INSTRUCTION,
 		type = "select",
-		selector = expr,
+		selector = checkType(expr, AST.EXPRESSION),
 		options = options
 	}
 end
 
 function captures.otherwise()
 	return {
-		_TYPE = "selector",
+		[AST] = AST.SELECTOR,
 		isDefault = true,
-		contents = { },
+		contents = captures.bodyinstr({ }),
 	}
 end
 
 function captures.when(expr)
 	return {
-		_TYPE = "selector",
+		[AST] = AST.SELECTOR,
 		isDefault = false,
-		expression = expr,
-		contents = { },
+		expression = checkType(expr, AST.EXPRESSION),
+		contents = captures.bodyinstr({ }),
 	}
 end
 
 function captures.bodyinstr(body)
-	return {
-		_TYPE = "instruction",
-		type = "body",
-		contents = body
-	}
+	assert(type(body)=="table")
+	body[AST] = AST.INSTRUCTION
+	body.type = "body"
+	return body
 end
 
 function captures.operator(type, operator, func)
 	return {
-		_TYPE = "operator-decl",
+		[AST] = AST.OPERATORDECL,
 		type = type,
 		operator = operator,
-		func = func
+		func = checkType(func, AST.EXPRESSION),
 	}
+end
+
+function captures.emptyinstr()
+	return {
+		[AST] = AST.INSTRUCTION,
+		type = "empty",
+	}
+end
+
+function captures.exprlist(list)
+	assert(type(list)=="table")
+	list[AST] = AST.EXPRESSIONLIST
+	return list
+end
+
+function captures.paramlist(list)
+	assert(type(list)=="table")
+	list[AST] = AST.PARAMLIST
+	return list
 end
 
 return captures

@@ -285,8 +285,8 @@ module instructions
 	assert fn()
 	{
 		loop
-			;
-		until bar
+			body;
+		until expr
 	};
 
 	assert fn()

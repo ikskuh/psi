@@ -1,5 +1,20 @@
 require "opairs"
-inspect = require "inspect"
+local _inspect = require "inspect"
+
+local function inspect(obj)
+	local AST = require"ast"
+	return _inspect(obj, {
+		process = function(item, path)
+			if item == AST then
+				return "AST"
+			elseif getmetatable(item) == AST.__mt then
+				return tostring(item)
+			else
+				return item
+			end
+		end
+	})
+end
 
 function print(...)
 	

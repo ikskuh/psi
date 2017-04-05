@@ -61,7 +61,7 @@ end
 -- Define the ruleset for Psi
 local ruleset = {
 	"program",
-	program = Ct((WSO * (V"declaration" + V"module") * WSO)^0),
+	program = Ct((WSO * (V"declaration" + V"module") * WSO)^0)/captures.program,
 	declaration = (V"assert" + V"import" + V"objdecl") / id,
 	module = (P"module" * WSO * V"exname" * WSO * P"{" * WSO * V"program" * WSO * P"}") / captures.module,
 	import = (P"import" * WSO * V"exname" * (WSO * P"as" * WSO * V"name")^-1 * WSO * P";") / captures.import,
@@ -82,14 +82,14 @@ local ruleset = {
 	record = (P"record" * WSO * P"(" * WSO * V"paramlist" * WSO * P")") / captures.recordtype,
 	fndecl = (P"fn" * WSO * P"(" * WSO * (V"paramlist" * WSO)^-1 * P")" * (WSO * P"->" * WSO * V"type")^-1) / captures.funsig,
 	
-	paramlist = Ct(V"param" * (WSO * P"," * WSO * V"param")^0),
+	paramlist = Ct(V"param" * (WSO * P"," * WSO * V"param")^0)/captures.paramlist,
 	param = (V"name" * WSO * V"paramspec") / captures.param,
 	paramspec =
 						(P":" * WSO * V"type" * WSO * P"=" * WSO * V"expr") / captures.paramspec +
 						(P":" * WSO * V"type") / captures.paramspec + 
 						(P"=" * WSO * V"expr") / captures.paramspec,
 	
-	exprlist = Ct(V"expr" * (WSO * P"," * WSO * V"expr")^0),
+	exprlist = Ct(V"expr" * (WSO * P"," * WSO * V"expr")^0)/captures.exprlist,
 	-- 'expr' and all 'binop_l*_expr' are generated below
 	--expr = V"binop_l0_expr",
 	
@@ -114,8 +114,8 @@ local ruleset = {
 	string = P('"') * C((1 - P('"'))^0) * P('"') / captures.string,
 	
 	func = (V"fndecl" * WSO * (V"body" + P"=>" * WSO * V"expr" / captures.exprinstr)) / captures.func,
-	body = Ct(P"{" * (WSO * V"instr")^0 * WSO * P"}"),
-	instr = V"declaration" + V"if_instr" + V"select_instr" + V"for_instr" + V"loop_instr" + V"while_instr" + V"goto_instr" + V"return_instr" + V"singleword_instr" + V"expr_instr" + V"body"/captures.bodyinstr + P";",
+	body = Ct(P"{" * (WSO * V"instr")^0 * WSO * P"}")/captures.bodyinstr,
+	instr = V"declaration" + V"if_instr" + V"select_instr" + V"for_instr" + V"loop_instr" + V"while_instr" + V"goto_instr" + V"return_instr" + V"singleword_instr" + V"expr_instr" + V"body" + P";"/captures.emptyinstr,
 	
 	expr_instr = (V"expr" * WSO * P";") / captures.exprinstr,
 	if_instr = (P"if" * packCondition(V"expr") * V"instr" * (WSO * P"else" * WSO * V"instr")^-1) / captures.ifinstr,

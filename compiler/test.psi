@@ -1,19 +1,4 @@
-export unary operator '->' = fn(i : int)
+const main = fn()
 {
-
-};
-
-export binary operator '**' = fn(i : int, j:int) -> int
-{
-
-};
-
-unary operator '+' = fn(i : int)
-{
-
-};
-
-binary operator '+' = fn(i : int, j:int) -> int
-{
-
+	var i : int;
 };
