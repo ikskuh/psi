@@ -280,12 +280,13 @@ end
 
 function captures.fncall(args)
 	if type(args) == "string" then
-		args = { }
+		args = {
+			[AST] = AST.ARGUMENTLIST
+		}
 	end
 	return {
 		type = "call",
-		name = name,
-		arguments = args,
+		arguments = checkType(args, AST.ARGUMENTLIST),
 	}
 end
 
@@ -467,6 +468,31 @@ function captures.exname(name)
 	assert(type(name)=="table")
 	name[AST] = AST.COMPOUNDNAME
 	return name
+end
+
+function captures.arglist(table)
+	assert(type(table)=="table")
+	for i,v in ipairs(table) do
+		checkType(v, AST.ARGUMENT)
+		if v.type == "positional" then
+			v.position = i
+		end
+	end
+	table[AST] = AST.ARGUMENTLIST
+	return table
+end
+
+function captures.argument(name, value)
+	if value == nil then
+		value = checkType(name, AST.EXPRESSION)
+		name = nil
+	end
+	return {
+		[AST] = AST.ARGUMENT,
+		name = name,
+		value = value,
+		type = name and "named" or "positional",
+	}
 end
 
 return captures

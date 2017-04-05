@@ -91,7 +91,9 @@ local ruleset = {
 						(P":" * WSO * V"type") / captures.paramspec + 
 						(P"=" * WSO * V"expr") / captures.paramspec,
 	
-	exprlist = Ct(V"expr" * (WSO * P"," * WSO * V"expr")^0)/captures.exprlist,
+	exprlist = Ct(V"expr" * (WSO * P"," * WSO * V"expr")^0) / captures.exprlist,
+	arglist_entry = ((V"name" * WSO * P":" * WSO)^-1 * V"expr") / captures.argument,
+	arglist = Ct(V"arglist_entry" * (WSO * P"," * WSO * V"arglist_entry")^0) / captures.arglist,
 	-- 'expr' and all 'binop_l*_expr' are generated below
 	--expr = V"binop_l0_expr",
 	
@@ -99,7 +101,7 @@ local ruleset = {
 	binop_l0_expr = (V"binop_end" * (
 										(C(S".'") * V"name") / captures.fieldindex + 
 										(P"[" * WSO * V"exprlist" * WSO * P"]") / captures.arrayindex + 
-										(P"(" * WSO * (V"exprlist" * WSO)^-1 * P")") / captures.fncall
+										(P"(" * WSO * (V"arglist" * WSO)^-1 * P")") / captures.fncall
 									)^0) / captures.indexer,
 	binop_end = (V"unop_expr" + V"func" + V"literal" + V"brackexpr") / id,
 	

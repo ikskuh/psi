@@ -1,2 +1,1 @@
-type foo = bar;
-const foo : std.type = bar;
+assert f(1, bar : baz, 2, 3, moep: 2*3);

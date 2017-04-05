@@ -138,6 +138,11 @@ module fncalls
 	assert f(1,2);
 	assert f(1,2,3);
 	assert f(1,2,3,4);
+	assert f(a:1);
+	assert f(a:1,b:2,c:3);
+	assert f(a:1,b:2,3,4);
+	assert f(1,2,a:3);
+	assert f(1,2,a:3,b:4);
 }
 
 module unary_operators

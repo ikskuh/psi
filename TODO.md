@@ -2,7 +2,8 @@
 
 ## Syntax Level
 - Add restrictions for functions with `with`
-- Add named parameters with `(1,2,index:10)`
+
+- Allow only `<positional>* <named>*` argument lists...
 
 ## Semantic Level
 - Define language semantics (how?!)
