@@ -1,1 +1,5 @@
-var foo = bar;
+const main = fn()
+{
+	for(i in foo) { }
+	for(i : record(field:int) in foo) { }
+};

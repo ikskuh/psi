@@ -6,7 +6,6 @@
 	- generalize with `<name> <expr>`
 	- `new` always
 	- `delete` only when explicit memory mode is on
-- Add syntax for typed for: `for(i:int in foo)`
 - Allow only `<positional>* <named>*` argument lists...
 
 ## Semantic Level

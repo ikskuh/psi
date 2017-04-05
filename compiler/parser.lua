@@ -72,24 +72,24 @@ local ruleset = {
 	-- Actually just syntax sugar for a vardecl of type "std.type" with the type as an initial value
 	typedecl = (P"type" * WS * V"name" * WSO * P"=" * WSO * V"extype" * WSO * P";") / captures.typedecl,
 	genvardecl = (P"generic" * WS * (P"var" + P"const") * WS * V"name" * WSO * V"genparams" * WSO * V"paramspec" * WSO * P";") / captures.genvardecl,
-	gentypedecl = (P"generic" * WS * P"type" * WS * V"name" * WSO * V"genparams" * WSO * P"=" * WSO * V"type" * WSO * P";") / captures.gentypedecl,
+	gentypedecl = (P"generic" * WS * P"type" * WS * V"name" * WSO * V"genparams" * WSO * P"=" * WSO * V"extype" * WSO * P";") / captures.gentypedecl,
 	genparams = P"<" * WSO * V"paramlist" * WSO * P">",
 	assert = (P"assert" * WS * V"expr" * WSO * P";") / captures.assert,
 	
 	name = C((R("AZ", "az") + S"_")^1 * (R("AZ", "az", "09") + S"_")^0),
 	exname = Ct(V"name" * (P"." * V"name")^0) / captures.exname,
 	
-	type = ((P"(" * WSO * V"type" * WSO * P")") + V"fndecl" + V"record" + V"gentype") / captures.type,
+	type = ((P"(" * WSO * V"extype" * WSO * P")") + V"fndecl" + V"record" + V"gentype") / captures.type,
 	extype = (V"type" + V"exname" / captures.namedType) / captures.type,
 	gentype = (V"exname" * WSO * P"<" * V"exprlist" * WSO * P">") / captures.gentyperef,
 	record = (P"record" * WSO * P"(" * WSO * V"paramlist" * WSO * P")") / captures.recordtype,
-	fndecl = (P"fn" * WSO * P"(" * WSO * (V"paramlist" * WSO)^-1 * P")" * (WSO * P"->" * WSO * V"type")^-1) / captures.funsig,
+	fndecl = (P"fn" * WSO * P"(" * WSO * (V"paramlist" * WSO)^-1 * P")" * (WSO * P"->" * WSO * V"extype")^-1) / captures.funsig,
 	
 	paramlist = Ct(V"param" * (WSO * P"," * WSO * V"param")^0)/captures.paramlist,
 	param = (V"name" * WSO * V"paramspec") / captures.param,
 	paramspec =
-						(P":" * WSO * V"type" * WSO * P"=" * WSO * V"expr") / captures.paramspec +
-						(P":" * WSO * V"type") / captures.paramspec + 
+						(P":" * WSO * V"extype" * WSO * P"=" * WSO * V"expr") / captures.paramspec +
+						(P":" * WSO * V"extype") / captures.paramspec + 
 						(P"=" * WSO * V"expr") / captures.paramspec,
 	
 	exprlist = Ct(V"expr" * (WSO * P"," * WSO * V"expr")^0) / captures.exprlist,
@@ -125,7 +125,7 @@ local ruleset = {
 	expr_instr = (V"expr" * WSO * P";") / captures.exprinstr,
 	if_instr = (P"if" * packCondition(V"expr") * V"instr" * (WSO * P"else" * WSO * V"instr")^-1) / captures.ifinstr,
 	while_instr = (P"while" * packCondition(V"expr") * V"instr") / captures.whileinstr,
-	for_instr = (P"for" * packCondition(V"name" * WS * P"in" * WS * V"expr") * V"instr") / captures.forinstr,
+	for_instr = (P"for" * packCondition(V"name" * (WSO * P":" * WSO * V"extype")^-1 * WS * P"in" * WS * V"expr") * V"instr") / captures.forinstr,
 	return_instr = (P"return" * (WS * V"expr")^-1 * WSO * P";") / captures.returninstr,
 	goto_instr = (P"goto" * WS * V"expr" * WSO * P";") / captures.gotoinstr,
 	loop_instr = (P"loop" * WSO * V"instr" * WSO * P"until" * packCondition(V"expr")) / captures.loopinstr,

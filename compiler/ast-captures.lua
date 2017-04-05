@@ -334,11 +334,18 @@ function captures.whileinstr(cond, body)
 	}
 end
 
-function captures.forinstr(var, expr, body)
+function captures.forinstr(var, type, expr, body)
+	if body == nil then
+		-- shift right one step
+		body = expr
+		expr = type
+		type = nil
+	end
 	return {
 		[AST] = AST.INSTRUCTION,
 		type = "for",
 		variable = var,
+		vartype = checkType(type, AST.TYPE, true),
 		expression = checkType(expr, AST.EXPRESSION),
 		body = checkType(body, AST.INSTRUCTION),
 	}
