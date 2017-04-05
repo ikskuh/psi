@@ -1,1 +1,32 @@
-assert f(1, bar : baz, 2, 3, moep: 2*3);
+const f = fn(foo : ptr<int>)
+{
+  foo = 10;
+	
+	f(i);      # Syntaxfehler
+	f(i'addr); # So gehts richtig
+	
+	# Allocate object with refcounting on heap
+	# var obj : ref<Foo> = new Foo();
+	
+	# Overwrite referenced object (ref<T> behaves
+	# similar to a T value)
+	obj = Foo();
+
+	# Weak reference to heap object
+	var obj2 : weak<Foo> = obj'weak;
+
+	# Pointers can be used to address
+	# stack objects as a reference as
+	# well:
+	var stackobj : Foo = Foo();
+
+	# Address changing outside of declaration
+	# is done by ':=', not by '='
+	var obj : ptr<Foo>;
+	obj := stackobj'addr;
+	obj := heapobj'addr; # INVALID! Would be of type ptr<ref<Foo>>
+	obj := heapobj;      # ref<T> can implicitly cast to ptr<T>
+											 # Good thing?
+};
+
+assert true;

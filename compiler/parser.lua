@@ -76,7 +76,7 @@ local ruleset = {
 	genparams = P"<" * WSO * V"paramlist" * WSO * P">",
 	assert = (P"assert" * WS * V"expr" * WSO * P";") / captures.assert,
 	
-	name = C((R("AZ", "az") + S"_")^1),
+	name = C((R("AZ", "az") + S"_")^1 * (R("AZ", "az", "09") + S"_")^0),
 	exname = Ct(V"name" * (P"." * V"name")^0) / captures.exname,
 	
 	type = ((P"(" * WSO * V"type" * WSO * P")") + V"fndecl" + V"record" + V"gentype" + V"exname" / captures.namedType) / captures.type,
