@@ -25,7 +25,7 @@ local binops =
 	{ "+", "--", "-" },
 	{ ">=", ">", "<=", "<" },
 	{ "==", "!=" },
-	{ "&", "|", "^", "<->", "->", "<-" },
+	{ "&", "|", "^", "<->", "->" },
 	{ "+=", "-=", "*=", "/=", "%=", "|=", "--=", ":=", "=" },
 	-- Lowest precedence (binds least)
 }
@@ -105,7 +105,7 @@ local ruleset = {
 	unop_expr = (V"unop" * WSO * V"binop_l0_expr") / captures.unop,
 	unop = C(S"+-~"),
 	
-	literal = V"array" + V"number" + V"name" / captures.variableref + V"string",
+	literal = V"type"/captures.typeexpr + V"array" + V"number" + V"name" / captures.variableref + V"string",
 	number = (V"hexint" + V"real" + V"integer") / id,
 	integer = C(S("+-")^-1 * R("09")^1) / captures.number,
 	hexint = C(S("+-")^-1 * P"0x" * R("09", "af", "AF")^1) / captures.number,

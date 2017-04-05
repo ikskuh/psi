@@ -22,7 +22,6 @@ local AST =
 	MODULE = uniq(),
 	PARAM = uniq(),
 	TYPE = uniq(),
-
 }
 
 function mt.__tostring(self)
@@ -32,6 +31,9 @@ function mt.__tostring(self)
 		end
 	end
 	return "UNKOWN"
+end
+function mt.__newindex(t,k,v)
+	error("Constant table!")
 end
 
 return AST

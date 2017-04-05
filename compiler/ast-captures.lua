@@ -444,4 +444,12 @@ function captures.paramlist(list)
 	return list
 end
 
+function captures.typeexpr(type)
+	return {
+		[AST] = AST.EXPRESSION,
+		type = "type",
+		reference = checkType(type, AST.TYPE),
+	}
+end
+
 return captures
