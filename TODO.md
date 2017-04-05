@@ -2,11 +2,8 @@
 
 ## Syntax Level
 - Add restrictions for functions with `with`
-- Add syntax for `new`, `delete`
-	- generalize with `<name> <expr>`
-	- `new` always
-	- `delete` only when explicit memory mode is on
 - Allow only `<positional>* <named>*` argument lists...
+- Allow `delete` only when explicit memory mode is on
 
 ## Semantic Level
 - Define language semantics (how?!)

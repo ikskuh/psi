@@ -502,4 +502,23 @@ function captures.argument(name, value)
 	}
 end
 
+function captures.deleteinstr(expr)
+	return {
+		[AST] = AST.INSTRUCTION,
+		type = "delete",
+		value = checkType(expr, AST.EXPRESSION),
+	}
+end
+
+function captures.newexpr(type, args)
+	assert(args.type == "call", "The argument list must be a function call operator!")
+	args = args.arguments
+	return {
+		[AST] = AST.EXPRESSION,
+		type = "new",
+		recordtype = checkType(type, AST.COMPOUNDNAME),
+		arguments = checkType(args, AST.ARGUMENTLIST),
+	}
+end
+
 return captures

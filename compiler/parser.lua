@@ -102,9 +102,13 @@ local ruleset = {
 	binop_l0_expr = (V"binop_end" * (
 										(C(S".'") * V"name") / captures.fieldindex + 
 										(P"[" * WSO * V"exprlist" * WSO * P"]") / captures.arrayindex + 
-										(P"(" * WSO * (V"arglist" * WSO)^-1 * P")") / captures.fncall
+										V"fncall"
 									)^0) / captures.indexer,
-	binop_end = (V"unop_expr" + V"func" + V"literal" + V"brackexpr") / id,
+	binop_end = (V"new_expr" + V"unop_expr" + V"func" + V"literal" + V"brackexpr") / id,
+	
+	fncall = (P"(" * WSO * (V"arglist" * WSO)^-1 * P")") / captures.fncall,
+	
+	new_expr = (P"new" * WS * V"exname" * WSO * V"fncall") / captures.newexpr,
 	
 	brackexpr = (P"(" * WSO * V"expr" * WSO * P")") / id,
 	unop_expr = (V"unop" * WSO * V"binop_l0_expr") / captures.unop,
@@ -120,8 +124,9 @@ local ruleset = {
 	
 	func = (V"fndecl" * WSO * (V"body" + P"=>" * WSO * V"expr" / captures.exprinstr)) / captures.func,
 	body = Ct(P"{" * (WSO * V"instr")^0 * WSO * P"}")/captures.bodyinstr,
-	instr = V"declaration" + V"if_instr" + V"select_instr" + V"for_instr" + V"loop_instr" + V"while_instr" + V"goto_instr" + V"return_instr" + V"singleword_instr" + V"expr_instr" + V"body" + P";"/captures.emptyinstr,
+	instr = V"delete_instr" + V"declaration" + V"if_instr" + V"select_instr" + V"for_instr" + V"loop_instr" + V"while_instr" + V"goto_instr" + V"return_instr" + V"singleword_instr" + V"expr_instr" + V"body" + P";"/captures.emptyinstr,
 	
+	delete_instr = (P"delete" * WS * V"expr" * WSO * P";") / captures.deleteinstr,
 	expr_instr = (V"expr" * WSO * P";") / captures.exprinstr,
 	if_instr = (P"if" * packCondition(V"expr") * V"instr" * (WSO * P"else" * WSO * V"instr")^-1) / captures.ifinstr,
 	while_instr = (P"while" * packCondition(V"expr") * V"instr") / captures.whileinstr,

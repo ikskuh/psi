@@ -219,6 +219,13 @@ module indexers
 	assert foo.bar'baz;
 }
 
+module object_creation
+{
+	assert new Foo();
+	assert new Foo(1);
+	assert new Foo(1,2);
+}
+
 module instructions
 {
 	assert fn()
@@ -283,6 +290,11 @@ module instructions
 			return;
 		for i in bar
 			return;
+		
+		for(i : int in bar)
+			return;
+		for i:int in bar
+			return;
 	};
 	
 	assert fn()
@@ -290,6 +302,11 @@ module instructions
 		loop
 			body;
 		until expr
+	};
+	
+	assert fn()
+	{
+		delete obj;
 	};
 
 	assert fn()
