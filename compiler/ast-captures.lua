@@ -290,10 +290,10 @@ function captures.fncall(args)
 	}
 end
 
-function captures.variableref(name)
+function captures.symbolref(name)
 	return {
 		[AST] = AST.EXPRESSION,
-		type = "variable",
+		type = "symbol",
 		name = name,
 	}
 end

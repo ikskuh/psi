@@ -70,7 +70,7 @@ local ruleset = {
 	vardecl = (C(P"var" + P"const") * WS * V"param" * WSO * P";") / captures.vardecl,
 	
 	-- Actually just syntax sugar for a vardecl of type "std.type" with the type as an initial value
-	typedecl = (P"type" * WS * V"name" * WSO * P"=" * WSO * V"type" * WSO * P";") / captures.typedecl,
+	typedecl = (P"type" * WS * V"name" * WSO * P"=" * WSO * V"extype" * WSO * P";") / captures.typedecl,
 	genvardecl = (P"generic" * WS * (P"var" + P"const") * WS * V"name" * WSO * V"genparams" * WSO * V"paramspec" * WSO * P";") / captures.genvardecl,
 	gentypedecl = (P"generic" * WS * P"type" * WS * V"name" * WSO * V"genparams" * WSO * P"=" * WSO * V"type" * WSO * P";") / captures.gentypedecl,
 	genparams = P"<" * WSO * V"paramlist" * WSO * P">",
@@ -79,7 +79,8 @@ local ruleset = {
 	name = C((R("AZ", "az") + S"_")^1 * (R("AZ", "az", "09") + S"_")^0),
 	exname = Ct(V"name" * (P"." * V"name")^0) / captures.exname,
 	
-	type = ((P"(" * WSO * V"type" * WSO * P")") + V"fndecl" + V"record" + V"gentype" + V"exname" / captures.namedType) / captures.type,
+	type = ((P"(" * WSO * V"type" * WSO * P")") + V"fndecl" + V"record" + V"gentype") / captures.type,
+	extype = (V"type" + V"exname" / captures.namedType) / captures.type,
 	gentype = (V"exname" * WSO * P"<" * V"exprlist" * WSO * P">") / captures.gentyperef,
 	record = (P"record" * WSO * P"(" * WSO * V"paramlist" * WSO * P")") / captures.recordtype,
 	fndecl = (P"fn" * WSO * P"(" * WSO * (V"paramlist" * WSO)^-1 * P")" * (WSO * P"->" * WSO * V"type")^-1) / captures.funsig,
@@ -109,7 +110,7 @@ local ruleset = {
 	unop_expr = (V"unop" * WSO * V"binop_l0_expr") / captures.unop,
 	unop = C(S"+-~"),
 	
-	literal = V"type"/captures.typeexpr + V"array" + V"number" + V"name" / captures.variableref + V"string",
+	literal = V"type"/captures.typeexpr + V"array" + V"number" + V"name" / captures.symbolref + V"string",
 	number = (V"hexint" + V"real" + V"integer") / id,
 	integer = C(S("+-")^-1 * R("09")^1) / captures.number,
 	hexint = C(S("+-")^-1 * P"0x" * R("09", "af", "AF")^1) / captures.number,

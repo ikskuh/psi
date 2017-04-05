@@ -22,6 +22,12 @@
 	- `type foo = bar` is equivalent to `const foo : type = bar`
 - Document semantics (how?!)
 - Document compiler
+
+> fuer mich interessant wäre z.B die information "was ist das besondere an der sprache, wofuer ist sie besser geeignet als $x"
+> "worin unterscheidet sie sich von $x, wenn sie ähnliche ziele verfolgt"
+> -> darum eher vergleichend
+
+> und dann gibt's noch fragen wie "wie ist das speichermodell", thread-safety und so gedöns, was eher advanced ist
 	
 ```
 export const main = fn(args : array<string>) -> int
