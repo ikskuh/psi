@@ -45,11 +45,20 @@ function captures.vardecl(const, param)
 end
 
 function captures.typedecl(name, type)
-	return {
+	--[[return {
 		[AST] = AST.TYPEDECL,
 		isGeneric = false,
 		name = name,
 		type = checkType(type, AST.TYPE),
+	}
+	--]]
+	return { 
+		[AST] = AST.VARDECL,
+		isGeneric = false,
+		isConst = true,
+		name = name,
+		type = captures.namedType(captures.exname({"std", "type"})),
+		value = captures.typeexpr(checkType(type, AST.TYPE))
 	}
 end
 
@@ -71,10 +80,12 @@ end
 
 function captures.gentypedecl(name, params, type)
 	return { 
-		[AST] = AST.TYPEDECL,
+		[AST] = AST.VARDECL,
 		isGeneric = true,
+		isConst = true,
 		name = name,
-		type = checkType(type, AST.TYPE),
+		type = captures.namedType(captures.exname({"std", "type"})),
+		value = captures.typeexpr(checkType(type, AST.TYPE)),
 		params = checkType(params, AST.PARAMLIST),
 	}
 end
@@ -142,7 +153,7 @@ function captures.namedType(name)
 	return {
 		[AST] = AST.TYPE,
 		type = "reference",
-		name = name,
+		name = checkType(name, AST.COMPOUNDNAME),
 	}
 end
 

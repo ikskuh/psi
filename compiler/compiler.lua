@@ -68,4 +68,5 @@ for i,file in ipairs(files) do
 	end
 	
 	-- Process AST here
+	print(file, ast)
 end

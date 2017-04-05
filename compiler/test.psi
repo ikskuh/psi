@@ -1,12 +1,2 @@
-import std.io;
-import foo as bar;
-
 type foo = bar;
-const foo : type = bar;
-
-generic var x<i:int> : int;
-
-const main = fn(args : array<string>) -> int
-{
-	return 0;
-};
+const foo : std.type = bar;

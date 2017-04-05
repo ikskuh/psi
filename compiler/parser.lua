@@ -68,6 +68,8 @@ local ruleset = {
 	objdecl = (((P"export" * WS)^-1) / exists * (V"opdecl" + V"genvardecl" + V"gentypedecl" + V"vardecl" + V"typedecl")) / captures.objectdecl,
 	opdecl = (C(P"unary" + P"binary") * WS * P"operator" * WS * P"'" * C(ANYOPERATOR) * P"'" * WSO * P"=" * WSO * V"func" * WSO * P";") / captures.operator,
 	vardecl = (C(P"var" + P"const") * WS * V"param" * WSO * P";") / captures.vardecl,
+	
+	-- Actually just syntax sugar for a vardecl of type "std.type" with the type as an initial value
 	typedecl = (P"type" * WS * V"name" * WSO * P"=" * WSO * V"type" * WSO * P";") / captures.typedecl,
 	genvardecl = (P"generic" * WS * (P"var" + P"const") * WS * V"name" * WSO * V"genparams" * WSO * V"paramspec" * WSO * P";") / captures.genvardecl,
 	gentypedecl = (P"generic" * WS * P"type" * WS * V"name" * WSO * V"genparams" * WSO * P"=" * WSO * V"type" * WSO * P";") / captures.gentypedecl,
