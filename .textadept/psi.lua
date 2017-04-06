@@ -31,7 +31,7 @@ local keyword = token(l.KEYWORD, word_match{
 	'if', 'else', 'for', 'while', 'loop',
 	'until', 'break', 'goto', 'next', 'continue',
 	'select', 'when', 'otherwise', 'export',
-	'return', 'new', 'delete'
+	'return', 'new', 'delete', 'with', 'where'
 })
 
 -- Types.

@@ -80,6 +80,15 @@ module types
 	
 	export type foo = int;
 	export type foo = int<0,1,clamping>;
+	
+	
+	type foo = fn() with return > 0;
+	type foo = fn(i : int) with i < 0;
+	type foo = fn(i : int, j : int) with i > 0, j < 0;
+	
+	type foo = fn() -> int with return > 0;
+	type foo = fn(i : int) -> int  with i < 0;
+	type foo = fn(i : int, j : int) -> int  with i > 0, j < 0;
 }
 
 	

@@ -174,12 +174,33 @@ function captures.gentyperef(name, exprlist)
 	}
 end
 
-function captures.funsig(params, returntype)
+function captures.funsig(...)
+	local t = table.pack(...)
+	local returntype, list
+	local params = {
+		[AST] = AST.PARAMLIST
+	}
+	for i,v in ipairs(t) do
+		if v[AST] == AST.PARAMLIST then
+			params = v
+		elseif v[AST] == AST.TYPE then
+			returntype = v
+		elseif v[AST] == AST.EXPRESSIONLIST then
+			list = v
+		elseif i == 1 and type(v) == "string" then
+			-- First argument is params when it is a string
+			-- Just ignore this!
+		else
+			error("Invalid function signature!")
+		end
+	end
+	-- print("!", params or "nil", returntype or "nil", list or "nil")
 	return {
 		[AST] = AST.TYPE,
 		type = "function",
-		params = params or { },
-		returntype = returntype
+		params = checkType(params, AST.PARAMLIST),
+		returntype = checkType(returntype, AST.TYPE, true),
+		restrictions = checkType(list, AST.EXPRESSIONLIST, true),
 	}
 end
 

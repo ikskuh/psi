@@ -83,7 +83,11 @@ local ruleset = {
 	extype = (V"type" + V"exname" / captures.namedType) / captures.type,
 	gentype = (V"exname" * WSO * P"<" * V"exprlist" * WSO * P">") / captures.gentyperef,
 	record = (P"record" * WSO * P"(" * WSO * V"paramlist" * WSO * P")") / captures.recordtype,
-	fndecl = (P"fn" * WSO * P"(" * WSO * (V"paramlist" * WSO)^-1 * P")" * (WSO * P"->" * WSO * V"extype")^-1) / captures.funsig,
+	fndecl = (
+							P"fn" * WSO *
+							P"(" * WSO * (V"paramlist" * WSO)^-1 * P")" * 
+							(WSO * P"->" * WSO * V"extype")^-1 * 
+							(WSO * (P"with" + P"where") * WS * V"exprlist")^-1) / captures.funsig,
 	
 	paramlist = Ct(V"param" * (WSO * P"," * WSO * V"param")^0)/captures.paramlist,
 	param = (V"name" * WSO * V"paramspec") / captures.param,
