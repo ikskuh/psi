@@ -347,6 +347,14 @@ module instructions
 		
 		generic type foo<i:int> = i;
 	};
+	
+	assert fn()
+	{
+		restrict(i > 0, y > 0)
+			;
+		else
+			;
+	};
 }
 
 module operators

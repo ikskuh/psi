@@ -550,4 +550,14 @@ function captures.enumtype(list)
 	}
 end
 
+function captures.restrictinstr(list, success, failure)
+	return {
+		[AST] = AST.INSTRUCTION,
+		type = "restriction",
+		restrictions = checkType(list, AST.EXPRESSIONLIST),
+		success = checkType(success, AST.INSTRUCTION),
+		failure = checkType(failure, AST.INSTRUCTION),
+	}
+end
+
 return captures

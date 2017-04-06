@@ -1,1 +1,7 @@
-type f = enum(a,b,c);
+const f = fn()
+{
+	restrict(i > 0, y > 0)
+		;
+	else
+		;
+};

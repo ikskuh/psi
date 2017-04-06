@@ -128,7 +128,7 @@ local ruleset = {
 	
 	func = (V"fndecl" * WSO * (V"body" + P"=>" * WSO * V"expr" / captures.exprinstr)) / captures.func,
 	body = Ct(P"{" * (WSO * V"instr")^0 * WSO * P"}")/captures.bodyinstr,
-	instr = V"delete_instr" + V"declaration" + V"if_instr" + V"select_instr" + V"for_instr" + V"loop_instr" + V"while_instr" + V"goto_instr" + V"return_instr" + V"singleword_instr" + V"expr_instr" + V"body" + P";"/captures.emptyinstr,
+	instr = V"restrict_instr" + V"delete_instr" + V"declaration" + V"if_instr" + V"select_instr" + V"for_instr" + V"loop_instr" + V"while_instr" + V"goto_instr" + V"return_instr" + V"singleword_instr" + V"expr_instr" + V"body" + P";"/captures.emptyinstr,
 	
 	delete_instr = (P"delete" * WS * V"expr" * WSO * P";") / captures.deleteinstr,
 	expr_instr = (V"expr" * WSO * P";") / captures.exprinstr,
@@ -142,7 +142,9 @@ local ruleset = {
 	select_instr = (P"select" * packCondition(V"expr") * P"{" * WSO * (
 									WSO * (P"otherwise" / captures.otherwise + (P"when" * WS * V"expr") / captures.when) * WSO * P":" + 
 									WSO * V"instr" * WSO
-								 )^0 * WSO * P"}") / captures.selectinstr
+								 )^0 * WSO * P"}") / captures.selectinstr,
+	restrict_instr = (P"restrict" * packCondition(V"exprlist") * V"instr" *
+										(WSO * P"else" * WSO * V"instr")) / captures.restrictinstr,
 }
 -- Autogenerate rulesets for binary operators
 -- with precedence:

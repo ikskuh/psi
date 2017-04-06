@@ -1,6 +1,7 @@
 # TODO
 
 ## Syntax Level
+- Add `special` operators (call, index)
 - Allow only `<positional>* <named>*` argument lists...
 - Allow `delete` only when explicit memory mode is on
 - Decide if a function restriction is introduced with `with` or with `where`...
@@ -8,6 +9,11 @@
 ## Semantic Level
 - Define language semantics (how?!)
 - Think about multithreading implementations
+- Define scopes and scope types
+- Define type properties
+	- Name
+	- Type (Primitive, Record, Enum, Function, Predefined)
+	- Operations (Construct, Deconstruct, Copy, Move)
 
 ## Compiler Level
 - Enable/Disable certain language features
