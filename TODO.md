@@ -7,11 +7,12 @@
 
 ## Semantic Level
 - Define language semantics (how?!)
+- Think about multithreading implementations
 
 ## Compiler Level
 - Enable/Disable certain language features
 	- Lambda/closure vs. static function
-	- Reference counting and secure pointers
+	- Reference counting and secure pointers vs. manual memory management (uses `delete`)
 
 ## Documentation
 - Document syntax

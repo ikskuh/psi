@@ -1,5 +1,5 @@
--- Copyright 2006-2016 Mitchell mitchell.att.foicica.com. See LICENSE.
--- C LPeg lexer.
+-- Psi Lexer for textadept
+-- 
 
 local l = require('lexer')
 local token, word_match = l.token, l.word_match
@@ -11,28 +11,18 @@ local M = {_NAME = 'psi'}
 local ws = token(l.WHITESPACE, l.space^1)
 
 -- Comments.
-local line_comment = '#' * l.nonnewline_esc^0
+local line_comment = '#' * l.nonnewline^0
 local block_comment = '#!' * (l.any - '!#')^0 * P('!#')^-1
-local comment = token(l.COMMENT, line_comment + block_comment)
+local comment = token(l.COMMENT, block_comment + line_comment)
 
 -- Strings.
 -- local sq_str = P('L')^-1 * l.delimited_range("'", true)
-local dq_str = P('L')^-1 * l.delimited_range('"', true)
+local dq_str = l.delimited_range('"', true)
 --local string = token(l.STRING, sq_str + dq_str)
 local string = token(l.STRING, dq_str)
 
 -- Numbers.
 local number = token(l.NUMBER, l.float + l.integer)
-
---[[
--- Preprocessor.
-local preproc_word = word_match{
-  'define', 'elif', 'else', 'endif', 'if', 'ifdef', 'ifndef', 'include', 'line',
-  'pragma', 'undef'
-}
-local preproc = token(l.PREPROCESSOR,
-                      l.starts_line('#') * S('\t ')^0 * preproc_word)
-]]
 											
 -- Keywords.
 local keyword = token(l.KEYWORD, word_match{
@@ -41,7 +31,7 @@ local keyword = token(l.KEYWORD, word_match{
 	'if', 'else', 'for', 'while', 'loop',
 	'until', 'break', 'goto', 'next', 'continue',
 	'select', 'when', 'otherwise', 'export',
-	'return'
+	'return', 'new', 'delete'
 })
 
 -- Types.
@@ -66,7 +56,6 @@ M._rules = {
   {'string', string},
   {'comment', comment},
   {'number', number},
-  -- {'preproc', preproc},
   {'operator', operator},
 }
 
