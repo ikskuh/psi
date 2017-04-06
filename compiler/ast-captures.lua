@@ -542,4 +542,12 @@ function captures.newexpr(type, args)
 	}
 end
 
+function captures.enumtype(list)
+	return {
+		[AST] = AST.TYPE,
+		type = "enum",
+		members = list,
+	}
+end
+
 return captures

@@ -79,15 +79,15 @@ local ruleset = {
 	name = C((R("AZ", "az") + S"_")^1 * (R("AZ", "az", "09") + S"_")^0),
 	exname = Ct(V"name" * (P"." * V"name")^0) / captures.exname,
 	
-	type = ((P"(" * WSO * V"extype" * WSO * P")") + V"fndecl" + V"record" + V"gentype") / captures.type,
-	extype = (V"type" + V"exname" / captures.namedType) / captures.type,
+	type    = ((P"(" * WSO * V"extype" * WSO * P")") + V"fndecl" + V"enum" + V"record" + V"gentype") / captures.type,
+	extype  = (V"type" + V"exname" / captures.namedType) / captures.type,
 	gentype = (V"exname" * WSO * P"<" * V"exprlist" * WSO * P">") / captures.gentyperef,
-	record = (P"record" * WSO * P"(" * WSO * V"paramlist" * WSO * P")") / captures.recordtype,
-	fndecl = (
-							P"fn" * WSO *
-							P"(" * WSO * (V"paramlist" * WSO)^-1 * P")" * 
-							(WSO * P"->" * WSO * V"extype")^-1 * 
-							(WSO * (P"with" + P"where") * WS * V"exprlist")^-1) / captures.funsig,
+	record  = (P"record" * WSO * P"(" * WSO * V"paramlist" * WSO * P")") / captures.recordtype,
+	enum    = (P"enum" * WSO * P"(" * WSO * Ct(V"name" * (WSO * P"," * WSO * V"name")^0) * WSO * P")") / captures.enumtype,
+	fndecl  = (P"fn" * WSO *
+						 P"(" * WSO * (V"paramlist" * WSO)^-1 * P")" * 
+						 (WSO * P"->" * WSO * V"extype")^-1 * 
+						 (WSO * (P"with" + P"where") * WS * V"exprlist")^-1) / captures.funsig,
 	
 	paramlist = Ct(V"param" * (WSO * P"," * WSO * V"param")^0)/captures.paramlist,
 	param = (V"name" * WSO * V"paramspec") / captures.param,

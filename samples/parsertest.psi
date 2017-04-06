@@ -59,7 +59,7 @@ module types
 	type foo = std.io.socket;
 	type foo = int<0,1,wrapping>;
 	
-	type foo = enum<first,second.third,fourth>;
+	type foo = enum(first,second,third,fourth);
 	type foo = record(foo : bar);
 	type foo = record(foo = 10);
 	type foo = record(foo = 10, bar : std.io.socket, baz : int = 10);
