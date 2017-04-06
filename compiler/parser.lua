@@ -44,7 +44,10 @@ end
 
 local captures = require "ast-captures"
 
-local totaloplist = { }
+local totaloplist = { 
+	"()", -- Function call operator 
+	"[]", -- Indexing operator
+}
 for i=1,#binops do
 	for j=1,#binops[i] do
 		table.insert(totaloplist, binops[i][j])
@@ -66,7 +69,7 @@ local ruleset = {
 	module = (P"module" * WSO * V"exname" * WSO * P"{" * WSO * V"program" * WSO * P"}") / captures.module,
 	import = (P"import" * WSO * V"exname" * (WSO * P"as" * WSO * V"name")^-1 * WSO * P";") / captures.import,
 	objdecl = (((P"export" * WS)^-1) / exists * (V"opdecl" + V"genvardecl" + V"gentypedecl" + V"vardecl" + V"typedecl")) / captures.objectdecl,
-	opdecl = (C(P"unary" + P"binary") * WS * P"operator" * WS * P"'" * C(ANYOPERATOR) * P"'" * WSO * P"=" * WSO * V"func" * WSO * P";") / captures.operator,
+	opdecl = (C(P"unary" + P"binary" + P"special") * WS * P"operator" * WS * P"'" * C(ANYOPERATOR) * P"'" * WSO * P"=" * WSO * V"func" * WSO * P";") / captures.operator,
 	vardecl = (C(P"var" + P"const") * WS * V"param" * WSO * P";") / captures.vardecl,
 	
 	-- Actually just syntax sugar for a vardecl of type "std.type" with the type as an initial value

@@ -1,7 +1,6 @@
 # TODO
 
 ## Syntax Level
-- Add `special` operators (call, index)
 - Allow only `<positional>* <named>*` argument lists...
 - Allow `delete` only when explicit memory mode is on
 - Decide if a function restriction is introduced with `with` or with `where`...

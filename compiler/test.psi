@@ -1,7 +1,1 @@
-const f = fn()
-{
-	restrict(i > 0, y > 0)
-		;
-	else
-		;
-};
+special operator '[]' = fn() { };
