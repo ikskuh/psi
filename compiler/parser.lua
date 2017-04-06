@@ -127,7 +127,7 @@ local ruleset = {
 	hexint = C(S("+-")^-1 * P"0x" * R("09", "af", "AF")^1) / captures.number,
 	real = C(S("+-")^-1 * R("09")^1 * P"." * R("09")^1) / captures.number,
 	array = (P"[" * (WSO * V"exprlist")^-1 * WSO * P"]") / captures.array,
-	string = P('"') * C((1 - P('"'))^0) * P('"') / captures.string,
+	string = P('"') * C(((P"\\" * P(1)) + (1 - P('"')))^0) * P('"') / captures.string,
 	
 	func = (V"fndecl" * WSO * (V"body" + P"=>" * WSO * V"expr" / captures.exprinstr)) / captures.func,
 	body = Ct(P"{" * (WSO * V"instr")^0 * WSO * P"}")/captures.bodyinstr,

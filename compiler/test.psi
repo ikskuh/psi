@@ -1,1 +1,1 @@
-special operator '[]' = fn() { };
+var foo = "hallo \"welt\"";

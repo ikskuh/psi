@@ -133,11 +133,20 @@ function captures.number(val)
 	}
 end
 
+local stringEscapes = 
+{
+	["r"] = "\r",
+	["n"] = "\n",
+	["t"] = "\t",
+}
+
 function captures.string(val)
 	return {
 		[AST] = AST.EXPRESSION,
 		type = "string",
-		value = tostring(val)
+		value = tostring(val):gsub("%\\(.)", function(i)
+			return stringEscapes[i] or i
+		end)
 	}
 end
 
