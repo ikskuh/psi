@@ -1,7 +1,7 @@
-#!
- ! Implementation of calculating a fibonacci number with
- ! both recursive and iterative approach.
- !#
+/*
+ * Implementation of calculating a fibonacci number with
+ * both recursive and iterative approach.
+ */
 import std;
 import std.io;
 

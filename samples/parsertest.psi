@@ -1,8 +1,8 @@
-#!
- ! This file is some kind of unit test for
- ! the parser and contains each syntactic structure
- ! the language has.
- !#
+/*
+ * This file is some kind of unit test for
+ * the parser and contains each syntactic structure
+ * the language has.
+ */
 
 import std;
 import std.io;
@@ -14,9 +14,9 @@ import std.io.network as baz;
 
 assert true;
 
-#!
- ! Module testing and nesting
- !#
+/*
+ * Module testing and nesting
+ */
 module std
 {
 	var foo : int;
@@ -31,9 +31,9 @@ module std
 	}
 }
 
-#!
- ! This module contains all possible variants of variable declarations
- !#
+/*
+ * This module contains all possible variants of variable declarations
+ */
 module vardecl
 {
 	var foo : int;
@@ -118,9 +118,9 @@ module gendecl
 	export generic type foo<i:int,j:string> = int<0,1,clamping>;
 }
 
-#!
- ! This module tests all possible numeric literal types
- !#
+/*
+ * This module tests all possible numeric literal types
+ */
 module numbers
 {
 	assert 10;

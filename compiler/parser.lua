@@ -11,8 +11,8 @@ local C = lpeg.C
 local Ct = lpeg.Ct
 
 local WS_blank = lpeg.S(" \t\r\n")
-local WS_comment_long = (P("#!") * (1 - P("!#"))^0 * P("!#"))
-local WS_comment_short = (P("#") * (1 - P("\n"))^0)
+local WS_comment_long = (P("/*") * (1 - P("*/"))^0 * P("*/"))
+local WS_comment_short = ((P"#" + P("//")) * (1 - P("\n"))^0)
 local WS  = (WS_blank + WS_comment_long + WS_comment_short)^1
 local WSO = WS^0
 

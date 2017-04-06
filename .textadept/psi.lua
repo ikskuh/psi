@@ -11,8 +11,8 @@ local M = {_NAME = 'psi'}
 local ws = token(l.WHITESPACE, l.space^1)
 
 -- Comments.
-local line_comment = '#' * l.nonnewline^0
-local block_comment = '#!' * (l.any - '!#')^0 * P('!#')^-1
+local line_comment = (P'#' + P'//') * l.nonnewline^0
+local block_comment = '/*' * (l.any - '*/')^0 * P('*/')^-1
 local comment = token(l.COMMENT, block_comment + line_comment)
 
 -- Strings.
