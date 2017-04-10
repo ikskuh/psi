@@ -1,9 +1,9 @@
 # TODO
 
 ## Syntax Level
+- Add binary shift operators!
 - Allow only `<positional>* <named>*` argument lists...
 - Allow `delete` only when explicit memory mode is on
-- Decide if a function restriction is introduced with `with` or with `where`...
 
 ## Semantic Level
 - Define language semantics (how?!)

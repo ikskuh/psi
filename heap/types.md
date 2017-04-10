@@ -5,10 +5,6 @@
 ### `null`
 The null type can only accept a single value: `null`
 
-### `any`
-A variable with this type can accept any value,
-the type of the value must be queried at runtime.
-
 ### `char`
 This type can accept any kind of textual character
 and text control codes. This includes any unicode

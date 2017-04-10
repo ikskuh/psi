@@ -1,0 +1,68 @@
+# Null type, has only a single value (null)
+type null = <INTERNAL>;
+
+# Character type, accepts a single unicode
+# codepoint
+type char = <INTERNAL>;
+
+# Unconstrained real number from [-∞,∞]
+type number = <INTERNAL>;
+
+# Unconstrained integral number from [-∞,∞]
+type integer = <INTERNAL>;
+
+# Required for int<> definition
+type overflow_behaviour = enum(wrapping, clamping, failing);
+
+# Customizable integer type
+generic type int<
+	min       : integer,
+	max       : integer,
+  behaviour : overflow_behaviour> = <INTERNAL>;
+
+# Customizable real type
+# TODO: Think about storage (single,double)
+generic type real<
+	min     : number,
+	max     : number> = <INTERNAL>;
+
+# Resizable array type
+# TODO: Think about usage...
+generic type array<
+	T : type,
+	dimensions : integer = 1> = <INTERNAL>;
+
+# Fixed size nd-array
+# TODO: How to do variadic argument lists?
+generic type fixarray<
+	T : type,
+	ndim : integer...> = <INTERNAL>;
+
+# Reference and pointer types
+# TODO: Does pointer allow 'nullptr' or similar
+generic type ref<T : type> = <INTERNAL>;
+generic type weak<T : type> = <INTERNAL>;
+generic type ptr<T : type> = <INTERNAL>;
+
+# Iterator type is a function
+generic type iterator<T : type> = fn() -> ptr<T>;
+
+
+type optional<T> = option<null, T>
+type boolean     = enum<true, false>
+type tristate    = optional<boolean>
+type pointer<T>  = optional<ref<T>>
+type string      = array<char>
+type u8          = int<0, 255>
+type u16         = int<0, 65536>
+type u32         = int<0, 4294967296>
+type u64         = int<0, 18446744073709551616>
+type i8          = int<-128, 127>
+type i16         = int<-32768, 32767>
+type i32         = int<-2147483648, 2147483647>
+type i64         = int<-9223372036854775808, 9223372036854775807>
+# type half        = real<-∞, ∞, half>
+# type float       = real<-∞, ∞, single>
+# type double      = real<-∞, ∞, double>
+type uint        = u32; (* This may be a u16 or u64, dependinging on the system *)
+type int         = i32; (* This may be a u16 or u64, dependinging on the system *)

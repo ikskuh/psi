@@ -22,6 +22,7 @@ local binops =
 	-- Highest precedence (binds most)
 	{ "**" },
 	{ "*", "/", "%" },
+	{ "<<", ">>" },
 	{ "+", "--", "-" },
 	{ ">=", ">", "<=", "<" },
 	{ "==", "!=" },
@@ -90,7 +91,7 @@ local ruleset = {
 	fndecl  = (P"fn" * WSO *
 						 P"(" * WSO * (V"paramlist" * WSO)^-1 * P")" * 
 						 (WSO * P"->" * WSO * V"extype")^-1 * 
-						 (WSO * (P"with" + P"where") * WS * V"exprlist")^-1) / captures.funsig,
+						 (WSO * P"with" * WS * V"exprlist")^-1) / captures.funsig,
 	
 	paramlist = Ct(V"param" * (WSO * P"," * WSO * V"param")^0)/captures.paramlist,
 	param = (V"name" * WSO * V"paramspec") / captures.param,

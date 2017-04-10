@@ -1,0 +1,3 @@
+generic type array<
+	T : type,
+	dimensions : integer = 1> = INTERNAL;

@@ -33,7 +33,7 @@ local keyword = token(l.KEYWORD, word_match{
 	'select', 'when', 'otherwise', 'export',
 	'return', 'new', 'delete', 'with', 'where',
 	'binary', 'unary', 'operator', 'restrict',
-	'special'
+	'special', 'null'
 })
 
 -- Types.
