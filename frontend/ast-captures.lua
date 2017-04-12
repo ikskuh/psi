@@ -295,6 +295,7 @@ end
 
 function captures.arrayindex(list)
 	return {
+		[AST] = AST.INDEX,
 		type = "array",
 		indices = list,
 	}
@@ -303,6 +304,7 @@ end
 function captures.fieldindex(...)
 	local t = table.pack(...)
 	return {
+		[AST] = AST.INDEX,
 		type = (t[1] == ".") and "field" or "meta",
 		field = t[2]
 	}
@@ -315,6 +317,7 @@ function captures.fncall(args)
 		}
 	end
 	return {
+		[AST] = AST.INDEX,
 		type = "call",
 		arguments = checkType(args, AST.ARGUMENTLIST),
 	}

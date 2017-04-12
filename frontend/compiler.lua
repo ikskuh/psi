@@ -1,7 +1,7 @@
 require "print"
 
-local parse = require "parser"
-
+local parse  = require "parser"
+local XML    = require "xml"
 local getopt = require "getopt"
 
 local function loadFile(name)
@@ -67,6 +67,8 @@ for i,file in ipairs(files) do
 		error("Failed to parse " .. file .. "!")
 	end
 	
+	XML.dump(io.stdout, ast)
+	
 	-- Process AST here
-	print(file, ast)
+	-- print(file, ast)
 end

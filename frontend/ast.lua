@@ -24,6 +24,7 @@ local AST =
 	MODULE = uniq(),
 	PARAM = uniq(),
 	TYPE = uniq(),
+	INDEX = uniq(),
 }
 
 function mt.__tostring(self)
@@ -35,7 +36,7 @@ function mt.__tostring(self)
 	return "UNKOWN"
 end
 function mt.__index(t,k)
-	error("Unknown AST node: "..k,2)
+	error("Unknown AST node: "..tostring(k),2)
 end
 function mt.__newindex(t,k,v)
 	error("Constant table!",2)
