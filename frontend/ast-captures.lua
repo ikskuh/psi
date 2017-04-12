@@ -177,7 +177,7 @@ end
 function captures.gentyperef(name, exprlist)
 	return {
 		[AST] = AST.TYPE,
-		type = "generic-reference",
+		type = "reference",
 		name = name,
 		args = exprlist
 	}

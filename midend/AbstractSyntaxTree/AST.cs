@@ -38,6 +38,15 @@ namespace midend
 			public VariableDeclaration[] Variables { get; set; }
 		}
 
+		public sealed class Param
+		{
+			[XmlElement("name")]
+			public string Name { get; set; }
+			
+			[XmlElement("type")]
+			public AbstractType Type { get; set; }
+		}
+
 		public sealed class Import
 		{
 			[XmlElement("module")]
@@ -70,7 +79,7 @@ namespace midend
 			// TODO: Implement generic declarations!
 		}
 
-
+		#region Types
 
 		[XmlInclude(typeof(TypeReference))]
 		[XmlInclude(typeof(TypeFunction))]
@@ -83,6 +92,9 @@ namespace midend
 		{
 			[XmlElement("name")]
 			public ObjectName Name { get; set; }
+			
+			[XmlArray("args"), XmlArrayItem("expression")]
+			public AbstractExpression[] Arguments { get; set; }
 		}
 
 		public sealed class TypeFunction : AbstractType
@@ -96,19 +108,13 @@ namespace midend
 			[XmlArray("restrictions"), XmlArrayItem("expression")]
 			public AbstractExpression[] Restrictions { get; set; }
 		}
-
-		public sealed class Param
-		{
-			[XmlElement("name")]
-			public string Name { get; set; }
-			
-			[XmlElement("type")]
-			public AbstractType Type { get; set; }
-		}
+		
+		#endregion
 
 		#region Expression
 
 		[XmlInclude(typeof(ExpressionNumber))]
+		[XmlInclude(typeof(ExpressionString))]
 		[XmlInclude(typeof(ExpressionBinaryOperator))]
 		[XmlInclude(typeof(ExpressionUnaryOperator))]
 		[XmlInclude(typeof(ExpressionSymbol))]
@@ -125,6 +131,12 @@ namespace midend
 			public string Value { get; set; }
 		}
 
+		public sealed class ExpressionString : AbstractExpression
+		{
+			[XmlElement("value")]
+			public string Value { get; set; }
+		}
+		
 		public sealed class ExpressionSymbol : AbstractExpression
 		{
 			[XmlElement("name")]
