@@ -421,7 +421,9 @@ end
 
 function captures.selectinstr(expr, ...)
 	local t = table.pack(...)
-	local options = { }
+	local options = { 
+		[AST] = AST.SELECTORLIST
+	}
 	local option
 	
 	for i=1,#t do
@@ -471,7 +473,7 @@ end
 function captures.operator(type, operator, func)
 	return {
 		[AST] = AST.OPERATORDECL,
-		type = type,
+		operatortype = type,
 		operator = operator,
 		func = checkType(func, AST.EXPRESSION),
 	}

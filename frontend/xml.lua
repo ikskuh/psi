@@ -8,6 +8,8 @@ function xml.escape(str)
 			return "&gt;"
 		elseif val == "<" then
 			return "&lt;"
+		elseif val == "&" then
+			return "&amp;"
 		end
 	end)
 end
@@ -65,6 +67,18 @@ function xml.dump(file, root, indent, name, skipDecl)
 				ind = i
 			end
 			xml.dump(file, v, indent..ichar, ind, true)
+		elseif type(v) == "table" then
+			file:write(indent, ichar, '<', tostring(i), '>\n')
+			for j=1,#v do
+				local o = v[j]
+				file:write(
+					indent, ichar, ichar, 
+					'<', type(o), '>',
+					tostring(o),
+					'</', type(o), '>\n')
+			end
+			file:write(indent, ichar, '</', tostring(i), '>\n')
+		
 		elseif type(i) == "number" then
 			file:write(indent, ichar, '<', type(v), '>', xml.escape(tostring(v)), '</', type(v), '>\n')
 		else

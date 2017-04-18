@@ -23,6 +23,7 @@ local string = token(l.STRING, dq_str)
 
 -- Numbers.
 local number = token(l.NUMBER, l.float + l.integer)
+
 											
 -- Keywords.
 local keyword = token(l.KEYWORD, word_match{
@@ -33,7 +34,7 @@ local keyword = token(l.KEYWORD, word_match{
 	'select', 'when', 'otherwise', 'export',
 	'return', 'new', 'delete', 'with', 'where',
 	'binary', 'unary', 'operator', 'restrict',
-	'special', 'null'
+	'special', 'null', 'true', 'false'
 })
 
 -- Types.

@@ -14,6 +14,7 @@ local AST =
 	EXPRESSION = uniq(),
 	INSTRUCTION = uniq(),
 	OPERATORDECL = uniq(),
+	SELECTORLIST = uniq(),
 	EXPRESSIONLIST = uniq(),
 	ARGUMENTLIST = uniq(),
 	COMPOUNDNAME = uniq(),

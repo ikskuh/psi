@@ -1,31 +1,37 @@
-/*
- * Implementation of calculating a fibonacci number with
- * both recursive and iterative approach.
- */
-import std;
-import std.io;
 
-# Recursive implementation
-export const fib_recursive = fn(n : uint) -> uint
-{
-	if(n < 2)
-		return n;
-	else
-		return fib_recursive(n - 1) + fib_recursive(n - 2);
-};
+#assert -10;
+#assert "Hallo!";
+#assert enum(a,b,c);
+#assert record(a : int, b : string);
+#assert fn();
+#assert fn() -> int;
+#assert fn(x : int = 10,y:int) -> int;
 
-# Iterative implementation
-export const fib_iterative = fn(n : uint) -> uint
+assert fn()
 {
-	if (n == 0)
-		return 0;
-	var prev : uint = 0;
-	var next : uint = 1;
-	for (i : int in 1 -> x-1)
+	select(expr)
 	{
-		var sum = prev + next;
-		prev = next;
-		next = sum;
+		when foo:
+			print("foo");
+			break; # Breakout
+		when bar:
+			print("bar");
+			next; # Fallthrough
+		when baz:
+			print("baz");
+			goto foo; # Switch case *badumtss*
+		otherwise:
+			print("???");
+			break;
 	}
-	return next;
 };
+
+
+/*
+assert fn()
+{
+	var x : int;
+	print("hi");
+	var y : int;
+};
+*/

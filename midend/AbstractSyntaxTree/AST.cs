@@ -10,9 +10,9 @@ namespace midend
 		public static Program Load(TextReader reader)
 		{
 			var ser = new XmlSerializer(typeof(Program));
-			ser.UnknownElement += (s,e) =>
+			ser.UnknownElement += (s, e) =>
 			{
-				Console.Error.WriteLine("Unknown node: {0}.{1}", e.ObjectBeingDeserialized.GetType().Name, e.Element.Name);
+				Console.Error.WriteLine("Unknown node: {0}.{1}", e.ObjectBeingDeserialized?.GetType()?.Name, e.Element?.Name);
 			};
 			return (Program)ser.Deserialize(reader);
 		}
@@ -36,33 +36,85 @@ namespace midend
 
 			[XmlElement("vardecl")]
 			public VariableDeclaration[] Variables { get; set; }
+			
+			[XmlElement("operatordecl")]
+			public OperatorDeclaration[] Operators { get; set; }
+
+			[XmlElement("assertion")]
+			public Assertion[] Assertions { get; set; }
+
+			[XmlElement("module")]
+			public Module[] Modules { get; set; }
+		}
+
+		public sealed class Module
+		{
+			[XmlElement("name")]
+			public SymbolName Name { get; set; }
+
+			[XmlElement("contents")]
+			public Program Contents { get; set; }
+		}
+
+		public sealed class Assertion
+		{
+			[XmlElement("expression")]
+			public AbstractExpression Claim { get; set; }
 		}
 
 		public sealed class Param
 		{
 			[XmlElement("name")]
 			public string Name { get; set; }
-			
+
 			[XmlElement("type")]
 			public AbstractType Type { get; set; }
+
+			[XmlElement("value")]
+			public AbstractExpression Value { get; set; }
+		}
+
+		[XmlInclude(typeof(AbstractInstruction))]
+		[XmlInclude(typeof(VariableDeclaration))]
+		public abstract class DeclOrInstruction
+		{
+
 		}
 
 		public sealed class Import
 		{
 			[XmlElement("module")]
-			public ObjectName Module { get; set; }
+			public SymbolName Module { get; set; }
 
 			[XmlElement("alias")]
 			public string Alias { get; set; }
 		}
+		
+		public sealed class OperatorDeclaration : DeclOrInstruction
+		{
+			[XmlElement("operatortype")]
+			public OperatorType Type { get; set; }
+			
+			[XmlElement("operator")]
+			public Operator Operator { get; set; }
+			
+			[XmlElement("func")]
+			public ExpressionFunction Function { get; set; }
 
-		public sealed class VariableDeclaration
+			[XmlElement("isExported")]
+			public bool IsExported { get; set; }
+		}
+
+		public sealed class VariableDeclaration : DeclOrInstruction
 		{
 			[XmlElement("type")]
 			public AbstractType Type { get; set; }
 
 			[XmlElement("value")]
 			public AbstractExpression Value { get; set; }
+
+			[XmlArray("params"), XmlArrayItem("param")]
+			public Param[] GenericArguments { get; set; }
 
 			[XmlElement("name")]
 			public string Name { get; set; }
@@ -83,6 +135,8 @@ namespace midend
 
 		[XmlInclude(typeof(TypeReference))]
 		[XmlInclude(typeof(TypeFunction))]
+		[XmlInclude(typeof(TypeEnum))]
+		[XmlInclude(typeof(TypeRecord))]
 		public abstract class AbstractType
 		{
 
@@ -91,8 +145,8 @@ namespace midend
 		public sealed class TypeReference : AbstractType
 		{
 			[XmlElement("name")]
-			public ObjectName Name { get; set; }
-			
+			public SymbolName Name { get; set; }
+
 			[XmlArray("args"), XmlArrayItem("expression")]
 			public AbstractExpression[] Arguments { get; set; }
 		}
@@ -101,28 +155,49 @@ namespace midend
 		{
 			[XmlArray("params"), XmlArrayItem("param")]
 			public Param[] Parameters { get; set; }
-			
+
 			[XmlElement("returntype")]
 			public AbstractType ReturnType { get; set; }
-			
+
 			[XmlArray("restrictions"), XmlArrayItem("expression")]
 			public AbstractExpression[] Restrictions { get; set; }
 		}
-		
+
+		public sealed class TypeEnum : AbstractType
+		{
+			[XmlArray("members"), XmlArrayItem("string")]
+			public string[] Members { get; set; }
+		}
+
+		public sealed class TypeRecord : AbstractType
+		{
+			[XmlArray("fields"), XmlArrayItem("param")]
+			public Param[] Fields { get; set; }
+		}
+
 		#endregion
 
 		#region Expression
 
 		[XmlInclude(typeof(ExpressionNumber))]
 		[XmlInclude(typeof(ExpressionString))]
+		[XmlInclude(typeof(ExpressionType))]
 		[XmlInclude(typeof(ExpressionBinaryOperator))]
 		[XmlInclude(typeof(ExpressionUnaryOperator))]
 		[XmlInclude(typeof(ExpressionSymbol))]
 		[XmlInclude(typeof(ExpressionFunction))]
 		[XmlInclude(typeof(ExpressionIndex))]
+		[XmlInclude(typeof(ExpressionArray))]
+		[XmlInclude(typeof(ExpressionNew))]
 		public abstract class AbstractExpression
 		{
-			
+
+		}
+
+		public sealed class ExpressionArray : AbstractExpression
+		{
+			[XmlArray("values"), XmlArrayItem("expression")]
+			public AbstractExpression[] Items { get; set; }
 		}
 
 		public sealed class ExpressionNumber : AbstractExpression
@@ -136,7 +211,13 @@ namespace midend
 			[XmlElement("value")]
 			public string Value { get; set; }
 		}
-		
+
+		public sealed class ExpressionType : AbstractExpression
+		{
+			[XmlElement("reference")]
+			public AbstractType Type { get; set; }
+		}
+
 		public sealed class ExpressionSymbol : AbstractExpression
 		{
 			[XmlElement("name")]
@@ -163,61 +244,71 @@ namespace midend
 			[XmlElement("operator")]
 			public Operator Operator { get; set; }
 		}
-		
+
 		public sealed class ExpressionFunction : AbstractExpression
 		{
 			[XmlElement("signature")]
 			public TypeFunction Signature { get; set; }
-			
+
 			[XmlElement("body")]
 			public AbstractInstruction Body { get; set; }
 		}
-		
+
 		public sealed class ExpressionIndex : AbstractExpression
 		{
 			[XmlElement("value")]
 			public AbstractExpression Value { get; set; }
-			
+
 			[XmlElement("index")]
-			public AbstractIndex Index { get; set; }	
+			public AbstractIndex Index { get; set; }
 		}
-		
+
+		public sealed class ExpressionNew : AbstractExpression
+		{
+			[XmlElement("recordtype")]
+			public SymbolName RecordTypeName { get; set; }
+
+			[XmlArray("arguments"), XmlArrayItem("argument")]
+			public AbstractArgument[] Arguments { get; set; }
+		}
+
 		#endregion
-		
+
 		#region Indices
-		
+
 		[XmlInclude(typeof(IndexArray))]
 		[XmlInclude(typeof(IndexField))]
 		[XmlInclude(typeof(IndexMeta))]
 		[XmlInclude(typeof(IndexCall))]
-		public abstract class AbstractIndex 
+		public abstract class AbstractIndex
 		{
-		
+
 		}
-		
+
 		public sealed class IndexArray : AbstractIndex
 		{
-		
+			[XmlArray("indices"), XmlArrayItem("expression")]
+			public AbstractExpression[] Indices { get; set; }
 		}
-		
+
 		public sealed class IndexField : AbstractIndex
 		{
 			[XmlElement("field")]
 			public string Field { get; set; }
 		}
-		
+
 		public sealed class IndexMeta : AbstractIndex
 		{
 			[XmlElement("field")]
 			public string Field { get; set; }
 		}
-		
+
 		public sealed class IndexCall : AbstractIndex
 		{
 			[XmlArray("arguments"), XmlArrayItem("argument")]
 			public AbstractArgument[] Arguments { get; set; }
 		}
-		
+
 		[XmlInclude(typeof(ArgumentPositional))]
 		[XmlInclude(typeof(ArgumentNamed))]
 		public abstract class AbstractArgument
@@ -225,56 +316,127 @@ namespace midend
 			[XmlElement("value")]
 			public AbstractExpression Value { get; set; }
 		}
-		
+
 		public sealed class ArgumentPositional : AbstractArgument
 		{
 			[XmlElement("position")]
 			public int Position { get; set; }
 		}
-		
+
 		public sealed class ArgumentNamed : AbstractArgument
 		{
 			[XmlElement("name")]
 			public string Name { get; set; }
 		}
-		
+
 		#endregion
-		
+
 		#region Instructions
-		
+
 		[XmlInclude(typeof(InstructionBody))]
 		[XmlInclude(typeof(InstructionExpression))]
 		[XmlInclude(typeof(InstructionConditional))]
 		[XmlInclude(typeof(InstructionReturn))]
+		[XmlInclude(typeof(InstructionWhile))]
+		[XmlInclude(typeof(InstructionLoopUntil))]
 		[XmlInclude(typeof(InstructionFor))]
-		public abstract class AbstractInstruction
+		[XmlInclude(typeof(InstructionEmpty))]
+		[XmlInclude(typeof(InstructionDelete))]
+		[XmlInclude(typeof(InstructionRestriction))]
+		[XmlInclude(typeof(InstructionBreak))]
+		[XmlInclude(typeof(InstructionContinue))]
+		[XmlInclude(typeof(InstructionNext))]
+		[XmlInclude(typeof(InstructionGoto))]
+		[XmlInclude(typeof(InstructionSelect))]
+		public abstract class AbstractInstruction : DeclOrInstruction
 		{
-		
+
+		}
+
+		public sealed class InstructionEmpty : AbstractInstruction
+		{
+		}
+
+		public sealed class InstructionBreak : AbstractInstruction
+		{
+		}
+
+		public sealed class InstructionContinue : AbstractInstruction
+		{
 		}
 		
+		public sealed class InstructionNext : AbstractInstruction
+		{
+		}
+		
+		public sealed class InstructionGoto : AbstractInstruction
+		{
+			[XmlElement("expression")]
+			public AbstractExpression Target { get; set; }
+		}
+		
+		public sealed class InstructionSelect : AbstractInstruction
+		{
+			[XmlElement("selector")]
+			public AbstractExpression Selector { get; set; }
+			
+			[XmlArray("options"), XmlArrayItem("selector")]
+			public SelectOption[] Options { get; set; }
+		}
+		
+		public sealed class SelectOption
+		{
+			[XmlElement("isDefault")]
+			public bool IsDefault { get; set; }
+			
+			[XmlElement("expression")]
+			public AbstractExpression Value { get; set; }
+			
+			[XmlElement("contents")]
+			public InstructionBody Contents { get; set; }
+		}
+
 		public sealed class InstructionBody : AbstractInstruction
 		{
-			[XmlElement("instruction")]
-			public AbstractInstruction[] Instructions { get; set; }
+			[XmlElement("instruction", typeof(AbstractInstruction))]
+			[XmlElement("vardecl", typeof(VariableDeclaration))]
+			public DeclOrInstruction[] Contents { get; set; }
 
-			[XmlElement("vardecl")]
-			public VariableDeclaration[] Variables { get; set; }
+			// public VariableDeclaration[] Variables { get; set; }
 		}
-		
+
 		public sealed class InstructionExpression : AbstractInstruction
 		{
 			[XmlElement("expression")]
 			public AbstractExpression Expression { get; set; }
 		}
-		
+
+		public sealed class InstructionWhile : AbstractInstruction
+		{
+			[XmlElement("condition")]
+			public AbstractExpression Expression { get; set; }
+
+			[XmlElement("body")]
+			public AbstractInstruction Body { get; set; }
+		}
+
+		public sealed class InstructionLoopUntil : AbstractInstruction
+		{
+			[XmlElement("condition")]
+			public AbstractExpression Expression { get; set; }
+
+			[XmlElement("body")]
+			public AbstractInstruction Body { get; set; }
+		}
+
 		public sealed class InstructionConditional : AbstractInstruction
 		{
 			[XmlElement("condition")]
 			public AbstractExpression Condition { get; set; }
-			
+
 			[XmlElement("positive")]
 			public AbstractInstruction Positive { get; set; }
-			
+
 			[XmlElement("negative")]
 			public AbstractInstruction Negative { get; set; }
 		}
@@ -285,17 +447,35 @@ namespace midend
 			public AbstractExpression Value { get; set; }
 		}
 
+		public sealed class InstructionDelete : AbstractInstruction
+		{
+			[XmlElement("value")]
+			public AbstractExpression Value { get; set; }
+		}
+
+		public sealed class InstructionRestriction : AbstractInstruction
+		{
+			[XmlArray("restrictions"), XmlArrayItem("expression")]
+			public ExpressionBinaryOperator[] Restrictions { get; set; }
+		
+			[XmlElement("success")]
+			public AbstractInstruction Success { get; set; }
+			
+			[XmlElement("failure")]
+			public AbstractInstruction Failure { get; set; }
+		}
+
 		public sealed class InstructionFor : AbstractInstruction
 		{
 			[XmlElement("variable")]
 			public string Variable { get; set; }
-		
+
 			[XmlElement("expression")]
 			public AbstractExpression Value { get; set; }
-			
+
 			[XmlElement("vartype")]
 			public AbstractType Type { get; set; }
-			
+
 			[XmlElement("body")]
 			public AbstractInstruction Body { get; set; }
 		}

@@ -39,16 +39,38 @@
     <Reference Include="NLua">
       <HintPath>packages\NLua.1.3.2.1\lib\net45\NLua.dll</HintPath>
     </Reference>
+    <Reference Include="System.Numerics" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AbstractSyntaxTree\AST.cs" />
-    <Compile Include="ObjectName.cs" />
+    <Compile Include="SymbolName.cs" />
     <Compile Include="Operator.cs" />
+    <Compile Include="SyntaxTree\Module.cs" />
+    <Compile Include="SyntaxTree\Variable.cs" />
+    <Compile Include="SyntaxTree\Assertion.cs" />
+    <Compile Include="Signature.cs" />
+    <Compile Include="Types\CType.cs" />
+    <Compile Include="Types\InternalTypes\StringType.cs" />
+    <Compile Include="Types\InternalTypes\IntegerType.cs" />
+    <Compile Include="Types\NamedType.cs" />
+    <Compile Include="Types\InternalTypes\CharacterType.cs" />
+    <Compile Include="Types\InternalTypes\TypeType.cs" />
+    <Compile Include="Expressions\Expression.cs" />
+    <Compile Include="Expressions\LiteralExpressions.cs" />
+    <Compile Include="CompilerRuntime\CValue.cs" />
+    <Compile Include="CompilerRuntime\EvaluationContext.cs" />
+    <Compile Include="CompilerRuntime\ICompilerOperators.cs" />
+    <Compile Include="Types\InternalTypes\BooleanType.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AbstractSyntaxTree\" />
+    <Folder Include="SyntaxTree\" />
+    <Folder Include="Types\" />
+    <Folder Include="Types\InternalTypes\" />
+    <Folder Include="Expressions\" />
+    <Folder Include="CompilerRuntime\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
