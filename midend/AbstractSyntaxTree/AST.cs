@@ -36,7 +36,7 @@ namespace midend
 
 			[XmlElement("vardecl")]
 			public VariableDeclaration[] Variables { get; set; }
-			
+
 			[XmlElement("operatordecl")]
 			public OperatorDeclaration[] Operators { get; set; }
 
@@ -45,6 +45,25 @@ namespace midend
 
 			[XmlElement("module")]
 			public Module[] Modules { get; set; }
+
+			public void GatherSymbols()
+			{
+				if (this.Variables != null)
+				{
+					foreach (var var in this.Variables)
+					{
+
+					}
+				}
+				if (this.Modules != null)
+				{
+					throw new NotImplementedException("Module declarations are not supported yet.");
+				}
+				if(this.Operators != null)
+				{
+					throw new NotImplementedException("Operators are not supported yet.");
+				}
+			}
 		}
 
 		public sealed class Module
@@ -56,7 +75,7 @@ namespace midend
 			public Program Contents { get; set; }
 		}
 
-		public sealed class Assertion
+		public sealed class Assertion : BodyContent
 		{
 			[XmlElement("expression")]
 			public AbstractExpression Claim { get; set; }
@@ -74,13 +93,6 @@ namespace midend
 			public AbstractExpression Value { get; set; }
 		}
 
-		[XmlInclude(typeof(AbstractInstruction))]
-		[XmlInclude(typeof(VariableDeclaration))]
-		public abstract class DeclOrInstruction
-		{
-
-		}
-
 		public sealed class Import
 		{
 			[XmlElement("module")]
@@ -89,15 +101,15 @@ namespace midend
 			[XmlElement("alias")]
 			public string Alias { get; set; }
 		}
-		
-		public sealed class OperatorDeclaration : DeclOrInstruction
+
+		public sealed class OperatorDeclaration : BodyContent
 		{
 			[XmlElement("operatortype")]
 			public OperatorType Type { get; set; }
-			
+
 			[XmlElement("operator")]
 			public Operator Operator { get; set; }
-			
+
 			[XmlElement("func")]
 			public ExpressionFunction Function { get; set; }
 
@@ -105,7 +117,7 @@ namespace midend
 			public bool IsExported { get; set; }
 		}
 
-		public sealed class VariableDeclaration : DeclOrInstruction
+		public sealed class VariableDeclaration : BodyContent
 		{
 			[XmlElement("type")]
 			public AbstractType Type { get; set; }
@@ -348,7 +360,7 @@ namespace midend
 		[XmlInclude(typeof(InstructionNext))]
 		[XmlInclude(typeof(InstructionGoto))]
 		[XmlInclude(typeof(InstructionSelect))]
-		public abstract class AbstractInstruction : DeclOrInstruction
+		public abstract class AbstractInstruction : BodyContent
 		{
 
 		}
@@ -364,34 +376,34 @@ namespace midend
 		public sealed class InstructionContinue : AbstractInstruction
 		{
 		}
-		
+
 		public sealed class InstructionNext : AbstractInstruction
 		{
 		}
-		
+
 		public sealed class InstructionGoto : AbstractInstruction
 		{
 			[XmlElement("expression")]
 			public AbstractExpression Target { get; set; }
 		}
-		
+
 		public sealed class InstructionSelect : AbstractInstruction
 		{
 			[XmlElement("selector")]
 			public AbstractExpression Selector { get; set; }
-			
+
 			[XmlArray("options"), XmlArrayItem("selector")]
 			public SelectOption[] Options { get; set; }
 		}
-		
+
 		public sealed class SelectOption
 		{
 			[XmlElement("isDefault")]
 			public bool IsDefault { get; set; }
-			
+
 			[XmlElement("expression")]
 			public AbstractExpression Value { get; set; }
-			
+
 			[XmlElement("contents")]
 			public InstructionBody Contents { get; set; }
 		}
@@ -400,9 +412,17 @@ namespace midend
 		{
 			[XmlElement("instruction", typeof(AbstractInstruction))]
 			[XmlElement("vardecl", typeof(VariableDeclaration))]
-			public DeclOrInstruction[] Contents { get; set; }
+			public BodyContent[] Contents { get; set; }
 
 			// public VariableDeclaration[] Variables { get; set; }
+		}
+
+		[XmlInclude(typeof(AbstractInstruction))]
+		[XmlInclude(typeof(VariableDeclaration))]
+		[XmlInclude(typeof(Assertion))]
+		public abstract class BodyContent
+		{
+
 		}
 
 		public sealed class InstructionExpression : AbstractInstruction
@@ -457,10 +477,10 @@ namespace midend
 		{
 			[XmlArray("restrictions"), XmlArrayItem("expression")]
 			public ExpressionBinaryOperator[] Restrictions { get; set; }
-		
+
 			[XmlElement("success")]
 			public AbstractInstruction Success { get; set; }
-			
+
 			[XmlElement("failure")]
 			public AbstractInstruction Failure { get; set; }
 		}

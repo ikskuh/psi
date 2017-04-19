@@ -1,5 +1,6 @@
 ﻿using System.Linq;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 namespace midend
 {
 	using System;
@@ -10,7 +11,7 @@ namespace midend
 	/// <summary>
 	/// The name of a symbol.
 	/// </summary>
-	public class SymbolName : IEquatable<SymbolName>
+	public sealed class SymbolName : IEquatable<SymbolName>
 	{
 		[XmlElement("string")]
 		public string[] path;
@@ -44,5 +45,6 @@ namespace midend
 		public IReadOnlyList<string> Path => this.path;
 
 		public override string ToString() => string.Join(".", this.path);
-	}
+
+}
 }

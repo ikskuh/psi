@@ -16,6 +16,8 @@ namespace midend
 			
 		}
 		
+		public override bool IsAllowedValue(object value) => value is bool;
+		
 		public override string ToString() => "bool";
 	}
 }

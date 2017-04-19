@@ -9,5 +9,9 @@ namespace midend
 		{
 		
 		}
+		
+		public override bool IsAllowedValue(object value) => value is CType;
+		
+		public override string ToString() => "type";
 	}
 }

@@ -7,24 +7,8 @@
 #assert fn() -> int;
 #assert fn(x : int = 10,y:int) -> int;
 
-assert fn()
-{
-	select(expr)
-	{
-		when foo:
-			print("foo");
-			break; # Breakout
-		when bar:
-			print("bar");
-			next; # Fallthrough
-		when baz:
-			print("baz");
-			goto foo; # Switch case *badumtss*
-		otherwise:
-			print("???");
-			break;
-	}
-};
+var x : int;
+var y : int;
 
 
 /*

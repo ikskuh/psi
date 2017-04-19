@@ -48,7 +48,7 @@
     <Compile Include="SymbolName.cs" />
     <Compile Include="Operator.cs" />
     <Compile Include="SyntaxTree\Module.cs" />
-    <Compile Include="SyntaxTree\Variable.cs" />
+    <Compile Include="SyntaxTree\Symbol.cs" />
     <Compile Include="SyntaxTree\Assertion.cs" />
     <Compile Include="Signature.cs" />
     <Compile Include="Types\CType.cs" />
@@ -63,6 +63,10 @@
     <Compile Include="CompilerRuntime\EvaluationContext.cs" />
     <Compile Include="CompilerRuntime\ICompilerOperators.cs" />
     <Compile Include="Types\InternalTypes\BooleanType.cs" />
+    <Compile Include="SyntaxTree\Scope.cs" />
+    <Compile Include="Types\InternalTypes\ModuleType.cs" />
+    <Compile Include="CompilerConfiguration.cs" />
+    <Compile Include="Expressions\SymbolReferenceExpression.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AbstractSyntaxTree\" />

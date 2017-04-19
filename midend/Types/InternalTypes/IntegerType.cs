@@ -2,7 +2,7 @@
 using System.Numerics;
 namespace midend
 {
-	public sealed class IntegerType
+	public sealed class IntegerType : CType
 	{
 		public static readonly IntegerType UInt8 = new IntegerType(byte.MinValue, byte.MaxValue, IntegerOverflowBehaviour.Wrapping);
 		public static readonly IntegerType UInt16 = new IntegerType(ushort.MinValue, ushort.MaxValue, IntegerOverflowBehaviour.Wrapping);
@@ -19,18 +19,12 @@ namespace midend
 
 		public IntegerType(BigInteger min, BigInteger max, IntegerOverflowBehaviour behaviour)
 		{
-			if (min >= max)
+			if (min > max)
 				throw new ArgumentOutOfRangeException("min must be less than max.", (Exception)null);
 			this.minimum = min;
 			this.maximum = max;
 			this.behaviour = behaviour;
 		}
-
-		public BigInteger Minimum => this.minimum;
-
-		public BigInteger Maximum => this.maximum;
-
-		public IntegerOverflowBehaviour Behaviour => this.behaviour;
 
 		public override bool Equals(object obj)
 		{
@@ -54,6 +48,16 @@ namespace midend
 			this.minimum,
 			this.maximum,
 			this.behaviour.ToString().ToLower());
+		
+		public override bool IsAllowedValue(object value) => value is BigInteger;
+
+		public BigInteger Minimum => this.minimum;
+
+		public BigInteger Maximum => this.maximum;
+
+		public IntegerOverflowBehaviour Behaviour => this.behaviour;
+		
+		public bool IsSingularity => (this.minimum == this.maximum);
 	}
 
 	public enum IntegerOverflowBehaviour

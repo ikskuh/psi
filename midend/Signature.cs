@@ -1,15 +1,25 @@
 ﻿using System;
 using System.Diagnostics.Contracts;
+using System.Text.RegularExpressions;
 
 namespace midend
 {
 	public sealed class Signature : IEquatable<Signature>
 	{
-		public Signature(SymbolName name, CType type)
+		private static readonly Regex patName = new Regex(@"^[A-Za-z_][A-Za-z0-9_]*$", RegexOptions.Compiled);
+	
+		public static bool IsValidIdentifier(string name) => patName.IsMatch(name);
+		
+		private readonly string name;
+		private readonly CType type;
+		
+		public Signature(string name, CType type)
 		{
-			Contract.Requires(type != null);
-			this.Name = name;
-			this.Type = type;
+			if(name == null) throw new ArgumentNullException(nameof(name));
+			if(type == null) throw new ArgumentNullException(nameof(type));
+			if(Signature.IsValidIdentifier(name) == false) throw new ArgumentOutOfRangeException($"'{name}' is not a valid identifier!");
+			this.name = name;
+			this.type = type;
 		}
 	
 		public bool Equals(Signature other)
@@ -17,7 +27,7 @@ namespace midend
 			if (other == null)
 				return false;
 			return (this.Name.Equals(other.Name)) 
-				&& (NamedType.Equals(this.Type, other.Type));
+				&& (this.Type.Equals(other.Type));
 		}
 
 		public override bool Equals(object obj) => this.Equals(obj as Signature);
@@ -26,9 +36,9 @@ namespace midend
 		
 		public override string ToString() => string.Format("{0} : {1}", this.Name, this.Type);
 
-		public SymbolName Name { get; private set; }
+		public string Name => this.name;
 
-		public CType Type { get; private set; }
+		public CType Type => this.type;
 
 	}
 }
