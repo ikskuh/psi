@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 namespace midend
 {
-	public class Scope : IEnumerable<Signature>
+	public class Scope : IReadOnlyScope, IEnumerable<Signature>
 	{
 		private readonly Scope parent;
 		private readonly Dictionary<Signature, Symbol> symbols = new Dictionary<Signature, Symbol>();

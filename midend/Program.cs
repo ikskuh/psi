@@ -31,11 +31,14 @@ namespace midend
 
 			var compileUnitScope = new Scope(globalScope);
 
-			
-			ast.GatherModulesAndSymbols();
-			
-			
-			
+			// Step #1: Create all declared modules in the unit scope.
+			ast.BuildModuleStructure(compileUnitScope);
+
+
+			ast.GatherSymbols(compileUnitScope);
+
+
+
 
 			PrintScope(compileUnitScope, compileUnitScope.Locals);
 		}

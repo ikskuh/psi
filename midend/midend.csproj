@@ -45,7 +45,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AbstractSyntaxTree\AST.cs" />
-    <Compile Include="SymbolName.cs" />
+    <Compile Include="SymbolPath.cs" />
     <Compile Include="Operator.cs" />
     <Compile Include="SyntaxTree\Module.cs" />
     <Compile Include="SyntaxTree\Symbol.cs" />
@@ -67,6 +67,7 @@
     <Compile Include="Types\InternalTypes\ModuleType.cs" />
     <Compile Include="CompilerConfiguration.cs" />
     <Compile Include="Expressions\SymbolReferenceExpression.cs" />
+    <Compile Include="SyntaxTree\IReadOnlyScope.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AbstractSyntaxTree\" />

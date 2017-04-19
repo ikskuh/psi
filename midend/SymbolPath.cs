@@ -11,20 +11,20 @@ namespace midend
 	/// <summary>
 	/// The name of a symbol.
 	/// </summary>
-	public sealed class SymbolName : IEquatable<SymbolName>
+	public sealed class SymbolPath : IEquatable<SymbolPath>
 	{
 		[XmlElement("string")]
 		public string[] path;
 
 		[Obsolete("Only for serialization!", true)]
-		public SymbolName() { }
+		public SymbolPath() { }
 
-		public SymbolName(params string[] path)
+		public SymbolPath(params string[] path)
 		{
 			this.path = path.ToArray();
 		}
 
-		public bool Equals(SymbolName other)
+		public bool Equals(SymbolPath other)
 		{
 			if (Equals(this.path, other.path))
 				return true;
@@ -37,14 +37,24 @@ namespace midend
 
 		public override bool Equals(object obj)
 		{
-			if (obj?.GetType() != typeof(SymbolName))
+			if (obj?.GetType() != typeof(SymbolPath))
 				return false;
-			return this.Equals((SymbolName)obj);
+			return this.Equals((SymbolPath)obj);
 		}
 
 		public IReadOnlyList<string> Path => this.path;
 
+		public int Length => this.path.Length;
+
+		public string this[int index] => this.path[index];
+
+		/// <summary>
+		/// Gets the last portion of this symbol name.
+		/// </summary>
+		/// <value>The name of the local.</value>
+		public string LocalName => this.path[this.path.Length - 1];
+
 		public override string ToString() => string.Join(".", this.path);
 
-}
+	}
 }

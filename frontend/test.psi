@@ -1,4 +1,25 @@
 
+
+module foo.bar.baz
+{
+	
+}
+
+// Start with modules:
+module foo
+{
+	module bar
+	{
+		
+	}
+}
+
+module foo.bar
+{
+	module baz.bam { }
+}
+
+
 #assert -10;
 #assert "Hallo!";
 #assert enum(a,b,c);
@@ -7,10 +28,8 @@
 #assert fn() -> int;
 #assert fn(x : int = 10,y:int) -> int;
 
-var x : int;
-var y : int;
-
-
+// var x : int;
+// var y : int;
 /*
 assert fn()
 {

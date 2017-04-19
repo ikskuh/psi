@@ -46,30 +46,69 @@ namespace midend
 			[XmlElement("module")]
 			public Module[] Modules { get; set; }
 
-			public void GatherSymbols()
+			/// <summary>
+			/// Creates all declared modules of this program in targetScope.
+			/// </summary>
+			/// <param name="targetScope">Target scope.</param>
+			public void BuildModuleStructure(Scope targetScope)
+			{
+				if (this.Modules == null)
+					return;
+				foreach (var mod in this.Modules)
+				{
+					var modscope = targetScope;
+					midend.Module module = null;
+					for (int i = 0; i < mod.Name.Length; i++)
+					{
+						var sym = modscope[new Signature(mod.Name[i], CTypes.Module)];
+						if (sym != null)
+						{
+							// Can safely pass null here as CTypes.Module is a compiletime-only type.
+							module = (midend.Module)sym.InitialValue.Evaluate(null).Value;
+							modscope = module;
+						}
+						else
+						{
+							module = new midend.Module();
+							modscope.AddSymbol(mod.Name[i], module);
+							modscope = module;
+						}
+					}
+					mod.Contents.BuildModuleStructure(module);
+				}
+			}
+
+			public void GatherSymbols(Scope targetScope)
 			{
 				if (this.Variables != null)
 				{
+					throw new NotImplementedException("Variable gathering is not supported yet.");
 					foreach (var var in this.Variables)
 					{
+						if (var.Value != null)
+							throw new NotImplementedException("Initial values are not supported yet.");
+						if (var.Type == null)
+							throw new NotImplementedException("Variables with type deduction are not supported yet.");
+
 
 					}
 				}
 				if (this.Modules != null)
 				{
-					throw new NotImplementedException("Module declarations are not supported yet.");
+
 				}
-				if(this.Operators != null)
+				if (this.Operators != null)
 				{
 					throw new NotImplementedException("Operators are not supported yet.");
 				}
 			}
+
 		}
 
 		public sealed class Module
 		{
 			[XmlElement("name")]
-			public SymbolName Name { get; set; }
+			public SymbolPath Name { get; set; }
 
 			[XmlElement("contents")]
 			public Program Contents { get; set; }
@@ -96,7 +135,7 @@ namespace midend
 		public sealed class Import
 		{
 			[XmlElement("module")]
-			public SymbolName Module { get; set; }
+			public SymbolPath Module { get; set; }
 
 			[XmlElement("alias")]
 			public string Alias { get; set; }
@@ -157,7 +196,7 @@ namespace midend
 		public sealed class TypeReference : AbstractType
 		{
 			[XmlElement("name")]
-			public SymbolName Name { get; set; }
+			public SymbolPath Name { get; set; }
 
 			[XmlArray("args"), XmlArrayItem("expression")]
 			public AbstractExpression[] Arguments { get; set; }
@@ -278,7 +317,7 @@ namespace midend
 		public sealed class ExpressionNew : AbstractExpression
 		{
 			[XmlElement("recordtype")]
-			public SymbolName RecordTypeName { get; set; }
+			public SymbolPath RecordTypeName { get; set; }
 
 			[XmlArray("arguments"), XmlArrayItem("argument")]
 			public AbstractArgument[] Arguments { get; set; }
