@@ -4,6 +4,10 @@ const c = 30;
 
 const d = a + b * c;
 
+const e = d == 610;
+const f = d < 620;
+const g = d < 600;
+
 #assert -10;
 #assert "Hallo!";
 #assert enum(a,b,c);

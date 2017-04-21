@@ -374,7 +374,7 @@ namespace midend
 				var opfunc = (Function)opsyms[0].InitialValue.Evaluate(null).Value;
 				if (opfunc == null)
 					return null;
-				return new FunctionCallExpression(opfunc, lhs, rhs);
+				return new FunctionCallExpression(opfunc, lhs.Simplify(), rhs.Simplify());
 			}
 		}
 

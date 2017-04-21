@@ -17,6 +17,8 @@ namespace midend
 				throw new ArgumentNullException(nameof(value));
 			this.type = type;
 			this.value = value;
+			if(type.IsAllowedValue(value) == false)
+				throw new ArgumentOutOfRangeException(nameof(value), "value is not a fitting value for type!");
 		}
 		
 		public CType Type => this.type;

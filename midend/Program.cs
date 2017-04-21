@@ -124,6 +124,8 @@ namespace midend
 
 			{ // i32 operators
 				var optype = new BinaryOperatorType(IntegerType.Int32, IntegerType.Int32);
+				var opcomp = new BinaryOperatorType(IntegerType.Int32, CTypes.Boolean);
+				
 				globalScope.AddSymbol(Operator.Add, new BuiltinFunction(optype, (arr) =>
 				{
 					return new CValue(IntegerType.Int32, (BigInteger)arr[0].Value + (BigInteger)arr[1].Value);
@@ -143,6 +145,15 @@ namespace midend
 				globalScope.AddSymbol(Operator.Modulo, new BuiltinFunction(optype, (arr) =>
 				{
 					return new CValue(IntegerType.Int32, (BigInteger)arr[0].Value % (BigInteger)arr[1].Value);
+				}));
+				
+				globalScope.AddSymbol(Operator.Less, new BuiltinFunction(opcomp, (arr) =>
+				{
+					return new CValue(CTypes.Boolean, (BigInteger)arr[0].Value < (BigInteger)arr[1].Value);
+				}));
+				globalScope.AddSymbol(Operator.Equals, new BuiltinFunction(opcomp, (arr) =>
+				{
+					return new CValue(CTypes.Boolean, (BigInteger)arr[0].Value == (BigInteger)arr[1].Value);
 				}));
 			}
 
