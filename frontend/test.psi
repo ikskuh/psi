@@ -1,12 +1,16 @@
-const a = 10;
-const b = 20;
-const c = 30;
+# const a = 10;
+# const b = 20;
+# const c = 30;
 
-const d = a + b * c;
+# const d = a + b * c;
 
-const e = d == 610;
-const f = d < 620;
-const g = d < 600;
+# const e = d == 610;
+# const b0 = d < 620;
+# const b1 = d < 600;
+
+const arr = [ 1, 2, 3 ];
+
+const i = arr[1];
 
 #assert -10;
 #assert "Hallo!";

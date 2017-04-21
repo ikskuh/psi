@@ -24,5 +24,7 @@ namespace midend
 		public CType Type => this.type;
 		
 		public object Value => this.value;
+		
+		public override string ToString() => $"{this.Value}";
 	}
 }

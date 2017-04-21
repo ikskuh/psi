@@ -296,6 +296,14 @@ namespace midend
 		{
 			[XmlArray("values"), XmlArrayItem("expression")]
 			public AbstractExpression[] Items { get; set; }
+			
+			public override Expression TryResolve(Scope targetScope)
+			{	
+				var items = this.Items.Select(exp => exp.TryResolve(targetScope)?.Simplify()).ToArray();
+				if(items.Any(i => (i == null)))
+					return null;
+				return new ArrayExpression(items);
+			}
 		}
 
 		public sealed class ExpressionNumber : AbstractExpression

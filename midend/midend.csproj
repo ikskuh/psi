@@ -73,9 +73,12 @@
     <Compile Include="Types\FunctionTypes\BinaryOperatorType.cs" />
     <Compile Include="Types\FunctionTypes\FunctionType.cs" />
     <Compile Include="Types\FunctionTypes\Parameter.cs" />
-    <Compile Include="Functions\Function.cs" />
     <Compile Include="Expressions\ConstantExpression.cs" />
     <Compile Include="Extensions.cs" />
+    <Compile Include="Types\ArrayType.cs" />
+    <Compile Include="CompilerRuntime\Function.cs" />
+    <Compile Include="CompilerRuntime\CArray.cs" />
+    <Compile Include="Expressions\ArrayExpression.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AbstractSyntaxTree\" />
@@ -84,7 +87,6 @@
     <Folder Include="Types\InternalTypes\" />
     <Folder Include="Expressions\" />
     <Folder Include="CompilerRuntime\" />
-    <Folder Include="Functions\" />
     <Folder Include="Types\FunctionTypes\" />
   </ItemGroup>
   <ItemGroup>

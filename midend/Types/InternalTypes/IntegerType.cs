@@ -74,8 +74,8 @@ namespace midend
 
 	public enum IntegerOverflowBehaviour
 	{
-		Failing,
-		Clamping,
-		Wrapping,
+		Failing = 0,
+		Clamping = 1,
+		Wrapping = 2,
 	}
 }
