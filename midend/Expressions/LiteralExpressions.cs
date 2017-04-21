@@ -21,7 +21,9 @@ namespace midend
 
 		public object Value => this.value;
 
-		public override CType Type => CTypes.Type;
+		public override CType Type => this.type;
+		
+		public override string ToString() => this.Value?.ToString() ?? "null";
 	}
 
 	/// <summary>
@@ -56,6 +58,8 @@ namespace midend
 		public StringExpression(string value) : base(CTypes.String, value)
 		{
 		}
+		
+		public override string ToString() => $"\"{this.Value}\"";
 	}
 	
 	/// <summary>

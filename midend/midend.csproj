@@ -61,13 +61,21 @@
     <Compile Include="Expressions\LiteralExpressions.cs" />
     <Compile Include="CompilerRuntime\CValue.cs" />
     <Compile Include="CompilerRuntime\EvaluationContext.cs" />
-    <Compile Include="CompilerRuntime\ICompilerOperators.cs" />
     <Compile Include="Types\InternalTypes\BooleanType.cs" />
     <Compile Include="SyntaxTree\Scope.cs" />
     <Compile Include="Types\InternalTypes\ModuleType.cs" />
     <Compile Include="CompilerConfiguration.cs" />
     <Compile Include="Expressions\SymbolReferenceExpression.cs" />
     <Compile Include="SyntaxTree\IReadOnlyScope.cs" />
+    <Compile Include="AbstractSyntaxTree\SymbolDefinition.cs" />
+    <Compile Include="Expressions\Argument.cs" />
+    <Compile Include="Expressions\FunctionCallExpression.cs" />
+    <Compile Include="Types\FunctionTypes\BinaryOperatorType.cs" />
+    <Compile Include="Types\FunctionTypes\FunctionType.cs" />
+    <Compile Include="Types\FunctionTypes\Parameter.cs" />
+    <Compile Include="Functions\Function.cs" />
+    <Compile Include="Expressions\ConstantExpression.cs" />
+    <Compile Include="Extensions.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AbstractSyntaxTree\" />
@@ -76,6 +84,8 @@
     <Folder Include="Types\InternalTypes\" />
     <Folder Include="Expressions\" />
     <Folder Include="CompilerRuntime\" />
+    <Folder Include="Functions\" />
+    <Folder Include="Types\FunctionTypes\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -50,6 +50,18 @@ namespace midend
 			this.behaviour.ToString().ToLower());
 		
 		public override bool IsAllowedValue(object value) => value is BigInteger;
+		
+		public override bool CanBeAssignedTo(CType type)
+		{
+			var itype = type as IntegerType;
+			if(itype == null)
+				return false;
+			if(itype.Maximum < this.Maximum)
+				return false;
+			if(itype.Minimum > this.Minimum)
+				return false;
+			return true;
+		}
 
 		public BigInteger Minimum => this.minimum;
 

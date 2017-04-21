@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using midend.AbstractSyntaxTree;
+
 namespace midend
 {
 	public class Scope : IReadOnlyScope, IEnumerable<Signature>
@@ -39,6 +41,40 @@ namespace midend
 				InitialValue = Expression.Constant(type),
 			});
 		}
+		
+		public void AddSymbol(string name, Function value)
+		{
+			this.AddSymbol(new Symbol(new Signature(name, value.Type))
+			{
+				IsConst = true,
+				IsExported = true,
+				InitialValue = Expression.Constant(value),
+			});
+		}
+		
+		public void AddSymbol(Operator op, Function value)
+		{
+			this.AddSymbol(new Symbol(new Signature(op, value.Type))
+			{
+				IsConst = true,
+				IsExported = true,
+				InitialValue = Expression.Constant(value),
+			});
+		}
+
+		/// <summary>
+		/// Gets all signatures with a given name.
+		/// </summary>
+		/// <returns>The all.</returns>
+		/// <param name="symbol">Symbol.</param>
+		public Signature[] GetAll(string symbol) => this.Where(sig => (sig.Name == symbol)).ToArray();
+
+		/// <summary>
+		/// Gets all fitting signatures.
+		/// </summary>
+		/// <returns>The all.</returns>
+		/// <param name="sig">Sig.</param>
+		public Signature[] GetAll(Operator op) => this.Where(sig => sig.IsOperatorSignature && sig.Operator == op).ToArray();
 
 		/// <summary>
 		/// Gets a symbol from this scope.
@@ -57,6 +93,10 @@ namespace midend
 				return null;
 			}
 		}
+
+		public Symbol this[string name, CType type] => this[new Signature(name, type)];
+
+		public Symbol this[Operator op, CType type] => this[new Signature(op, type)];
 
 		/// <summary>
 		/// Gets an enumeration of all locally defined symbols.
@@ -92,5 +132,6 @@ namespace midend
 
 			IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 		}
+
 	}
 }

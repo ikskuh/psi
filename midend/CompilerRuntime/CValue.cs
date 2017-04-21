@@ -22,12 +22,5 @@ namespace midend
 		public CType Type => this.type;
 		
 		public object Value => this.value;
-		
-		public static CValue Add(CValue lhs, CValue rhs)
-		{
-			if(lhs.Type != rhs.Type)
-				throw new ArgumentException("Type mismatch!");
-			return lhs.Type.CompileTimeOperators.Addition(lhs, rhs);
-		}
 	}
 }

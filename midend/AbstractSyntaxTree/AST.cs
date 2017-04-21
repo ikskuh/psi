@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Xml.Serialization;
+using System.Collections.Generic;
+using System.Linq;
+using System.Numerics;
 namespace midend
 {
 	using midend.AbstractSyntaxTree;
@@ -56,9 +59,12 @@ namespace midend
 					return;
 				foreach (var mod in this.Modules)
 				{
+					// Skip all contents with empty body.
+					if (mod.Contents == null)
+						continue;
 					var modscope = targetScope;
 					midend.Module module = null;
-					for (int i = 0; i < mod.Name.Length; i++)
+					for (int i = 0; i < mod.Name.Count; i++)
 					{
 						var sym = modscope[new Signature(mod.Name[i], CTypes.Module)];
 						if (sym != null)
@@ -69,7 +75,7 @@ namespace midend
 						}
 						else
 						{
-							module = new midend.Module();
+							module = new midend.Module(modscope);
 							modscope.AddSymbol(mod.Name[i], module);
 							modscope = module;
 						}
@@ -78,31 +84,41 @@ namespace midend
 				}
 			}
 
-			public void GatherSymbols(Scope targetScope)
+			/// <summary>
+			/// This method gathers all symbols defined in this program including all submodules.
+			/// </summary>
+			/// <returns>The symbols.</returns>
+			/// <param name="targetScope">Target scope.</param>
+			/// <remarks>All referenced modules must already exist in <paramref name="targetScope"/>.</remarks>
+			public IEnumerable<SymbolDefinition> GatherSymbols(Scope targetScope)
 			{
 				if (this.Variables != null)
 				{
-					throw new NotImplementedException("Variable gathering is not supported yet.");
 					foreach (var var in this.Variables)
 					{
-						if (var.Value != null)
-							throw new NotImplementedException("Initial values are not supported yet.");
-						if (var.Type == null)
-							throw new NotImplementedException("Variables with type deduction are not supported yet.");
-
-
+						yield return new SymbolDefinition(targetScope, var);
 					}
 				}
 				if (this.Modules != null)
 				{
-
+					foreach (var mod in this.Modules)
+					{
+						var innerScope = mod.Name.Path.Aggregate(
+							targetScope,
+							(current, name) =>
+							{
+								var sym = current[new Signature(name, CTypes.Module)];
+								return (midend.Scope)sym.InitialValue.Evaluate(null).Value;
+							});
+						foreach (var def in mod.Contents.GatherSymbols(innerScope))
+							yield return def;
+					}
 				}
 				if (this.Operators != null)
 				{
 					throw new NotImplementedException("Operators are not supported yet.");
 				}
 			}
-
 		}
 
 		public sealed class Module
@@ -190,7 +206,10 @@ namespace midend
 		[XmlInclude(typeof(TypeRecord))]
 		public abstract class AbstractType
 		{
-
+			public virtual CType TryResolve(Scope targetScope)
+			{
+				throw new NotImplementedException($"{this.GetType().Name} is missing its type resolver!");
+			}
 		}
 
 		public sealed class TypeReference : AbstractType
@@ -200,6 +219,31 @@ namespace midend
 
 			[XmlArray("args"), XmlArrayItem("expression")]
 			public AbstractExpression[] Arguments { get; set; }
+
+			public override CType TryResolve(Scope targetScope)
+			{
+				if (this.Arguments != null)
+					throw new NotSupportedException("Generics are not supported yet!");
+
+				var scope = targetScope;
+				for (int i = 0; i < (this.Name.Count - 1); i++)
+				{
+					var sym = scope[this.Name[i], CTypes.Module];
+					if (sym == null)
+						return null;
+					var mod = (Scope)sym.InitialValue.Evaluate(null).Value;
+					if (mod == null)
+						return null;
+					scope = mod;
+				}
+
+				var type = scope[this.Name.LocalName, CTypes.Type];
+				if (type == null)
+					return null;
+				if (type.HasStaticValue == false)
+					return null;
+				return (CType)type.InitialValue.Evaluate(null).Value;
+			}
 		}
 
 		public sealed class TypeFunction : AbstractType
@@ -242,7 +286,10 @@ namespace midend
 		[XmlInclude(typeof(ExpressionNew))]
 		public abstract class AbstractExpression
 		{
-
+			public virtual Expression TryResolve(Scope targetScope)
+			{
+				throw new NotImplementedException($"Expression translation not implemented for {this.GetType().Name}!");
+			}
 		}
 
 		public sealed class ExpressionArray : AbstractExpression
@@ -255,12 +302,17 @@ namespace midend
 		{
 			[XmlElement("value")]
 			public string Value { get; set; }
+
+			// TODO: Implement real values as well
+			public override Expression TryResolve(Scope targetScope) => Expression.Constant(BigInteger.Parse(this.Value));
 		}
 
 		public sealed class ExpressionString : AbstractExpression
 		{
 			[XmlElement("value")]
 			public string Value { get; set; }
+
+			public override Expression TryResolve(Scope targetScope) => Expression.Constant(this.Value);
 		}
 
 		public sealed class ExpressionType : AbstractExpression
@@ -273,6 +325,19 @@ namespace midend
 		{
 			[XmlElement("name")]
 			public string Symbol { get; set; }
+
+			public override Expression TryResolve(Scope targetScope)
+			{
+				var symbols = targetScope.GetAll(this.Symbol);
+				if (symbols.Length == 0)
+					return null; // Empty
+				if (symbols.Length != 1)
+				{
+					// TODO: Implement polymorphic variables!
+					throw new NotImplementedException("There is something missing....");
+				}
+				return new SymbolReferenceExpression(targetScope[symbols[0]]);
+			}
 		}
 
 		public sealed class ExpressionBinaryOperator : AbstractExpression
@@ -285,6 +350,32 @@ namespace midend
 
 			[XmlElement("operator")]
 			public Operator Operator { get; set; }
+
+			public override Expression TryResolve(Scope targetScope)
+			{
+				var lhs = this.LeftHandSide.TryResolve(targetScope);
+				var rhs = this.RightHandSide.TryResolve(targetScope);
+
+				if (lhs == null || rhs == null)
+					return null;
+
+				var opsyms = targetScope
+					.GetAll(this.Operator)
+					.Select(sig => targetScope[sig])
+					.Where(sym => sym.Type is BinaryOperatorType)
+					.ToArray();
+				if(opsyms == null || opsyms.Length == 0)
+					return null;
+				
+				// TODO: Implement selection of correct operator!
+				if(opsyms.Length > 1)
+					throw new InvalidOperationException("Multiple operators defined!");
+				
+				var opfunc = (Function)opsyms[0].InitialValue.Evaluate(null).Value;
+				if (opfunc == null)
+					return null;
+				return new FunctionCallExpression(opfunc, lhs, rhs);
+			}
 		}
 
 		public sealed class ExpressionUnaryOperator : AbstractExpression

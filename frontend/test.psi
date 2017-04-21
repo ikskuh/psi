@@ -1,24 +1,8 @@
+const a = 10;
+const b = 20;
+const c = 30;
 
-
-module foo.bar.baz
-{
-	
-}
-
-// Start with modules:
-module foo
-{
-	module bar
-	{
-		
-	}
-}
-
-module foo.bar
-{
-	module baz.bam { }
-}
-
+const d = a + b * c;
 
 #assert -10;
 #assert "Hallo!";

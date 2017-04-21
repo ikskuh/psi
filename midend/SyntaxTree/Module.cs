@@ -4,7 +4,7 @@ namespace midend
 {
 	public sealed class Module : Scope
 	{
-		public Module() : base(null)
+		public Module(Scope parent = null) : base(parent)
 		{
 		
 		}

@@ -4,6 +4,7 @@ using System.Text.RegularExpressions;
 namespace midend
 {
 	using System;
+	using System.Collections;
 	using System.Xml;
 	using System.Xml.Schema;
 	using System.Xml.Serialization;
@@ -17,7 +18,7 @@ namespace midend
 		public string[] path;
 
 		[Obsolete("Only for serialization!", true)]
-		public SymbolPath() { }
+		public SymbolPath() { this.path = new string[0]; }
 
 		public SymbolPath(params string[] path)
 		{
@@ -44,8 +45,6 @@ namespace midend
 
 		public IReadOnlyList<string> Path => this.path;
 
-		public int Length => this.path.Length;
-
 		public string this[int index] => this.path[index];
 
 		/// <summary>
@@ -54,7 +53,21 @@ namespace midend
 		/// <value>The name of the local.</value>
 		public string LocalName => this.path[this.path.Length - 1];
 
+		public int Count => this.path.Length;
+
 		public override string ToString() => string.Join(".", this.path);
 
+		// public IEnumerator<string> GetEnumerator() => ((IReadOnlyList<string>)path).GetEnumerator();
+
+		// IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
+
+/*
+		[Obsolete("This is only meant for deserialization!", true)]
+		public void Add(string value)
+		{
+			Array.Resize(ref this.path, this.path.Length + 1);
+			this.path[this.path.Length - 1] = value;
+		}
+		*/
 	}
 }

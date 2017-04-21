@@ -18,9 +18,13 @@ namespace midend
 			return (value != null);
 		}
 
-
-		public virtual ICompilerOperators CompileTimeOperators { get; } = null;
-
+		public bool CanBeAssignedFrom(CType type) => type.CanBeAssignedTo(this);
+		
+		public virtual bool CanBeAssignedTo(CType type)
+		{
+			// By default, allow no coalescing
+			return this.Equals(type);
+		}
 	}
 
 	public static class CTypes

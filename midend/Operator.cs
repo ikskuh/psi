@@ -1,4 +1,4 @@
-﻿namespace midend.AbstractSyntaxTree
+﻿namespace midend
 {
 	using System.Xml.Serialization;
 
@@ -11,6 +11,8 @@
 
 	public enum Operator
 	{
+		Invalid = 0,
+	
 		// TODO: Add all operators!
 		[XmlEnum("+")] Add,
 		[XmlEnum("-")] Sub,

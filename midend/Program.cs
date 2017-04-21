@@ -5,6 +5,7 @@ using System.IO;
 using System.Text;
 using System.Numerics;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace midend
 {
@@ -34,24 +35,65 @@ namespace midend
 			// Step #1: Create all declared modules in the unit scope.
 			ast.BuildModuleStructure(compileUnitScope);
 
+			// Step #2: Gather all declared symbols for all modules,
+			//          without actually creating them
+			var declarations = ast.GatherSymbols(compileUnitScope).ToList();
 
-			ast.GatherSymbols(compileUnitScope);
+			// Step #3: Resolve the types of all declarations, try to build all definitions
+			while (declarations.Count > 0)
+			{
+				var declPrecount = declarations.Count;
 
+				for (int i = 0; i < declarations.Count; i++)
+				{
+					var decl = declarations[i];
+					if (decl.InitialValue != null && decl.Value == null)
+					{
+						decl.TryCreateValue();
+					}
+					if (decl.CanCreateSymbol == false)
+					{
+						decl.TryResolveType();
+						if (decl.CanCreateSymbol == false)
+							continue;
+					}
+					var sym = decl.CreateSymbol();
+					if (decl.InitialValue != null)
+					{
+						if (decl.Value == null)
+							throw new InvalidOperationException("This should not happen: Value was not created already!");
+						sym.InitialValue = decl.Value.Simplify();
+					}
 
+					declarations.RemoveAt(i);
+					i -= 1; // Adjust offset
+				}
 
+				if (declarations.Count == declPrecount)
+					throw new InvalidOperationException("Cyclic dependency detected, can't resolve!");
+			}
 
-			PrintScope(compileUnitScope, compileUnitScope.Locals);
+			Console.WriteLine("Complete module:");
+			PrintScope(compileUnitScope, compileUnitScope.Locals, "\t");
 		}
 
 		private static void PrintScope(Scope scope, IEnumerable<Signature> elements, string prefix = "")
 		{
 			foreach (var sig in elements)
 			{
-				Console.WriteLine("{0}{1}", prefix, sig);
+				var sym = scope[sig];
+				Console.Write("{0}{2}{1}", prefix, sig, sym.HasStaticValue ? "static " : "");
+				if (sym.InitialValue != null)
+				{
+					Console.Write(" = {0}", sym.InitialValue);
+				}
+				Console.WriteLine();
 				if (sig.Type == ModuleType.Instance)
 				{
+					Console.WriteLine("{0}{{", new string(prefix.TakeWhile(char.IsWhiteSpace).ToArray()));
 					var mod = (Scope)scope[sig].InitialValue.Evaluate(null).Value;
-					PrintScope(mod, mod.Locals, prefix + sig.Name + ".");
+					PrintScope(mod, mod.Locals, "\t" + prefix);
+					Console.WriteLine("{0}}}", new string(prefix.TakeWhile(char.IsWhiteSpace).ToArray()));
 				}
 			}
 		}
@@ -78,6 +120,30 @@ namespace midend
 			foreach (var type in types)
 			{
 				globalScope.AddSymbol(type.Key, type.Value);
+			}
+
+			{ // i32 operators
+				var optype = new BinaryOperatorType(IntegerType.Int32, IntegerType.Int32);
+				globalScope.AddSymbol(Operator.Add, new BuiltinFunction(optype, (arr) =>
+				{
+					return new CValue(IntegerType.Int32, (BigInteger)arr[0].Value + (BigInteger)arr[1].Value);
+				}));
+				globalScope.AddSymbol(Operator.Sub, new BuiltinFunction(optype, (arr) =>
+				{
+					return new CValue(IntegerType.Int32, (BigInteger)arr[0].Value - (BigInteger)arr[1].Value);
+				}));
+				globalScope.AddSymbol(Operator.Times, new BuiltinFunction(optype, (arr) =>
+				{
+					return new CValue(IntegerType.Int32, (BigInteger)arr[0].Value * (BigInteger)arr[1].Value);
+				}));
+				globalScope.AddSymbol(Operator.Divide, new BuiltinFunction(optype, (arr) =>
+				{
+					return new CValue(IntegerType.Int32, (BigInteger)arr[0].Value / (BigInteger)arr[1].Value);
+				}));
+				globalScope.AddSymbol(Operator.Modulo, new BuiltinFunction(optype, (arr) =>
+				{
+					return new CValue(IntegerType.Int32, (BigInteger)arr[0].Value % (BigInteger)arr[1].Value);
+				}));
 			}
 
 			{

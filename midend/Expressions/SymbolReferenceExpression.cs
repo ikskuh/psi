@@ -14,15 +14,13 @@ namespace midend
 			this.symbol = sym;
 		}
 		
-		// TODO: Implement this
-		// public override bool IsConstant => this.symbol.IsConst;
+		public override bool IsConstant => this.symbol.IsConst && this.symbol.HasStaticValue;
 
 		public override CType Type => this.symbol.Type;
 
 		public override CValue Evaluate(EvaluationContext context)
 		{
-			// TODO: Implement compile time symbol evaluation
-			throw new NotImplementedException();
+			return this.symbol.InitialValue.Evaluate(context);
 		}
 	}
 }
