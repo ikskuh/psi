@@ -23,6 +23,10 @@ namespace midend
 		public SymbolPath(params string[] path)
 		{
 			this.path = path.ToArray();
+			for (int i = 0; i < this.path.Length; i++)
+			{
+				Signature.ValidateIdentifier(this.path[i], "path[" + i + "]");
+			}
 		}
 
 		public bool Equals(SymbolPath other)
@@ -61,13 +65,13 @@ namespace midend
 
 		// IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-/*
-		[Obsolete("This is only meant for deserialization!", true)]
-		public void Add(string value)
-		{
-			Array.Resize(ref this.path, this.path.Length + 1);
-			this.path[this.path.Length - 1] = value;
-		}
-		*/
+		/*
+				[Obsolete("This is only meant for deserialization!", true)]
+				public void Add(string value)
+				{
+					Array.Resize(ref this.path, this.path.Length + 1);
+					this.path[this.path.Length - 1] = value;
+				}
+				*/
 	}
 }

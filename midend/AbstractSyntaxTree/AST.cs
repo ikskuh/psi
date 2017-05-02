@@ -296,11 +296,11 @@ namespace midend
 		{
 			[XmlArray("values"), XmlArrayItem("expression")]
 			public AbstractExpression[] Items { get; set; }
-			
+
 			public override Expression TryResolve(Scope targetScope)
-			{	
+			{
 				var items = this.Items.Select(exp => exp.TryResolve(targetScope)?.Simplify()).ToArray();
-				if(items.Any(i => (i == null)))
+				if (items.Any(i => (i == null)))
 					return null;
 				return new ArrayExpression(items);
 			}
@@ -372,13 +372,13 @@ namespace midend
 					.Select(sig => targetScope[sig])
 					.Where(sym => sym.Type is BinaryOperatorType)
 					.ToArray();
-				if(opsyms == null || opsyms.Length == 0)
+				if (opsyms == null || opsyms.Length == 0)
 					return null;
-				
+
 				// TODO: Implement selection of correct operator!
-				if(opsyms.Length > 1)
+				if (opsyms.Length > 1)
 					throw new InvalidOperationException("Multiple operators defined!");
-				
+
 				var opfunc = (Function)opsyms[0].InitialValue.Evaluate(null).Value;
 				if (opfunc == null)
 					return null;
@@ -411,6 +411,43 @@ namespace midend
 
 			[XmlElement("index")]
 			public AbstractIndex Index { get; set; }
+
+			public override Expression TryResolve(Scope targetScope)
+			{
+				var value = Value?.TryResolve(targetScope);
+				if (value == null)
+				{
+					return null;
+				}
+
+				if (Index is IndexField)
+				{
+					var index = (IndexField)Index;
+				}
+				else if (Index is IndexMeta)
+				{
+					var index = (IndexMeta)Index;
+				}
+				else if (Index is IndexCall)
+				{
+					var index = (IndexCall)Index;
+				}
+				else if (Index is IndexArray)
+				{
+					var index = (IndexArray)Index;
+					var indexes = new Expression[index.Indices.Length];
+					for (int i = 0; i < indexes.Length; i++)
+					{
+						indexes[i] = index.Indices[i].TryResolve(targetScope);
+						if (indexes[i] == null)
+						{
+							return null;
+						}
+					}
+					return new ArrayIndexExpression(value, indexes);
+				}
+				throw new NotSupportedException();
+			}
 		}
 
 		public sealed class ExpressionNew : AbstractExpression

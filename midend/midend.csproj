@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -51,7 +50,6 @@
     <Compile Include="SyntaxTree\Symbol.cs" />
     <Compile Include="SyntaxTree\Assertion.cs" />
     <Compile Include="Signature.cs" />
-    <Compile Include="Types\CType.cs" />
     <Compile Include="Types\InternalTypes\StringType.cs" />
     <Compile Include="Types\InternalTypes\IntegerType.cs" />
     <Compile Include="Types\NamedType.cs" />
@@ -79,6 +77,11 @@
     <Compile Include="CompilerRuntime\Function.cs" />
     <Compile Include="CompilerRuntime\CArray.cs" />
     <Compile Include="Expressions\ArrayExpression.cs" />
+    <Compile Include="Expressions\ArrayIndexExpression.cs" />
+    <Compile Include="CompilerRuntime\Indexer.cs" />
+    <Compile Include="CompilerRuntime\Field.cs" />
+    <Compile Include="Types\CType.cs" />
+    <Compile Include="CompilerRuntime\ConstantField.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AbstractSyntaxTree\" />

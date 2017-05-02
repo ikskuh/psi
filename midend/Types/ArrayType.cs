@@ -13,7 +13,9 @@ namespace midend
 		
 		public override bool IsAllowedValue(object value)
 		{
-			return base.IsAllowedValue(value);
+			var array = value as CArray;
+			if(array == null) return false;
+			return (array.Type == this);
 		}
 		
 		public CType ElementType => this.elementType;

@@ -25,6 +25,27 @@ namespace midend
 			// By default, allow no coalescing
 			return this.Equals(type);
 		}
+		
+		public Indexer GetIndexer(params CType[] types)
+		{
+			return null;
+		}
+		
+		public virtual Field GetField(string name)
+		{
+			Signature.ValidateIdentifier(name);
+			return null;
+		}
+		
+		public virtual Field GetMetaField(string name)
+		{
+			Signature.ValidateIdentifier(name);
+			switch(name)
+			{
+				case "type": return new ConstantField(CTypes.Type, this);
+			}
+			return null;
+		}
 	}
 
 	public static class CTypes
