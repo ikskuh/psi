@@ -19,6 +19,6 @@ namespace midend
 
 		public override CType Type => this.value.Type;
 		
-		public override string ToString() => $"[{this.Value}]";
+		public override string ToString() => $"`{this.Value}`";
 	}
 }

@@ -9,8 +9,8 @@
 # const b1 = d < 600;
 
 const arr = [ 1, 2, 3 ];
-
-const i = arr[1];
+const i = 2;
+const j = arr[i];
 
 #assert -10;
 #assert "Hallo!";

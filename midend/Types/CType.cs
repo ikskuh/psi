@@ -26,7 +26,7 @@ namespace midend
 			return this.Equals(type);
 		}
 		
-		public Indexer GetIndexer(params CType[] types)
+		public virtual Indexer GetIndexer(params CType[] types)
 		{
 			return null;
 		}
@@ -73,13 +73,18 @@ namespace midend
 		public static readonly CType Module = ModuleType.Instance;
 
 		/// <summary>
-		/// The type that is used for referencing system types.
+		/// A type that can only be true or false.
 		/// </summary>
 		public static readonly CType Boolean = BooleanType.Instance;
 
 		/// <summary>
-		/// The type that is used for referencing system types.
+		/// A type that stores a single text character.
 		/// </summary>
 		public static readonly CType Char = CharacterType.Instance;
+		
+		/// <summary>
+		/// A type that can contain integer numbers.
+		/// </summary>
+		public static readonly CType Integer = IntegerType.Instance;
 	}
 }

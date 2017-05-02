@@ -21,19 +21,6 @@ namespace midend
 			// Trivial case
 			if(includedTypes.Length == 1)
 				return includedTypes[0];
-			
-			if(includedTypes.All(type => type is IntegerType))
-			{
-				var types = includedTypes.Cast<IntegerType>();
-				var min = types.Min(type => type.Minimum);
-				var max = types.Max(type => type.Maximum);
-				
-				var behav = types.Select(type => type.Behaviour).OrderByDescending(b => b).Distinct().ToArray();
-				
-				// Take the most "restrictive" behavour
-				return new IntegerType(min, max, behav[0]);
-			}
-			
 			throw new NotSupportedException("Array type not supported yet.");
 		}
 

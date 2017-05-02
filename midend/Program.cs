@@ -112,10 +112,7 @@ namespace midend
 				{ "string", CTypes.String },
 				{ "bool", CTypes.Boolean },
 				{ "char", CTypes.Char },
-				
-				// Create new integer types that have system size
-				{ "int", new IntegerType(-(new BigInteger(1) << (cfg.IntegerWidth - 1)), (new BigInteger(1) << (cfg.IntegerWidth - 1))- 1, IntegerOverflowBehaviour.Failing) },
-				{ "uint", new IntegerType(0, (new BigInteger(1) << cfg.IntegerWidth) - 1, IntegerOverflowBehaviour.Failing) }
+				{ "int", CTypes.Integer },
 			};
 			foreach (var type in types)
 			{
@@ -123,28 +120,28 @@ namespace midend
 			}
 
 			{ // i32 operators
-				var optype = new BinaryOperatorType(IntegerType.Int32, IntegerType.Int32);
-				var opcomp = new BinaryOperatorType(IntegerType.Int32, CTypes.Boolean);
+				var optype = new BinaryOperatorType(CTypes.Integer, CTypes.Integer);
+				var opcomp = new BinaryOperatorType(CTypes.Integer, CTypes.Boolean);
 				
 				globalScope.AddSymbol(Operator.Add, new BuiltinFunction(optype, (arr) =>
 				{
-					return new CValue(IntegerType.Int32, (BigInteger)arr[0].Value + (BigInteger)arr[1].Value);
+					return new CValue(CTypes.Integer, (BigInteger)arr[0].Value + (BigInteger)arr[1].Value);
 				}));
 				globalScope.AddSymbol(Operator.Sub, new BuiltinFunction(optype, (arr) =>
 				{
-					return new CValue(IntegerType.Int32, (BigInteger)arr[0].Value - (BigInteger)arr[1].Value);
+					return new CValue(CTypes.Integer, (BigInteger)arr[0].Value - (BigInteger)arr[1].Value);
 				}));
 				globalScope.AddSymbol(Operator.Times, new BuiltinFunction(optype, (arr) =>
 				{
-					return new CValue(IntegerType.Int32, (BigInteger)arr[0].Value * (BigInteger)arr[1].Value);
+					return new CValue(CTypes.Integer, (BigInteger)arr[0].Value * (BigInteger)arr[1].Value);
 				}));
 				globalScope.AddSymbol(Operator.Divide, new BuiltinFunction(optype, (arr) =>
 				{
-					return new CValue(IntegerType.Int32, (BigInteger)arr[0].Value / (BigInteger)arr[1].Value);
+					return new CValue(CTypes.Integer, (BigInteger)arr[0].Value / (BigInteger)arr[1].Value);
 				}));
 				globalScope.AddSymbol(Operator.Modulo, new BuiltinFunction(optype, (arr) =>
 				{
-					return new CValue(IntegerType.Int32, (BigInteger)arr[0].Value % (BigInteger)arr[1].Value);
+					return new CValue(CTypes.Integer, (BigInteger)arr[0].Value % (BigInteger)arr[1].Value);
 				}));
 				
 				globalScope.AddSymbol(Operator.Less, new BuiltinFunction(opcomp, (arr) =>
@@ -162,26 +159,6 @@ namespace midend
 
 				std.AddSymbol("type", CTypes.Type);
 				std.AddSymbol("module", CTypes.Module);
-
-				{ // std.integers
-					var stdint = new Module();
-					var inttypes = new Dictionary<string, CType>()
-					{
-						{ "u8", IntegerType.UInt8 },
-						{ "u16", IntegerType.UInt16 },
-						{ "u32", IntegerType.UInt32 },
-						{ "u64", IntegerType.UInt64 },
-						{ "i8", IntegerType.Int8 },
-						{ "i16", IntegerType.Int16 },
-						{ "i32", IntegerType.Int32 },
-						{ "i64", IntegerType.Int64 },
-					};
-					foreach (var type in inttypes)
-					{
-						stdint.AddSymbol(type.Key, type.Value);
-					}
-					std.AddSymbol("integers", stdint);
-				}
 
 				{ // std.system
 					var stdsys = new Module();

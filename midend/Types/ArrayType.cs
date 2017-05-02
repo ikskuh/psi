@@ -18,6 +18,15 @@ namespace midend
 			return (array.Type == this);
 		}
 		
+		public override Indexer GetIndexer(params CType[] types)
+		{
+			if(types.Length == 1 && types[0] is IntegerType)
+			{
+				return new ArrayIndexer(this);
+			}
+			return base.GetIndexer(types);
+		}
+		
 		public CType ElementType => this.elementType;
 		
 		public override string ToString() => $"array<{ElementType}>";

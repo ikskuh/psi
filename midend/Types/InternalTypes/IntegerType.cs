@@ -4,72 +4,13 @@ namespace midend
 {
 	public sealed class IntegerType : CType
 	{
-		public static readonly IntegerType UInt8 = new IntegerType(byte.MinValue, byte.MaxValue, IntegerOverflowBehaviour.Wrapping);
-		public static readonly IntegerType UInt16 = new IntegerType(ushort.MinValue, ushort.MaxValue, IntegerOverflowBehaviour.Wrapping);
-		public static readonly IntegerType UInt32 = new IntegerType(uint.MinValue, uint.MaxValue, IntegerOverflowBehaviour.Wrapping);
-		public static readonly IntegerType UInt64 = new IntegerType(ulong.MinValue, ulong.MaxValue, IntegerOverflowBehaviour.Wrapping);
-		
-		public static readonly IntegerType Int8 = new IntegerType(sbyte.MinValue, sbyte.MaxValue, IntegerOverflowBehaviour.Wrapping);
-		public static readonly IntegerType Int16 = new IntegerType(short.MinValue, short.MaxValue, IntegerOverflowBehaviour.Wrapping);
-		public static readonly IntegerType Int32 = new IntegerType(int.MinValue, int.MaxValue, IntegerOverflowBehaviour.Wrapping);
-		public static readonly IntegerType Int64 = new IntegerType(long.MinValue, long.MaxValue, IntegerOverflowBehaviour.Wrapping);
+		public static readonly IntegerType Instance = new IntegerType();
 	
-		private readonly BigInteger minimum, maximum;
-		private readonly IntegerOverflowBehaviour behaviour;
+		private IntegerType() { }
 
-		public IntegerType(BigInteger min, BigInteger max, IntegerOverflowBehaviour behaviour)
-		{
-			if (min > max)
-				throw new ArgumentOutOfRangeException("min must be less than max.", (Exception)null);
-			this.minimum = min;
-			this.maximum = max;
-			this.behaviour = behaviour;
-		}
-
-		public override bool Equals(object obj)
-		{
-			if (object.ReferenceEquals(this, obj))
-				return true;
-			var itype = obj as IntegerType;
-			if (itype == null)
-				return false;
-			return (itype.minimum == this.minimum)
-				&& (itype.maximum == this.maximum)
-				&& (itype.behaviour == this.behaviour);
-		}
-
-		public override int GetHashCode() =>
-			this.minimum.GetHashCode() ^
-			this.maximum.GetHashCode() ^
-			this.behaviour.GetHashCode();
-
-		public override string ToString() => string.Format(
-			"int<{0},{1},{2}>",
-			this.minimum,
-			this.maximum,
-			this.behaviour.ToString().ToLower());
+		public override string ToString() => "int";
 		
 		public override bool IsAllowedValue(object value) => value is BigInteger;
-		
-		public override bool CanBeAssignedTo(CType type)
-		{
-			var itype = type as IntegerType;
-			if(itype == null)
-				return false;
-			if(itype.Maximum < this.Maximum)
-				return false;
-			if(itype.Minimum > this.Minimum)
-				return false;
-			return true;
-		}
-
-		public BigInteger Minimum => this.minimum;
-
-		public BigInteger Maximum => this.maximum;
-
-		public IntegerOverflowBehaviour Behaviour => this.behaviour;
-		
-		public bool IsSingularity => (this.minimum == this.maximum);
 	}
 
 	public enum IntegerOverflowBehaviour

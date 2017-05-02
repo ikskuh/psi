@@ -29,10 +29,20 @@ namespace midend
 		public Indexer Indexer => this.indexer;
 
 		public override CType Type => this.indexer.SubscriptType;
+		
+		public override bool IsConstant => this.Indexer.IsCompileTimeEvaluatable && this.Value.IsConstant && this.Indexes.All(i => i.IsConstant);
 
 		public override CValue Evaluate(EvaluationContext context)
 		{
-			throw new NotImplementedException();
+			return this.indexer.Evaluate(
+				context, 
+				this.Value.Evaluate(context), 
+				this.indexes.Select(i => i.Evaluate(context)).ToArray());
 		}
+		
+		public override string ToString() => string.Format(
+			"({0})[{1}]",
+			this.Value.ToString(),
+			string.Join(", ", this.Indexes));
 	}
 }

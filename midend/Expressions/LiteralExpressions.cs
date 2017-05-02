@@ -67,7 +67,7 @@ namespace midend
 	/// </summary>
 	public sealed class IntegerExpression : LiteralExpression<BigInteger>
 	{
-		public IntegerExpression(BigInteger value) : base(new IntegerType(value, value, IntegerOverflowBehaviour.Failing), value)
+		public IntegerExpression(BigInteger value) : base(CTypes.Integer, value)
 		{
 		}
 	}

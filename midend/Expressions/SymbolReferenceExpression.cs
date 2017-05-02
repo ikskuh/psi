@@ -22,5 +22,7 @@ namespace midend
 		{
 			return this.symbol.InitialValue.Evaluate(context);
 		}
+		
+		public override string ToString() => this.symbol.Name.Name;
 	}
 }
