@@ -119,6 +119,9 @@ namespace midend
 				globalScope.AddSymbol(type.Key, type.Value);
 			}
 
+			globalScope.AddSymbol("true", (CValue)true);
+			globalScope.AddSymbol("false", (CValue)false);
+
 			{ // i32 operators
 				var optype = new BinaryOperatorType(CTypes.Integer, CTypes.Integer);
 				var opcomp = new BinaryOperatorType(CTypes.Integer, CTypes.Boolean);
@@ -153,6 +156,25 @@ namespace midend
 					return new CValue(CTypes.Boolean, (BigInteger)arr[0].Value == (BigInteger)arr[1].Value);
 				}));
 			}
+			
+			{ // String operators
+				var optype = new BinaryOperatorType(CTypes.String, CTypes.String);
+				var opcomp = new BinaryOperatorType(CTypes.String, CTypes.Boolean);
+				
+				globalScope.AddSymbol(Operator.Concatenate, new BuiltinFunction(optype, (arr) =>
+				{
+					return (CValue)(arr[0].Get<string>() + arr[1].Get<string>());
+				}));
+				
+				globalScope.AddSymbol(Operator.Equals, new BuiltinFunction(opcomp, (arr) =>
+				{
+					return (CValue)(arr[0].Get<string>() == arr[1].Get<string>());
+				}));
+				globalScope.AddSymbol(Operator.Inequals, new BuiltinFunction(opcomp, (arr) =>
+				{
+					return (CValue)(arr[0].Get<string>() != arr[1].Get<string>());
+				}));
+			}
 
 			{
 				var std = new Module();
@@ -162,17 +184,8 @@ namespace midend
 
 				{ // std.system
 					var stdsys = new Module();
-
-					stdsys.AddSymbol(new Symbol("os", CTypes.String)
-					{
-						IsConst = true,
-						IsExported = true,
-						InitialValue = Expression.Constant(Environment.OSVersion.ToString())
-					});
-
-
-
-
+					stdsys.AddSymbol("os", (CValue)Environment.OSVersion.ToString());
+					stdsys.AddSymbol("platform", (CValue)Environment.OSVersion.Platform.ToString());
 					std.AddSymbol("system", stdsys);
 				}
 

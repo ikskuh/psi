@@ -35,6 +35,8 @@ namespace midend
 		
 		#region Constants
 		
+		public static Expression Constant(CType type, object value) => new ConstantExpression(new CValue(type, value));
+		
 		public static Expression Constant(CValue value) => new ConstantExpression(value);
 		
 		public static Expression Constant(Function value) => new LiteralExpression<Function>(value.Type, value);

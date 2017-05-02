@@ -82,6 +82,7 @@
     <Compile Include="CompilerRuntime\Field.cs" />
     <Compile Include="Types\CType.cs" />
     <Compile Include="CompilerRuntime\ConstantField.cs" />
+    <Compile Include="Expressions\FieldIndexExpression.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AbstractSyntaxTree\" />

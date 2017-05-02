@@ -366,7 +366,7 @@ namespace midend
 
 				if (lhs == null || rhs == null)
 					return null;
-
+				
 				var opsyms = targetScope
 					.GetAll(this.Operator)
 					.Select(sig => targetScope[sig])
@@ -374,12 +374,12 @@ namespace midend
 					.ToArray();
 				if (opsyms == null || opsyms.Length == 0)
 					return null;
+				
+				var @operator = opsyms.First(o => 
+					lhs.Type.CanBeAssignedTo(((BinaryOperatorType)o.Type).LeftHandSide)
+					&& rhs.Type.CanBeAssignedTo(((BinaryOperatorType)o.Type).RightHandSide));
 
-				// TODO: Implement selection of correct operator!
-				if (opsyms.Length > 1)
-					throw new InvalidOperationException("Multiple operators defined!");
-
-				var opfunc = (Function)opsyms[0].InitialValue.Evaluate(null).Value;
+				var opfunc = (Function)@operator.InitialValue.Evaluate(null).Value;
 				if (opfunc == null)
 					return null;
 				return new FunctionCallExpression(opfunc, lhs.Simplify(), rhs.Simplify());
@@ -423,14 +423,33 @@ namespace midend
 				if (Index is IndexField)
 				{
 					var index = (IndexField)Index;
+					if (value.Type is ModuleType)
+					{ // Special case: Module declarations need "dynamic" indexing at compile time
+						if(!value.IsConstant) throw new InvalidOperationException("This should not happen...");
+						var module = (midend.Module)value.Evaluate(null).Value;
+						var options = module.Locals.Where(l => l.Name == index.Field).ToArray();
+						if(options.Length != 1) throw new InvalidOperationException("Symbol has multiple definitions or is not declared!");
+						
+						return new SymbolReferenceExpression(module[options[0]]);
+					}
+					else
+					{
+						var field = value.Type.GetField(index.Field);
+						if (field == null) throw new InvalidOperationException($"Value field `.{index.Field}` does not exist!");
+						return new FieldIndexExpression(value, field);
+					}
 				}
 				else if (Index is IndexMeta)
 				{
 					var index = (IndexMeta)Index;
+					var field = value.Type.GetMetaField(index.Field);
+					if (field == null) throw new InvalidOperationException($"Meta field `'{index.Field}` does not exist!");
+					return new FieldIndexExpression(value, field);
 				}
 				else if (Index is IndexCall)
 				{
 					var index = (IndexCall)Index;
+					throw new NotSupportedException();
 				}
 				else if (Index is IndexArray)
 				{

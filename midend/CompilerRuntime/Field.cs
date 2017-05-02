@@ -5,5 +5,7 @@
 		public abstract CValue Evaluate(CValue value, EvaluationContext context);
 		
 		public abstract CType Type { get; }
+
+		public virtual bool IsCompileTimeEvaluatable => false;
 	}
 }

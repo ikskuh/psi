@@ -32,6 +32,16 @@ namespace midend
 			});
 		}
 
+		public void AddSymbol(string name, CValue value)
+		{
+			this.AddSymbol(new Symbol(name, value.Type)
+			{
+				IsConst = true,
+				IsExported = true,
+				InitialValue = Expression.Constant(value),
+			});
+		}
+		
 		public void AddSymbol(string name, CType type)
 		{
 			this.AddSymbol(new Symbol(name, CTypes.Type)
