@@ -24,6 +24,8 @@ namespace midend
 		
 		public T Get<T>() => (T)this.value;
 		
+		public Field GetField(string name) => this.Type.GetInstanceField(this, name);
+		
 		public CType Type => this.type;
 		
 		public object Value => this.value;

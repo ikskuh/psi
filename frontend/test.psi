@@ -1,11 +1,12 @@
-
-const info = std.system.os -- " is a " -- std.system.platform;
-
-const meta = std.system.platform == "Unix";
-
 #assert -10;
 #assert "Hallo!";
-#assert enum(a,b,c);
+type foo = record(a:int,b:int);
+
+const bar = foo.a;
+
+const baz1 = bar'type.name;
+const baz2 = foo.name;
+
 #assert record(a : int, b : string);
 #assert fn();
 #assert fn() -> int;

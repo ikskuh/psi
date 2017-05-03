@@ -38,7 +38,7 @@ namespace midend
 			// Step #2: Gather all declared symbols for all modules,
 			//          without actually creating them
 			var declarations = ast.GatherSymbols(compileUnitScope).ToList();
-
+			
 			// Step #3: Resolve the types of all declarations, try to build all definitions
 			while (declarations.Count > 0)
 			{

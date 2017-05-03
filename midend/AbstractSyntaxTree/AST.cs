@@ -262,6 +262,14 @@ namespace midend
 		{
 			[XmlArray("members"), XmlArrayItem("string")]
 			public string[] Members { get; set; }
+
+			public override CType TryResolve(Scope targetScope)
+			{
+				var members = new HashSet<string>(this.Members);
+				if (members.Count != this.Members.Length)
+					throw new IndexOutOfRangeException("Duplicate enum members!");
+				return new EnumType(members);
+			}
 		}
 
 		public sealed class TypeRecord : AbstractType
@@ -327,6 +335,14 @@ namespace midend
 		{
 			[XmlElement("reference")]
 			public AbstractType Type { get; set; }
+
+			public override Expression TryResolve(Scope targetScope)
+			{
+				var type = this.Type.TryResolve(targetScope);
+				if (type == null)
+					return null;
+				return Expression.Constant(type);
+			}
 		}
 
 		public sealed class ExpressionSymbol : AbstractExpression
@@ -366,7 +382,7 @@ namespace midend
 
 				if (lhs == null || rhs == null)
 					return null;
-				
+
 				var opsyms = targetScope
 					.GetAll(this.Operator)
 					.Select(sig => targetScope[sig])
@@ -374,8 +390,8 @@ namespace midend
 					.ToArray();
 				if (opsyms == null || opsyms.Length == 0)
 					return null;
-				
-				var @operator = opsyms.First(o => 
+
+				var @operator = opsyms.First(o =>
 					lhs.Type.CanBeAssignedTo(((BinaryOperatorType)o.Type).LeftHandSide)
 					&& rhs.Type.CanBeAssignedTo(((BinaryOperatorType)o.Type).RightHandSide));
 
@@ -425,18 +441,29 @@ namespace midend
 					var index = (IndexField)Index;
 					if (value.Type is ModuleType)
 					{ // Special case: Module declarations need "dynamic" indexing at compile time
-						if(!value.IsConstant) throw new InvalidOperationException("This should not happen...");
+						if (!value.IsConstant) throw new InvalidOperationException("This should not happen...");
 						var module = (midend.Module)value.Evaluate(null).Value;
 						var options = module.Locals.Where(l => l.Name == index.Field).ToArray();
-						if(options.Length != 1) throw new InvalidOperationException("Symbol has multiple definitions or is not declared!");
-						
+						if (options.Length != 1) throw new InvalidOperationException("Symbol has multiple definitions or is not declared!");
+
 						return new SymbolReferenceExpression(module[options[0]]);
 					}
 					else
 					{
 						var field = value.Type.GetField(index.Field);
-						if (field == null) throw new InvalidOperationException($"Value field `.{index.Field}` does not exist!");
-						return new FieldIndexExpression(value, field);
+						if (field == null)
+						{
+							if (value.IsConstant)
+							{
+								var contents = value.Evaluate(null);
+								field = contents.GetField(index.Field);
+							}
+						}
+						if (field == null)
+						{
+							throw new InvalidOperationException($"Value field `.{index.Field}` does not exist!");
+						}
+						return new FieldIndexExpression(value.Simplify(), field);
 					}
 				}
 				else if (Index is IndexMeta)
@@ -444,7 +471,7 @@ namespace midend
 					var index = (IndexMeta)Index;
 					var field = value.Type.GetMetaField(index.Field);
 					if (field == null) throw new InvalidOperationException($"Meta field `'{index.Field}` does not exist!");
-					return new FieldIndexExpression(value, field);
+					return new FieldIndexExpression(value.Simplify(), field);
 				}
 				else if (Index is IndexCall)
 				{
@@ -457,7 +484,7 @@ namespace midend
 					var indexes = new Expression[index.Indices.Length];
 					for (int i = 0; i < indexes.Length; i++)
 					{
-						indexes[i] = index.Indices[i].TryResolve(targetScope);
+						indexes[i] = index.Indices[i].TryResolve(targetScope)?.Simplify();
 						if (indexes[i] == null)
 						{
 							return null;

@@ -83,6 +83,8 @@
     <Compile Include="Types\CType.cs" />
     <Compile Include="CompilerRuntime\ConstantField.cs" />
     <Compile Include="Expressions\FieldIndexExpression.cs" />
+    <Compile Include="Types\EnumType.cs" />
+    <Compile Include="CompilerRuntime\Fields\TypeNameField.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AbstractSyntaxTree\" />
@@ -92,6 +94,7 @@
     <Folder Include="Expressions\" />
     <Folder Include="CompilerRuntime\" />
     <Folder Include="Types\FunctionTypes\" />
+    <Folder Include="CompilerRuntime\Fields\" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
