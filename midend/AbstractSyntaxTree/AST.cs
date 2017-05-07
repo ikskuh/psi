@@ -53,35 +53,23 @@ namespace midend
 			/// Creates all declared modules of this program in targetScope.
 			/// </summary>
 			/// <param name="targetScope">Target scope.</param>
-			public void BuildModuleStructure(Scope targetScope)
+			public midend.Module BuildModuleStructure(midend.Module containingModule, string name)
 			{
+				var module = containingModule.AddSubModule(name);
 				if (this.Modules == null)
-					return;
+					return module;
 				foreach (var mod in this.Modules)
 				{
-					// Skip all contents with empty body.
-					if (mod.Contents == null)
-						continue;
-					var modscope = targetScope;
-					midend.Module module = null;
-					for (int i = 0; i < mod.Name.Count; i++)
+					if (mod.Contents == null) throw new InvalidDataException("'Empty' module found!");
+
+					var container = module;
+					for (int i = 0; i < (mod.Name.Count - 1); i++)
 					{
-						var sym = modscope[new Signature(mod.Name[i], CTypes.Module)];
-						if (sym != null)
-						{
-							// Can safely pass null here as CTypes.Module is a compiletime-only type.
-							module = (midend.Module)sym.InitialValue.Evaluate(null).Value;
-							modscope = module;
-						}
-						else
-						{
-							module = new midend.Module(modscope);
-							modscope.AddSymbol(mod.Name[i], module);
-							modscope = module;
-						}
+						container = container.GetSubModule(mod.Name[i], true);
 					}
-					mod.Contents.BuildModuleStructure(module);
+					BuildModuleStructure(container, name);
 				}
+				return module;
 			}
 
 			/// <summary>
@@ -90,26 +78,20 @@ namespace midend
 			/// <returns>The symbols.</returns>
 			/// <param name="targetScope">Target scope.</param>
 			/// <remarks>All referenced modules must already exist in <paramref name="targetScope"/>.</remarks>
-			public IEnumerable<SymbolDefinition> GatherSymbols(Scope targetScope)
+			public IEnumerable<SymbolDefinition> GatherSymbols(midend.Module targetModule)
 			{
 				if (this.Variables != null)
 				{
 					foreach (var var in this.Variables)
 					{
-						yield return new SymbolDefinition(targetScope, var);
+						yield return new SymbolDefinition(targetModule, var);
 					}
 				}
 				if (this.Modules != null)
 				{
 					foreach (var mod in this.Modules)
 					{
-						var innerScope = mod.Name.Path.Aggregate(
-							targetScope,
-							(current, name) =>
-							{
-								var sym = current[new Signature(name, CTypes.Module)];
-								return (midend.Scope)sym.InitialValue.Evaluate(null).Value;
-							});
+						var innerScope = mod.Name.Path.Aggregate(targetModule, (current, name) => current.GetSubModule(name));
 						foreach (var def in mod.Contents.GatherSymbols(innerScope))
 							yield return def;
 					}
@@ -117,6 +99,29 @@ namespace midend
 				if (this.Operators != null)
 				{
 					throw new NotImplementedException("Operators are not supported yet.");
+				}
+			}
+
+			public IEnumerable<midend.Assertion> CreateAllAssertions(midend.Module module)
+			{
+				if (this.Assertions != null)
+				{
+					foreach (var assert in this.Assertions)
+					{
+						var claim = assert.Claim.TryResolve(module.Scope);
+						yield return module.AddAssertion(claim.Simplify());
+					}
+				}
+				if (this.Modules != null)
+				{
+					foreach (var mod in this.Modules)
+					{
+						var innerScope = mod.Name.Path.Aggregate(module, (current, name) => current.GetSubModule(name));
+						foreach (var assert in mod.Contents.CreateAllAssertions(innerScope))
+						{
+							yield return assert;
+						}
+					}
 				}
 			}
 		}
@@ -482,10 +487,10 @@ namespace midend
 					{ // Special case: Module declarations need "dynamic" indexing at compile time
 						if (!value.IsConstant) throw new InvalidOperationException("This should not happen...");
 						var module = (midend.Module)value.Evaluate(null).Value;
-						var options = module.Locals.Where(l => l.Name == index.Field).ToArray();
+						var options = module.Scope.Locals.Where(l => l.Name == index.Field).ToArray();
 						if (options.Length != 1) throw new InvalidOperationException("Symbol has multiple definitions or is not declared!");
 
-						return new SymbolReferenceExpression(module[options[0]]);
+						return new SymbolReferenceExpression(module.Scope[options[0]]);
 					}
 					else
 					{

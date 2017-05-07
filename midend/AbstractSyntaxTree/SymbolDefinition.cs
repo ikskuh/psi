@@ -3,17 +3,15 @@ namespace midend
 {
 	public sealed class SymbolDefinition
 	{
-		private readonly Scope targetScope;
+		private readonly Module targetModule;
 		private readonly AbstractSyntaxTree.VariableDeclaration declaration;
 
-		public SymbolDefinition(Scope targetScope, AbstractSyntaxTree.VariableDeclaration variable)
+		public SymbolDefinition(Module targetModule, AbstractSyntaxTree.VariableDeclaration variable)
 		{
-			if (targetScope == null)
-				throw new ArgumentNullException(nameof(targetScope));
-			if (variable == null)
-				throw new ArgumentNullException(nameof(declaration));
+			if (targetModule == null) throw new ArgumentNullException(nameof(targetModule));
+			if (variable == null) throw new ArgumentNullException(nameof(declaration));
 
-			this.targetScope = targetScope;
+			this.targetModule = targetModule;
 			this.declaration = variable;
 
 			Signature.ValidateIdentifier(this.declaration.Name);
@@ -31,7 +29,7 @@ namespace midend
 		/// </summary>
 		public void TryResolveType()
 		{
-			if(this.Type != null)
+			if (this.Type != null)
 				throw new InvalidOperationException("Type was already resolved!");
 			// TODO: Try resolve the type of this definition via the value!
 			if (this.declaration.Type == null)
@@ -40,18 +38,18 @@ namespace midend
 			}
 			else
 			{
-				this.Type = this.declaration.Type.TryResolve(this.targetScope);
+				this.Type = this.declaration.Type.TryResolve(this.targetModule.Scope);
 			}
 		}
 
 		public bool TryCreateValue()
 		{
-			if(this.InitialValue == null)
+			if (this.InitialValue == null)
 				throw new InvalidOperationException("Cannot create value of non-existent prototype!");
-			
-			this.Value = this.InitialValue.TryResolve(this.targetScope);
-			
-			
+
+			this.Value = this.InitialValue.TryResolve(this.targetModule.Scope);
+
+
 			return (this.Value != null);
 		}
 
@@ -71,7 +69,7 @@ namespace midend
 				IsConst = this.declaration.IsConstant,
 				IsExported = this.declaration.IsExported,
 			};
-			this.targetScope.AddSymbol(this.Symbol);
+			this.targetModule.Scope.AddSymbol(this.Symbol);
 			return this.Symbol;
 		}
 
@@ -79,7 +77,7 @@ namespace midend
 
 		public string Name => this.declaration.Name;
 
-		public Scope TargetScope => this.targetScope;
+		public Scope TargetScope => this.targetModule.Scope;
 
 		public CType Type { get; set; }
 

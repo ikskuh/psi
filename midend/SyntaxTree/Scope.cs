@@ -22,16 +22,6 @@ namespace midend
 			this.symbols.Add(sym.Name, sym);
 		}
 
-		public void AddSymbol(string name, Module value)
-		{
-			this.AddSymbol(new Symbol(name, CTypes.Module)
-			{
-				IsConst = true,
-				IsExported = true,
-				InitialValue = Expression.Constant(value),
-			});
-		}
-
 		public void AddSymbol(string name, CValue value)
 		{
 			this.AddSymbol(new Symbol(name, value.Type)

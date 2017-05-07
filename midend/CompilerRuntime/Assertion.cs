@@ -16,11 +16,17 @@ namespace midend
 				throw new InvalidOperationException("Assertion is not of boolean type!");
 		}
 
-		public void Validate()
+		public bool Validate(bool throwOnFailure = true)
 		{
 			var value = this.claim.Execute();
-			if (value.Get<bool>() == false)
-				throw new InvalidOperationException("Assertion is not boolean or it has failed!");
+			var result = value.Get<bool>();
+			if (throwOnFailure && (result == false))
+				throw new InvalidOperationException("Assertion has failed!");
+			return result;
 		}
+		
+		public Module Module => this.module;
+		
+		public Expression Claim => this.claim;
 	}
 }

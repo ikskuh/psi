@@ -30,14 +30,12 @@ namespace midend
 
 			var globalScope = CreateGlobalScope(cfg);
 
-			var compileUnitScope = new Scope(globalScope);
-
 			// Step #1: Create all declared modules in the unit scope.
-			ast.BuildModuleStructure(compileUnitScope);
+			var unit = ast.BuildModuleStructure(globalScope, "unit");
 
 			// Step #2: Gather all declared symbols for all modules,
 			//          without actually creating them
-			var declarations = ast.GatherSymbols(compileUnitScope).ToList();
+			var declarations = ast.GatherSymbols(unit).ToList();
 
 			// Step #3: Resolve the types of all declarations, try to build all definitions
 			while (declarations.Count > 0)
@@ -67,7 +65,7 @@ namespace midend
 					}
 
 					Console.WriteLine("Resolved {0} : {1}", decl.Name, decl.Type);
-					
+
 					declarations.RemoveAt(i);
 					i -= 1; // Adjust offset
 				}
@@ -83,8 +81,14 @@ namespace midend
 				}
 			}
 
+			// Step #3: Validate all assertions!
+			foreach (var assert in ast.CreateAllAssertions(unit))
+			{
+				Console.WriteLine("Validate assertion in {0}: {1}", assert.Module, assert.Validate(false) ? "success" : "failure");
+			}
+
 			Console.WriteLine("Complete module:");
-			PrintScope(compileUnitScope, compileUnitScope.Locals, "\t");
+			PrintScope(unit.Scope, unit.Scope.Locals, "\t");
 		}
 
 		private static void PrintScope(Scope scope, IEnumerable<Signature> elements, string prefix = "")
@@ -113,9 +117,9 @@ namespace midend
 		/// </summary>
 		/// <returns>The global scope.</returns>
 		/// <param name="cfg">Cfg.</param>
-		static Scope CreateGlobalScope(CompilerConfiguration cfg)
+		static Module CreateGlobalScope(CompilerConfiguration cfg)
 		{
-			var globalScope = new Scope();
+			var globalScope = new Module();
 
 			var types = new Dictionary<string, CType>()
 			{
@@ -126,52 +130,52 @@ namespace midend
 			};
 			foreach (var type in types)
 			{
-				globalScope.AddSymbol(type.Key, type.Value);
+				globalScope.Scope.AddSymbol(type.Key, type.Value);
 			}
 
-			globalScope.AddSymbol("true", (CValue)true);
-			globalScope.AddSymbol("false", (CValue)false);
+			globalScope.Scope.AddSymbol("true", (CValue)true);
+			globalScope.Scope.AddSymbol("false", (CValue)false);
 
 			{ // i32 operators
 				var optype = new BinaryOperatorType(CTypes.Integer, CTypes.Integer);
 				var unoptype = new UnaryOperatorType(CTypes.Integer, CTypes.Integer);
 				var opcomp = new BinaryOperatorType(CTypes.Integer, CTypes.Boolean);
 
-				globalScope.AddSymbol(Operator.Add, new BuiltinFunction(unoptype, (arr) =>
+				globalScope.Scope.AddSymbol(Operator.Add, new BuiltinFunction(unoptype, (arr) =>
 				{
 					return (CValue)(arr[0].Get<BigInteger>());
 				}));
-				globalScope.AddSymbol(Operator.Sub, new BuiltinFunction(unoptype, (arr) =>
+				globalScope.Scope.AddSymbol(Operator.Sub, new BuiltinFunction(unoptype, (arr) =>
 				{
 					return (CValue)(-arr[0].Get<BigInteger>());
 				}));
 
-				globalScope.AddSymbol(Operator.Add, new BuiltinFunction(optype, (arr) =>
+				globalScope.Scope.AddSymbol(Operator.Add, new BuiltinFunction(optype, (arr) =>
 				{
 					return new CValue(CTypes.Integer, (BigInteger)arr[0].Value + (BigInteger)arr[1].Value);
 				}));
-				globalScope.AddSymbol(Operator.Sub, new BuiltinFunction(optype, (arr) =>
+				globalScope.Scope.AddSymbol(Operator.Sub, new BuiltinFunction(optype, (arr) =>
 				{
 					return new CValue(CTypes.Integer, (BigInteger)arr[0].Value - (BigInteger)arr[1].Value);
 				}));
-				globalScope.AddSymbol(Operator.Times, new BuiltinFunction(optype, (arr) =>
+				globalScope.Scope.AddSymbol(Operator.Times, new BuiltinFunction(optype, (arr) =>
 				{
 					return new CValue(CTypes.Integer, (BigInteger)arr[0].Value * (BigInteger)arr[1].Value);
 				}));
-				globalScope.AddSymbol(Operator.Divide, new BuiltinFunction(optype, (arr) =>
+				globalScope.Scope.AddSymbol(Operator.Divide, new BuiltinFunction(optype, (arr) =>
 				{
 					return new CValue(CTypes.Integer, (BigInteger)arr[0].Value / (BigInteger)arr[1].Value);
 				}));
-				globalScope.AddSymbol(Operator.Modulo, new BuiltinFunction(optype, (arr) =>
+				globalScope.Scope.AddSymbol(Operator.Modulo, new BuiltinFunction(optype, (arr) =>
 				{
 					return new CValue(CTypes.Integer, (BigInteger)arr[0].Value % (BigInteger)arr[1].Value);
 				}));
 
-				globalScope.AddSymbol(Operator.Less, new BuiltinFunction(opcomp, (arr) =>
+				globalScope.Scope.AddSymbol(Operator.Less, new BuiltinFunction(opcomp, (arr) =>
 				{
 					return new CValue(CTypes.Boolean, (BigInteger)arr[0].Value < (BigInteger)arr[1].Value);
 				}));
-				globalScope.AddSymbol(Operator.Equals, new BuiltinFunction(opcomp, (arr) =>
+				globalScope.Scope.AddSymbol(Operator.Equals, new BuiltinFunction(opcomp, (arr) =>
 				{
 					return new CValue(CTypes.Boolean, (BigInteger)arr[0].Value == (BigInteger)arr[1].Value);
 				}));
@@ -181,61 +185,58 @@ namespace midend
 				var optype = new BinaryOperatorType(CTypes.String, CTypes.String);
 				var opcomp = new BinaryOperatorType(CTypes.String, CTypes.Boolean);
 
-				globalScope.AddSymbol(Operator.Concatenate, new BuiltinFunction(optype, (arr) =>
+				globalScope.Scope.AddSymbol(Operator.Concatenate, new BuiltinFunction(optype, (arr) =>
 				{
 					return (CValue)(arr[0].Get<string>() + arr[1].Get<string>());
 				}));
 
-				globalScope.AddSymbol(Operator.Equals, new BuiltinFunction(opcomp, (arr) =>
+				globalScope.Scope.AddSymbol(Operator.Equals, new BuiltinFunction(opcomp, (arr) =>
 				{
 					return (CValue)(arr[0].Get<string>() == arr[1].Get<string>());
 				}));
-				globalScope.AddSymbol(Operator.Inequals, new BuiltinFunction(opcomp, (arr) =>
+				globalScope.Scope.AddSymbol(Operator.Inequals, new BuiltinFunction(opcomp, (arr) =>
 				{
 					return (CValue)(arr[0].Get<string>() != arr[1].Get<string>());
 				}));
 			}
-			
+
 			{
 				var binoptype = new BinaryOperatorType(CTypes.Boolean, CTypes.Boolean);
 				var unoptype = new UnaryOperatorType(CTypes.Boolean, CTypes.Boolean);
-				
-				globalScope.AddSymbol(Operator.Invert, new BuiltinFunction(unoptype, (arg) =>
+
+				globalScope.Scope.AddSymbol(Operator.Invert, new BuiltinFunction(unoptype, (arg) =>
 				{
 					return (CValue)(!arg[0].Get<bool>());
 				}));
-				
-				globalScope.AddSymbol(Operator.And, new BuiltinFunction(binoptype, (arg) =>
+
+				globalScope.Scope.AddSymbol(Operator.And, new BuiltinFunction(binoptype, (arg) =>
 				{
 					return (CValue)(arg[0].Get<bool>() && arg[1].Get<bool>());
 				}));
-				
-				globalScope.AddSymbol(Operator.Or, new BuiltinFunction(binoptype, (arg) =>
+
+				globalScope.Scope.AddSymbol(Operator.Or, new BuiltinFunction(binoptype, (arg) =>
 				{
 					return (CValue)(arg[0].Get<bool>() || arg[1].Get<bool>());
 				}));
-				
-				globalScope.AddSymbol(Operator.Xor, new BuiltinFunction(binoptype, (arg) =>
+
+				globalScope.Scope.AddSymbol(Operator.Xor, new BuiltinFunction(binoptype, (arg) =>
 				{
 					return (CValue)(arg[0].Get<bool>() ^ arg[1].Get<bool>());
 				}));
-			
+
 			}
 
 			{
-				var std = new Module();
+				var std = globalScope.AddSubModule("std");
 
-				std.AddSymbol("type", CTypes.Type);
-				std.AddSymbol("module", CTypes.Module);
+				std.Scope.AddSymbol("type", CTypes.Type);
+				std.Scope.AddSymbol("module", CTypes.Module);
 
 				{ // std.system
-					var stdsys = new Module();
-					stdsys.AddSymbol("os", (CValue)Environment.OSVersion.ToString());
-					stdsys.AddSymbol("platform", (CValue)Environment.OSVersion.Platform.ToString());
-					std.AddSymbol("system", stdsys);
+					var stdsys = std.AddSubModule("system");
+					stdsys.Scope.AddSymbol("os", (CValue)Environment.OSVersion.ToString());
+					stdsys.Scope.AddSymbol("platform", (CValue)Environment.OSVersion.Platform.ToString());
 				}
-
-				globalScope.AddSymbol("std", std);
 			}
 
 			return globalScope;
