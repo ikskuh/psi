@@ -48,7 +48,6 @@
     <Compile Include="Operator.cs" />
     <Compile Include="SyntaxTree\Module.cs" />
     <Compile Include="SyntaxTree\Symbol.cs" />
-    <Compile Include="SyntaxTree\Assertion.cs" />
     <Compile Include="Signature.cs" />
     <Compile Include="Types\InternalTypes\StringType.cs" />
     <Compile Include="Types\InternalTypes\IntegerType.cs" />
@@ -85,6 +84,11 @@
     <Compile Include="Expressions\FieldIndexExpression.cs" />
     <Compile Include="Types\EnumType.cs" />
     <Compile Include="CompilerRuntime\Fields\TypeNameField.cs" />
+    <Compile Include="Types\RecordType.cs" />
+    <Compile Include="CompilerRuntime\Record.cs" />
+    <Compile Include="CompilerRuntime\Fields\RecordFieldIndex.cs" />
+    <Compile Include="Types\FunctionTypes\UnaryOperatorType.cs" />
+    <Compile Include="CompilerRuntime\Assertion.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AbstractSyntaxTree\" />

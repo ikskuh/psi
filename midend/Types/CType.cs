@@ -39,7 +39,7 @@ namespace midend
 		public virtual Field GetField(string name)
 		{
 			Signature.ValidateIdentifier(name);
-			switch(name)
+			switch (name)
 			{
 				default: return null;
 			}
@@ -80,11 +80,24 @@ namespace midend
 		{
 			return null;
 		}
+		
+		/// <summary>
+		/// Gets the constructor.
+		/// </summary>
+		/// <returns>The constructor.</returns>
+		public virtual Function GetConstructor()
+		{
+			throw new NotSupportedException($"The type {this} has no constructor!");
+		}
 	}
 
 	public static class CTypes
 	{
-		private sealed class VoidType : CType { }
+		private sealed class VoidType : CType
+		{
+			public override bool IsAllowedValue(object value) => value is DBNull;
+			public override string ToString() => "void";
+		}
 
 		/// <summary>
 		/// The type that marks an invalid type.

@@ -276,6 +276,28 @@ namespace midend
 		{
 			[XmlArray("fields"), XmlArrayItem("param")]
 			public Param[] Fields { get; set; }
+
+			public override CType TryResolve(Scope targetScope)
+			{
+				var members = new RecordMember[this.Fields.Length];
+				for (int i = 0; i < members.Length; i++)
+				{
+					CValue initial = null;
+					var name = this.Fields[i].Name;
+					var type = this.Fields[i].Type.TryResolve(targetScope);
+					if (type == null)
+						return null;
+					if (this.Fields[i].Value != null)
+					{
+						initial = this.Fields[i].Value.TryResolve(targetScope)?.Execute();
+						if (initial == null)
+							return null;
+					}
+					members[i] = new RecordMember(type, name, initial);
+				}
+
+				return new RecordType(members);
+			}
 		}
 
 		#endregion
@@ -395,10 +417,7 @@ namespace midend
 					lhs.Type.CanBeAssignedTo(((BinaryOperatorType)o.Type).LeftHandSide)
 					&& rhs.Type.CanBeAssignedTo(((BinaryOperatorType)o.Type).RightHandSide));
 
-				var opfunc = (Function)@operator.InitialValue.Evaluate(null).Value;
-				if (opfunc == null)
-					return null;
-				return new FunctionCallExpression(opfunc, lhs.Simplify(), rhs.Simplify());
+				return new FunctionCallExpression(@operator.InitialValue.Simplify(), lhs.Simplify(), rhs.Simplify());
 			}
 		}
 
@@ -409,6 +428,26 @@ namespace midend
 
 			[XmlElement("operator")]
 			public Operator Operator { get; set; }
+
+			public override Expression TryResolve(Scope targetScope)
+			{
+				var value = this.Value.TryResolve(targetScope);
+
+				if (value == null)
+					return null;
+
+				var opsyms = targetScope
+					.GetAll(this.Operator)
+					.Select(sig => targetScope[sig])
+					.Where(sym => sym.Type is UnaryOperatorType)
+					.ToArray();
+				if (opsyms == null || opsyms.Length == 0)
+					return null;
+
+				var @operator = opsyms.First(o => value.Type.CanBeAssignedTo(((UnaryOperatorType)o.Type).Value));
+
+				return new FunctionCallExpression(@operator.InitialValue.Simplify(), value.Simplify());
+			}
 		}
 
 		public sealed class ExpressionFunction : AbstractExpression
@@ -476,7 +515,12 @@ namespace midend
 				else if (Index is IndexCall)
 				{
 					var index = (IndexCall)Index;
-					throw new NotSupportedException();
+
+					var args = index.Arguments.Select(arg => arg.TryResolve(targetScope)).ToArray();
+					if (args.Any(a => (a == null)))
+						return null;
+
+					return new FunctionCallExpression(value, args);
 				}
 				else if (Index is IndexArray)
 				{
@@ -548,18 +592,34 @@ namespace midend
 		{
 			[XmlElement("value")]
 			public AbstractExpression Value { get; set; }
+
+			public abstract Argument TryResolve(Scope targetScope);
 		}
 
 		public sealed class ArgumentPositional : AbstractArgument
 		{
 			[XmlElement("position")]
 			public int Position { get; set; }
+
+			public override Argument TryResolve(Scope targetScope)
+			{
+				var value = this.Value.TryResolve(targetScope);
+				if (value == null) return null;
+				return new PositionalArgument(this.Position - 1, value);
+			}
 		}
 
 		public sealed class ArgumentNamed : AbstractArgument
 		{
 			[XmlElement("name")]
 			public string Name { get; set; }
+
+			public override Argument TryResolve(Scope targetScope)
+			{
+				var value = this.Value.TryResolve(targetScope);
+				if (value == null) return null;
+				return new NamedArgument(this.Name, value);
+			}
 		}
 
 		#endregion

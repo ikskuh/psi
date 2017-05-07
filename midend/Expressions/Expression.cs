@@ -12,7 +12,7 @@ namespace midend
 		public virtual bool IsConstant => false;
 		
 		public abstract CValue Evaluate(EvaluationContext context);
-		
+
 		public abstract CType Type { get; }
 		
 		/// <summary>
@@ -31,6 +31,17 @@ namespace midend
 			if(value == null) throw new InvalidOperationException("Expression evaluation returned null!");
 			
 			return new ConstantExpression(value);
+		}
+
+		public static CValue Execute(Expression ex)
+		{
+			if(ex == null) throw new ArgumentNullException(nameof(ex));
+			if(ex.IsConstant == false)
+				throw new ArgumentException("Expression must be constant!");
+			var ec = new EvaluationContext();
+			var value = ex.Evaluate(ec);
+			if(value == null) throw new InvalidOperationException("Expression evaluation returned null!");
+			return value;
 		}
 		
 		#region Constants

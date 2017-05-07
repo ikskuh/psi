@@ -26,6 +26,11 @@ namespace midend
 			return instance.Get<CType>().GetTypeField(name);
 		}
 		
+		public override Function GetConstructor()
+		{
+			throw new NotSupportedException("Types cannot be constructed, only defined!");
+		}
+		
 		public override bool IsAllowedValue(object value) => value is CType;
 
 		public override string ToString() => "type";

@@ -38,7 +38,7 @@ namespace midend
 			// Step #2: Gather all declared symbols for all modules,
 			//          without actually creating them
 			var declarations = ast.GatherSymbols(compileUnitScope).ToList();
-			
+
 			// Step #3: Resolve the types of all declarations, try to build all definitions
 			while (declarations.Count > 0)
 			{
@@ -47,6 +47,7 @@ namespace midend
 				for (int i = 0; i < declarations.Count; i++)
 				{
 					var decl = declarations[i];
+					Console.WriteLine("Try resolve {0}", decl.Name);
 					if (decl.InitialValue != null && decl.Value == null)
 					{
 						decl.TryCreateValue();
@@ -65,12 +66,21 @@ namespace midend
 						sym.InitialValue = decl.Value.Simplify();
 					}
 
+					Console.WriteLine("Resolved {0} : {1}", decl.Name, decl.Type);
+					
 					declarations.RemoveAt(i);
 					i -= 1; // Adjust offset
 				}
 
 				if (declarations.Count == declPrecount)
+				{
+					Console.Error.WriteLine("Failed to translate:");
+					foreach (var decl in declarations)
+					{
+						Console.Error.WriteLine(decl.Name);
+					}
 					throw new InvalidOperationException("Cyclic dependency detected, can't resolve!");
+				}
 			}
 
 			Console.WriteLine("Complete module:");
@@ -124,8 +134,18 @@ namespace midend
 
 			{ // i32 operators
 				var optype = new BinaryOperatorType(CTypes.Integer, CTypes.Integer);
+				var unoptype = new UnaryOperatorType(CTypes.Integer, CTypes.Integer);
 				var opcomp = new BinaryOperatorType(CTypes.Integer, CTypes.Boolean);
-				
+
+				globalScope.AddSymbol(Operator.Add, new BuiltinFunction(unoptype, (arr) =>
+				{
+					return (CValue)(arr[0].Get<BigInteger>());
+				}));
+				globalScope.AddSymbol(Operator.Sub, new BuiltinFunction(unoptype, (arr) =>
+				{
+					return (CValue)(-arr[0].Get<BigInteger>());
+				}));
+
 				globalScope.AddSymbol(Operator.Add, new BuiltinFunction(optype, (arr) =>
 				{
 					return new CValue(CTypes.Integer, (BigInteger)arr[0].Value + (BigInteger)arr[1].Value);
@@ -146,7 +166,7 @@ namespace midend
 				{
 					return new CValue(CTypes.Integer, (BigInteger)arr[0].Value % (BigInteger)arr[1].Value);
 				}));
-				
+
 				globalScope.AddSymbol(Operator.Less, new BuiltinFunction(opcomp, (arr) =>
 				{
 					return new CValue(CTypes.Boolean, (BigInteger)arr[0].Value < (BigInteger)arr[1].Value);
@@ -156,16 +176,16 @@ namespace midend
 					return new CValue(CTypes.Boolean, (BigInteger)arr[0].Value == (BigInteger)arr[1].Value);
 				}));
 			}
-			
+
 			{ // String operators
 				var optype = new BinaryOperatorType(CTypes.String, CTypes.String);
 				var opcomp = new BinaryOperatorType(CTypes.String, CTypes.Boolean);
-				
+
 				globalScope.AddSymbol(Operator.Concatenate, new BuiltinFunction(optype, (arr) =>
 				{
 					return (CValue)(arr[0].Get<string>() + arr[1].Get<string>());
 				}));
-				
+
 				globalScope.AddSymbol(Operator.Equals, new BuiltinFunction(opcomp, (arr) =>
 				{
 					return (CValue)(arr[0].Get<string>() == arr[1].Get<string>());
@@ -174,6 +194,32 @@ namespace midend
 				{
 					return (CValue)(arr[0].Get<string>() != arr[1].Get<string>());
 				}));
+			}
+			
+			{
+				var binoptype = new BinaryOperatorType(CTypes.Boolean, CTypes.Boolean);
+				var unoptype = new UnaryOperatorType(CTypes.Boolean, CTypes.Boolean);
+				
+				globalScope.AddSymbol(Operator.Invert, new BuiltinFunction(unoptype, (arg) =>
+				{
+					return (CValue)(!arg[0].Get<bool>());
+				}));
+				
+				globalScope.AddSymbol(Operator.And, new BuiltinFunction(binoptype, (arg) =>
+				{
+					return (CValue)(arg[0].Get<bool>() && arg[1].Get<bool>());
+				}));
+				
+				globalScope.AddSymbol(Operator.Or, new BuiltinFunction(binoptype, (arg) =>
+				{
+					return (CValue)(arg[0].Get<bool>() || arg[1].Get<bool>());
+				}));
+				
+				globalScope.AddSymbol(Operator.Xor, new BuiltinFunction(binoptype, (arg) =>
+				{
+					return (CValue)(arg[0].Get<bool>() ^ arg[1].Get<bool>());
+				}));
+			
 			}
 
 			{

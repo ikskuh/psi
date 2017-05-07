@@ -9,7 +9,7 @@ namespace midend
 		private readonly CType returnType;
 		private readonly Parameter[] parameters;
 	
-		protected FunctionType(CType returnType, params Parameter[] parameters )
+		protected FunctionType(CType returnType, params Parameter[] parameters)
 		{
 			if(returnType == null) throw new ArgumentNullException(nameof(returnType));
 			if(parameters == null) throw new ArgumentNullException(nameof(parameters));

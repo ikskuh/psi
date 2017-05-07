@@ -5,9 +5,9 @@ namespace midend
 	{
 		private readonly string name;
 		private readonly CType type;
-		private readonly Expression defaultValue;
+		private readonly CValue defaultValue;
 
-		public Parameter(string name, CType type, Expression defaultValue = null)
+		public Parameter(string name, CType type, CValue defaultValue = null)
 		{
 			Signature.ValidateIdentifier(name);
 			if (type == null) throw new ArgumentNullException(nameof(type));
@@ -20,6 +20,6 @@ namespace midend
 
 		public CType Type => this.type;
 
-		public Expression DefaultValue => this.defaultValue;
+		public CValue DefaultValue => this.defaultValue;
 	}
 }

@@ -6,10 +6,16 @@ namespace midend
 	/// </summary>
 	public sealed class BooleanType : CType
 	{
-		public static readonly CType Instance = new BooleanType();
-	
-		public static readonly CValue True = new CValue(Instance, true);
-		public static readonly CValue False = new CValue(Instance, false);
+		public static readonly CType Instance;
+		public static readonly CValue True;
+		public static readonly CValue False;
+		
+		static BooleanType()
+		{
+			Instance = new BooleanType();
+			True = new CValue(Instance, true);
+			False = new CValue(Instance, false);
+		}
 		
 		private BooleanType()
 		{

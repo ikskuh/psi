@@ -9,6 +9,8 @@ namespace midend
 	{
 		private readonly CType type;
 		private readonly object value;
+		
+		public static readonly CValue Unassigned = new CValue(CTypes.Void, DBNull.Value);
 
 		public CValue(CType type, object value)
 		{
@@ -41,6 +43,8 @@ namespace midend
 		public static explicit operator CValue(BigInteger value) => new CValue(CTypes.Integer, value);
 		
 		public static explicit operator CValue(char value) => new CValue(CTypes.Char, value);
+		
+		public static explicit operator CValue(Record value) => new CValue(value.Type, value);
 		
 		#endregion
 	}
