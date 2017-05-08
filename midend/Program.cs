@@ -50,18 +50,19 @@ namespace midend
 					{
 						decl.TryCreateValue();
 					}
-					if (decl.CanCreateSymbol == false)
+					Symbol sym;
+					if (decl.Symbol == null && decl.CanCreateSymbol == false)
 					{
 						decl.TryResolveType();
 						if (decl.CanCreateSymbol == false)
 							continue;
+						sym = decl.CreateSymbol();
 					}
-					var sym = decl.CreateSymbol();
 					if (decl.InitialValue != null)
 					{
 						if (decl.Value == null)
-							throw new InvalidOperationException("This should not happen: Value was not created already!");
-						sym.InitialValue = decl.Value.Simplify();
+							continue; // throw new InvalidOperationException("This should not happen: Value was not created already!");
+						decl.TryCreateValue();
 					}
 
 					Console.WriteLine("Resolved {0} : {1}", decl.Name, decl.Type);

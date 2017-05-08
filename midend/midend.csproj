@@ -89,6 +89,7 @@
     <Compile Include="CompilerRuntime\Fields\RecordFieldIndex.cs" />
     <Compile Include="Types\FunctionTypes\UnaryOperatorType.cs" />
     <Compile Include="CompilerRuntime\Assertion.cs" />
+    <Compile Include="SyntaxTree\ResolvationContext.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="AbstractSyntaxTree\" />

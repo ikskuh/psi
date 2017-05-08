@@ -38,7 +38,8 @@ namespace midend
 			}
 			else
 			{
-				this.Type = this.declaration.Type.TryResolve(this.targetModule.Scope);
+				var rc = new ResolvationContext(this.targetModule.Scope);
+				this.Type = this.declaration.Type.TryResolve(rc);
 			}
 		}
 
@@ -47,8 +48,10 @@ namespace midend
 			if (this.InitialValue == null)
 				throw new InvalidOperationException("Cannot create value of non-existent prototype!");
 
-			this.Value = this.InitialValue.TryResolve(this.targetModule.Scope);
-
+			var rc = new ResolvationContext(this.targetModule.Scope);
+			if (this.Type != null)
+				rc = rc.WantsType(this.Type);
+			this.Value = this.InitialValue.TryResolve(rc);
 
 			return (this.Value != null);
 		}

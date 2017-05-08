@@ -106,9 +106,10 @@ namespace midend
 			{
 				if (this.Assertions != null)
 				{
+					var context = new ResolvationContext(module.Scope);
 					foreach (var assert in this.Assertions)
 					{
-						var claim = assert.Claim.TryResolve(module.Scope);
+						var claim = assert.Claim.TryResolve(context);
 						yield return module.AddAssertion(claim.Simplify());
 					}
 				}
@@ -211,10 +212,7 @@ namespace midend
 		[XmlInclude(typeof(TypeRecord))]
 		public abstract class AbstractType
 		{
-			public virtual CType TryResolve(Scope targetScope)
-			{
-				throw new NotImplementedException($"{this.GetType().Name} is missing its type resolver!");
-			}
+			public abstract CType TryResolve(ResolvationContext context);
 		}
 
 		public sealed class TypeReference : AbstractType
@@ -225,12 +223,12 @@ namespace midend
 			[XmlArray("args"), XmlArrayItem("expression")]
 			public AbstractExpression[] Arguments { get; set; }
 
-			public override CType TryResolve(Scope targetScope)
+			public override CType TryResolve(ResolvationContext context)
 			{
 				if (this.Arguments != null)
 					throw new NotSupportedException("Generics are not supported yet!");
 
-				var scope = targetScope;
+				var scope = context.Scope;
 				for (int i = 0; i < (this.Name.Count - 1); i++)
 				{
 					var sym = scope[this.Name[i], CTypes.Module];
@@ -261,6 +259,11 @@ namespace midend
 
 			[XmlArray("restrictions"), XmlArrayItem("expression")]
 			public AbstractExpression[] Restrictions { get; set; }
+			
+			public override CType TryResolve(ResolvationContext context)
+			{
+				throw new NotImplementedException("Function type is not implemented yet.");
+			}
 		}
 
 		public sealed class TypeEnum : AbstractType
@@ -268,7 +271,7 @@ namespace midend
 			[XmlArray("members"), XmlArrayItem("string")]
 			public string[] Members { get; set; }
 
-			public override CType TryResolve(Scope targetScope)
+			public override CType TryResolve(ResolvationContext context)
 			{
 				var members = new HashSet<string>(this.Members);
 				if (members.Count != this.Members.Length)
@@ -282,19 +285,19 @@ namespace midend
 			[XmlArray("fields"), XmlArrayItem("param")]
 			public Param[] Fields { get; set; }
 
-			public override CType TryResolve(Scope targetScope)
+			public override CType TryResolve(ResolvationContext context)
 			{
 				var members = new RecordMember[this.Fields.Length];
 				for (int i = 0; i < members.Length; i++)
 				{
 					CValue initial = null;
 					var name = this.Fields[i].Name;
-					var type = this.Fields[i].Type.TryResolve(targetScope);
+					var type = this.Fields[i].Type.TryResolve(context);
 					if (type == null)
 						return null;
 					if (this.Fields[i].Value != null)
 					{
-						initial = this.Fields[i].Value.TryResolve(targetScope)?.Execute();
+						initial = this.Fields[i].Value.TryResolve(context)?.Execute();
 						if (initial == null)
 							return null;
 					}
@@ -321,7 +324,7 @@ namespace midend
 		[XmlInclude(typeof(ExpressionNew))]
 		public abstract class AbstractExpression
 		{
-			public virtual Expression TryResolve(Scope targetScope)
+			public virtual Expression TryResolve(ResolvationContext context)
 			{
 				throw new NotImplementedException($"Expression translation not implemented for {this.GetType().Name}!");
 			}
@@ -332,9 +335,9 @@ namespace midend
 			[XmlArray("values"), XmlArrayItem("expression")]
 			public AbstractExpression[] Items { get; set; }
 
-			public override Expression TryResolve(Scope targetScope)
+			public override Expression TryResolve(ResolvationContext context)
 			{
-				var items = this.Items.Select(exp => exp.TryResolve(targetScope)?.Simplify()).ToArray();
+				var items = this.Items.Select(exp => exp.TryResolve(context)?.Simplify()).ToArray();
 				if (items.Any(i => (i == null)))
 					return null;
 				return new ArrayExpression(items);
@@ -347,7 +350,7 @@ namespace midend
 			public string Value { get; set; }
 
 			// TODO: Implement real values as well
-			public override Expression TryResolve(Scope targetScope) => Expression.Constant(BigInteger.Parse(this.Value));
+			public override Expression TryResolve(ResolvationContext context) => Expression.Constant(BigInteger.Parse(this.Value));
 		}
 
 		public sealed class ExpressionString : AbstractExpression
@@ -355,7 +358,7 @@ namespace midend
 			[XmlElement("value")]
 			public string Value { get; set; }
 
-			public override Expression TryResolve(Scope targetScope) => Expression.Constant(this.Value);
+			public override Expression TryResolve(ResolvationContext context) => Expression.Constant(this.Value);
 		}
 
 		public sealed class ExpressionType : AbstractExpression
@@ -363,9 +366,9 @@ namespace midend
 			[XmlElement("reference")]
 			public AbstractType Type { get; set; }
 
-			public override Expression TryResolve(Scope targetScope)
+			public override Expression TryResolve(ResolvationContext context)
 			{
-				var type = this.Type.TryResolve(targetScope);
+				var type = this.Type.TryResolve(context);
 				if (type == null)
 					return null;
 				return Expression.Constant(type);
@@ -377,8 +380,13 @@ namespace midend
 			[XmlElement("name")]
 			public string Symbol { get; set; }
 
-			public override Expression TryResolve(Scope targetScope)
+			public override Expression TryResolve(ResolvationContext context)
 			{
+				var symbol = context.GetSymbol(this.Symbol);
+				if(symbol == null)
+					return null;
+				return new SymbolReferenceExpression(symbol);
+				/*
 				var symbols = targetScope.GetAll(this.Symbol);
 				if (symbols.Length == 0)
 					return null; // Empty
@@ -388,6 +396,7 @@ namespace midend
 					throw new NotImplementedException("There is something missing....");
 				}
 				return new SymbolReferenceExpression(targetScope[symbols[0]]);
+				*/
 			}
 		}
 
@@ -402,17 +411,18 @@ namespace midend
 			[XmlElement("operator")]
 			public Operator Operator { get; set; }
 
-			public override Expression TryResolve(Scope targetScope)
+			public override Expression TryResolve(ResolvationContext context)
 			{
-				var lhs = this.LeftHandSide.TryResolve(targetScope);
-				var rhs = this.RightHandSide.TryResolve(targetScope);
+				var lhs = this.LeftHandSide.TryResolve(context);
+				var rhs = this.RightHandSide.TryResolve(context);
 
 				if (lhs == null || rhs == null)
 					return null;
 
-				var opsyms = targetScope
+				var opsyms = context
+					.Scope
 					.GetAll(this.Operator)
-					.Select(sig => targetScope[sig])
+					.Select(sig => context.Scope[sig])
 					.Where(sym => sym.Type is BinaryOperatorType)
 					.ToArray();
 				if (opsyms == null || opsyms.Length == 0)
@@ -434,16 +444,17 @@ namespace midend
 			[XmlElement("operator")]
 			public Operator Operator { get; set; }
 
-			public override Expression TryResolve(Scope targetScope)
+			public override Expression TryResolve(ResolvationContext context)
 			{
-				var value = this.Value.TryResolve(targetScope);
+				var value = this.Value.TryResolve(context);
 
 				if (value == null)
 					return null;
 
-				var opsyms = targetScope
+				var opsyms = context
+					.Scope
 					.GetAll(this.Operator)
-					.Select(sig => targetScope[sig])
+					.Select(sig => context.Scope[sig])
 					.Where(sym => sym.Type is UnaryOperatorType)
 					.ToArray();
 				if (opsyms == null || opsyms.Length == 0)
@@ -472,9 +483,9 @@ namespace midend
 			[XmlElement("index")]
 			public AbstractIndex Index { get; set; }
 
-			public override Expression TryResolve(Scope targetScope)
+			public override Expression TryResolve(ResolvationContext context)
 			{
-				var value = Value?.TryResolve(targetScope);
+				var value = Value?.TryResolve(context);
 				if (value == null)
 				{
 					return null;
@@ -521,7 +532,7 @@ namespace midend
 				{
 					var index = (IndexCall)Index;
 
-					var args = index.Arguments.Select(arg => arg.TryResolve(targetScope)).ToArray();
+					var args = index.Arguments.Select(arg => arg.TryResolve(context)).ToArray();
 					if (args.Any(a => (a == null)))
 						return null;
 
@@ -533,7 +544,7 @@ namespace midend
 					var indexes = new Expression[index.Indices.Length];
 					for (int i = 0; i < indexes.Length; i++)
 					{
-						indexes[i] = index.Indices[i].TryResolve(targetScope)?.Simplify();
+						indexes[i] = index.Indices[i].TryResolve(context)?.Simplify();
 						if (indexes[i] == null)
 						{
 							return null;
@@ -598,7 +609,7 @@ namespace midend
 			[XmlElement("value")]
 			public AbstractExpression Value { get; set; }
 
-			public abstract Argument TryResolve(Scope targetScope);
+			public abstract Argument TryResolve(ResolvationContext context);
 		}
 
 		public sealed class ArgumentPositional : AbstractArgument
@@ -606,9 +617,9 @@ namespace midend
 			[XmlElement("position")]
 			public int Position { get; set; }
 
-			public override Argument TryResolve(Scope targetScope)
+			public override Argument TryResolve(ResolvationContext context)
 			{
-				var value = this.Value.TryResolve(targetScope);
+				var value = this.Value.TryResolve(context);
 				if (value == null) return null;
 				return new PositionalArgument(this.Position - 1, value);
 			}
@@ -619,9 +630,9 @@ namespace midend
 			[XmlElement("name")]
 			public string Name { get; set; }
 
-			public override Argument TryResolve(Scope targetScope)
+			public override Argument TryResolve(ResolvationContext context)
 			{
-				var value = this.Value.TryResolve(targetScope);
+				var value = this.Value.TryResolve(context);
 				if (value == null) return null;
 				return new NamedArgument(this.Name, value);
 			}

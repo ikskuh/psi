@@ -1,10 +1,10 @@
 #assert -10;
 #assert "Hallo!";
 
-const foo = 1 < 2;
-const bar = ~(2 < 1);
+const val : string = "Hallo";
+const val : int = 10;
 
-assert (foo & bar);
+const foo : int = val;
 
 #assert record(a : int, b : string);
 #assert fn();
