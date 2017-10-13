@@ -1,3 +1,0 @@
-#!/bin/bash
-PATH=$PATH:/home/felix/projects/psilang/midend/bin/Debug/
-./psi test.psi && echo ----------------------------------------------------------------------------------------------- && ./psi test.psi | midend
