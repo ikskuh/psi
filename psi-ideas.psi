@@ -1,0 +1,336 @@
+Wording:
+    object         | An actual instantiation of a type
+    value          | Synonym for *object*
+    lvalue         | A value that can have a new value assigned
+    rvalue         | A value that is immutable (and thus can have no new value assigned)
+    member         | Implicit or explicit part of an object like the array length or a record field
+    dot-member     | A member that is beeing accessed with the `.` operator
+    meta-member    | A member that is beeing accessed with the `'` operator
+    parameter      | The definition of what name and value is beeing passed into a function
+    argument       | The actual value passed into a function
+    item           | An accepted value for an enumeration type
+    named type     | A type that is stored in a const variable
+    primitive type | A type that is not derived from any other type and is provided by the language itself
+
+Syntax Changes:
+    - Allow a semicolon at the end of a declaration, but
+      don't enforce it. This allows cleaner syntax for function
+      definitions
+    - Parameters can be prefixed with either `in`, `inout` or `out` for denoting
+      its semantic.
+    - A new keyword is introduced: `new`.
+      It allows declaring the following expression: `new T(...)` where `T` is a constructor
+      that creates a new object. `...` is the parameter list to the constructor.
+    - The first parameter can be prefixed with `this` as the first prefix.
+    - Add new operator `:=` which is similar to `=`
+    - New special statement `error` which behaves similar to assert, but always throws an
+      error with the given message.
+    - new keyword `operator` followed by the operator overloaded encased in single quotes
+      declares it's name: `operator '+'`
+    - rename of implication operator (`->`) to "forward"
+    - new operator "backward" (`<-`)
+    - Function body can be single expression introduced by `=>`:
+      `fn(a : int) => 2 * a;`
+      The return type is implicitly the same as the return type of the expression.
+    - Lambda syntax: `\(a,b,...)` is an alternative syntax to a function definition
+      where the parameter types can be uniquely inferred by the compiler (including
+      parameter type, specification and return type). Declaring the parameter types
+      is not possible in this notation.
+      When only a single parameter is required, the parenthesis around the parameter
+      are not required: `\x => 2*x`
+    - Enumeration literals are introduced: `:%w+`
+    - Alternative enumeration constructor is introduced:
+      `enum<type>(key1 = value1, key2 = value2, key3 = value3, ...)`
+    - On declaration of an enum type, the colon prefix is not necessary, but may be used:
+      `enum(:a, :b, c, d)`
+
+Semantic Changes:
+    - The standard library contains a type `ref<T>` that allows having a garbage-collected
+      objects. Objects in this case may be of any type. The reference type exports all
+      dot-members of the referenced object as its own dot-members, but doesn't export
+      the meta-members. It provides a special meta-member `'value` that allows accessing the
+      referenced value as an lvalue.
+    - Operators are now beeing handled like functions and declared as such using the operator name
+    - Parameters can have their behaviour changed into `inout` or `out` parameters:
+        - `inout` parameters pass the argument as a lvalue into the function which can be changed
+        - `out` parameters pass the argument as a lvalue into the function which **must** be changed
+      In both cases, the argument isn't a copy, but a reference to the value passed
+      into the function. A parameter declared `in` behaves as a copied parameter, the same applies
+      for un-annotated parameters.
+    - Using `this` as a prefix on a function type allows the following:
+      If a variable in the current scope with such a function type `fn(this name : T, ...)` exists,
+      it is allowed to call this variable as an extension:
+      `object.function(...)`
+      This is semantically equivalent to `function(object, ...)` which means that the function called
+      is beeing selected at compile time.
+    - `:=` is the "semantic copy" operator which may has a well-defined transfer logic on how to copy
+      the *rhs* into the *lhs* operand. This may be used for custom conversions, advanced assignments
+      (like used in the ref<T> implementation) or allowing to create *container* objects.
+    - The `ref<T>` type may coerce implicitly into a `T` rvalue, returning a plain copy of the
+      referenced object. This allows easier API use on most actions, but requires special attention
+      when passing it as an `inout` or `out` argument.
+    - Enumerations are a set of accepted values. Only the names declared in the type specifier
+      are allowed as values, it is not possible to cast an integer or another discrete type to
+      an enumeration value.
+    - It is possible to use enumerations in a key-value-pair fashion and on declaration,
+      for each item, a value can be assigned. The type is denoted via the generic type argument.
+      If an enumeration has key-value assigned items, a value of it may be implicitly cast into
+      the value type.
+    - An enum value can be implicitly cast into another enum value, if the type of the first enum
+      is completly inclusive to the type of the second value:
+      `b = a; # only when type(a)'items subsetOf type(b)'items`
+    - The `error` statement allows explicitly *crashing* the program with a given error message.
+      Such errors can not be caught or recovered and are there to assure that the program does
+      not land in an invalid state. Semantic error handling is to be done with `optional<T>` or
+      `union<T>`.
+    - Closures capture a reference to their outer variables that persist until all closures are dead
+    - For loop instantiates a new variable each iteration, so it's possible to capture the
+      loop variable with a closure without "sharing" the value with other iterations.
+    - The `option<T1,T2,...>` is a type that allows implicit casting from `T1`,`T2`,... to the
+      option type, but requires explicit casting back to `T1`,`T2`,... If the cast fails, an
+      error will be thrown.
+      `option<...>` exposes a dot-member `.type` which contains the type of the current value.
+      Equality operators will work as expected and check for equal type, then equal value.
+    - A singleton type `singleton<name>` is provided that allows a single value which is
+      identified by the *name* in the brackets. Singleton types can be used for signalling
+      behaviour via option types.
+    - A type cast is realized by calling a type variable as a function when any auto-generated
+      constructors are provided or by manually implementing functions with the same name as a
+      named type returning this type. These functions must not conflict with the auto-generated
+      constructors.
+        - A named type may be implicitly cast into any type it was derived from (another named type or a primitive one)
+        - A type may be explicitly casted in any named type derived from itself.
+        - Function types may be cast implicitly into other function types when only differing in the default
+          value specification.
+        - All primitive types have auto-generated constructors
+            - Numeric types are explicitly castable into any other numeric type
+            - Any primitive type is castable into a `string` represenation
+        - Special types like `ref<T>` or `option<T>` have implicit casts defined
+    - All operators have a pre-defined restriction on their signature, preventing misimplementation
+      and having side-effects where none should occurr.
+        - Binary operators have three classes:
+            - "const lhs": lhs is declared `in`
+                - contents: "+", "-", "*", "->"
+            - "var lhs":   lhs is declared `inout`
+                - contents: ":=", "+=", "*=", "-="
+            - "new lhs":   lhs is declared `out`
+                - contents: "="
+      - Index operator may be split into "lvalue index" and "rvalue index":
+          - `operator '[?]'` is the getting operator
+          - `operator '[!]'` is the setting operator
+          - C++ semantics with lvalue return is kinda stupid and inflexible, also
+            overhead shouldn't be that much
+          - Number of subscripts (indices) is determined by operator type and number of arguments
+    - `array<T : type, dims = 1>`
+        - Have extra array constructor be `array<T>(len : int = 0)`
+        - When `dims == 1`
+            - Have special syntax: `[ a, b, c, ... ]`
+            - Expose function `resize(len : int)`
+            - Expose functions `append(item : T)`, `insert(item : T, index = 0)`
+        - Expose meta operators `'range` for an index iteratable and `'pairs` for a key-value iteratable
+        - Is value-iteratable by a for loop
+
+Annotations:
+    - `0 -> 10` reads as "0 up to 10 (inclusive)"
+    - `true -> false` reads as "true implies false"
+    - `a <- b` reads as "b reduces to a"
+    - `optional<T>` is an alias for `option<nothing,T>` for having a standardized variant to
+      make function return values optional. `nothing` is a `singleton<nothing>`
+    - `trinary` is a an alias for `optional<bool>`
+    - `string` is an alias for `array<char>`
+    - Implement classes/objects by using closure instantiation and returning only the public interface
+
+Think About:
+    - How to handle default values in function types?
+        - Bound to function, kinda un-useful
+            - Is more flexible
+            - Is more complex to handle, because it requires runtime eval of argument lists
+        - Bound to type, kinda weird, but more logical
+            - Does not contradict language philosophy
+            - Creates a clean interface
+            - Does not interfere with simple function defintions (`const name = fn(...)`)
+    - How to define generics?
+			- See *ellipsis*
+		- How to handle ellipsis `...` for variadic parameter lists (also for generic)
+			- For functions: Don't, use alternatives (string.arg())
+			- For generics:  Throw generics out of the first language version and use overloads + metaprogramming?
+				+ Can be deferred into later language versions
+				- Kinda useful
+		- How to handle `null` / optional references?
+			- `ref<T>` can always accept `null`
+				+ Known semantics
+				+ easy to code
+				- easy to make mistakes
+			- Add another type (`ptr<T>`) that has coercion rules for `ref<T>`
+			  and allows `null` whereas `ref<T>` does not.
+				+ less mistakes
+				- more work when coding
+	
+	
+```
+type nil  = singleton<nil>;
+type Point = record(x : int, y : int);
+
+module examples.operators
+{
+    const operator '[!]' = fn(inout pt : Point, idx : int, real value) -> real
+    {
+        switch(idx)
+        {
+            case 0:
+                pt.x = value;
+                break;
+            case 1:
+                pt.y = value;
+                break;
+            default:
+                error "Invalid index passed to point indexer.";
+        }
+        return value;
+    }
+
+    const operator '+' = fn(a : Point, b : Point) -> Point
+    {
+        return Point(
+            a.x + b.x,
+            a.y + b.y);
+    }
+}
+
+module example.extensions
+{
+    const print = fn(this i : int, j : int)
+    {
+        io.write(i, ",", j, "\n");
+    }
+
+    const print = fn(this p : Point)
+    {
+        io.write("(", p.x, ",", p.y, ")\n");
+    }
+
+    var pt = Point(x = 10, y = 20);
+    pt.print(); # Prints "(10,20)\n"
+    print(pt);  # Prints exactly the same
+    5.print(6); # Prints "5,6\n"
+}
+
+module example.references
+{
+    var foo : ref<Point> = new Point(x = 10);
+    var bar : ref<Point> = new Point(x = 20);
+
+    foo = bar;               # copy reference
+    foo = new Point(x = 40); # assign new reference
+
+    foo := Point(x = 30);    # assign new value
+    foo := bar'value;        # copy value
+    foo := bar;              # copy value with use of coercion
+
+    var baz : Point = bar;   # copy value with coercion
+
+    print(foo'value.x);      # access value member
+    print(foo.x);            # use dot-member propagation
+}
+
+module examples.lambda
+{
+    const apply = fn(this list : array<real>, f : fn(x:real) -> real) -> array<real>
+    {
+        var res : array<real> = array<real>(list.length);
+        for(i in list'range)
+            res[i] = f(list[i]);
+        return res;
+    }
+
+    var foo = [1.0, 2.0, 3.0].apply(\x => 2 * x);
+}
+
+module examples.enum
+{
+    type siprefix = enum<real>(
+        nano  = 0.00000001,
+        micro = 0.000001,
+        milli = 0.001,
+        one   = 1,
+        kilo  = 1000.0,
+        mega  = 1000000,
+        giga  = 1000000000,
+        tera  = 1000000000000
+    )
+    type unit = record(
+        type = enum(
+            time,weight,voltage,current,distance
+        )
+        exponent : int = 1,
+    )
+    type physical = record(
+        units : array<unit>,
+        value : real = 1.0,
+    )
+    const seconds = physical([ unit(:time) ]);
+    const gram = physical([ unit(:weight) ], 0.001);
+    const meter = physical([ unit(:distance) ]);
+
+    # requires operator overloads, not written here...
+
+    var force = 3.5 * :kilo * gram * meter / (second * second);
+
+    # force will be physical([ unit(:weight,1), unit(:distance,1), unit(:time,-2) ], 3.5)
+}
+
+module examples.loop_usage
+{
+    for(i in 0 -> 10)
+        print(i);
+
+    var arr = [ 3, 4, 5 ];
+
+    for(p in arr)
+        print("value = %1".arg(v));
+
+    for(i in arr'range)
+        print("index = %1".arg(i));
+
+    for(v in arr'pairs)
+        print(p.index, p.value);
+}
+
+module examples.custom_iterator
+{
+    var i = 10;
+    var iter = fn() -> option<nil,int>
+    {
+        if(i <= 0)
+            return nil;
+        return --i;
+    }
+
+    for(v in iter)
+        print(v); # 10 9 8 7 6 5 4 3 2 1 0
+}
+
+# TODO: Work on the option<...> type
+module examples.option
+{
+    type ios = option<string,int>;
+
+    var val : ios = "Hello, World!";
+    switch(val.type)
+    {
+        case string:
+            print("s = %1".arg(string(val)));
+            break;
+        case int:
+            print("i = %1".arg(int(val)));
+            break;
+        others:
+            error "Not supported!";
+    }
+}
+
+module examples.generics
+{
+	# 
+}
+```

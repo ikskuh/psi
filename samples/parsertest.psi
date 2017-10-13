@@ -91,7 +91,6 @@ module types
 	type foo = fn(i : int, j : int) -> int  with i > 0, j < 0;
 }
 
-	
 module gendecl
 {
 	generic var foo<i:int> : int;
@@ -386,6 +385,9 @@ module operators
 	
 	special operator '[]' = fn() { };
 	special operator '()' = fn() { };
+	
+	export special operator '[]' = fn() { };
+	export special operator '()' = fn() { };
 }
 
 export const main = fn(args : array<string>) -> int

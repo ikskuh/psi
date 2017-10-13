@@ -27,16 +27,9 @@ generic type real<
 	max     : number> = <INTERNAL>;
 
 # Resizable array type
-# TODO: Think about usage...
 generic type array<
 	T : type,
 	dimensions : integer = 1> = <INTERNAL>;
-
-# Fixed size nd-array
-# TODO: How to do variadic argument lists?
-generic type fixarray<
-	T : type,
-	ndim : integer...> = <INTERNAL>;
 
 # Reference and pointer types
 # TODO: Does pointer allow 'nullptr' or similar
