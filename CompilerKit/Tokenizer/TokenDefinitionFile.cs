@@ -19,6 +19,23 @@ namespace CompilerKit
 		{
 
 		}
+		
+		public void Rename(string old, string @new)
+		{
+			if(tokentypes.ContainsKey(@new))
+				throw new InvalidOperationException();
+			if(!tokentypes.ContainsKey(old))
+				throw new InvalidOperationException();
+			
+			tokentypes.Add(@new, tokentypes[@old]);
+			tokentypes.Remove(@old);
+			
+			if(postprocess.ContainsKey(@old))
+			{
+				postprocess.Add(@new, postprocess[@old]);
+				postprocess.Remove(@old);
+			}
+		}
 
 		public static TokenDefinitionFile Load(string source)
 		{

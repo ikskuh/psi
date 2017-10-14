@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Text.RegularExpressions;
-namespace MetaCompiler
+namespace CompilerKit
 {
 	public sealed class Terminal : Syntax
 	{

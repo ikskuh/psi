@@ -3,9 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MetaCompiler", "MetaCompiler\MetaCompiler.csproj", "{51BA2EFE-74BE-4654-926E-03C7D4A75578}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Documentation", "Documentation\Documentation.csproj", "{FE5AFC8F-AF85-4718-A590-40BDA5D95DFA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CompilerKit", "CompilerKit\CompilerKit.csproj", "{8EC1C24B-1017-4AC1-BAD1-297EB992C2F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiCompiler", "PsiCompiler\PsiCompiler.csproj", "{C3F22A9A-EDFD-489C-A722-B100B05A9602}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{057E8ADA-B3F6-4C31-8E37-82107D516621}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{96BA2189-31EE-4432-8476-B2EED2A4A000}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,13 +21,13 @@ Global
 		{51BA2EFE-74BE-4654-926E-03C7D4A75578}.Debug|x86.Build.0 = Debug|x86
 		{51BA2EFE-74BE-4654-926E-03C7D4A75578}.Release|x86.ActiveCfg = Release|x86
 		{51BA2EFE-74BE-4654-926E-03C7D4A75578}.Release|x86.Build.0 = Release|x86
-		{FE5AFC8F-AF85-4718-A590-40BDA5D95DFA}.Debug|x86.ActiveCfg = Debug|x86
-		{FE5AFC8F-AF85-4718-A590-40BDA5D95DFA}.Debug|x86.Build.0 = Debug|x86
-		{FE5AFC8F-AF85-4718-A590-40BDA5D95DFA}.Release|x86.ActiveCfg = Release|x86
-		{FE5AFC8F-AF85-4718-A590-40BDA5D95DFA}.Release|x86.Build.0 = Release|x86
 		{8EC1C24B-1017-4AC1-BAD1-297EB992C2F5}.Debug|x86.ActiveCfg = Debug|Any CPU
 		{8EC1C24B-1017-4AC1-BAD1-297EB992C2F5}.Debug|x86.Build.0 = Debug|Any CPU
 		{8EC1C24B-1017-4AC1-BAD1-297EB992C2F5}.Release|x86.ActiveCfg = Release|Any CPU
 		{8EC1C24B-1017-4AC1-BAD1-297EB992C2F5}.Release|x86.Build.0 = Release|Any CPU
+		{C3F22A9A-EDFD-489C-A722-B100B05A9602}.Debug|x86.ActiveCfg = Debug|x86
+		{C3F22A9A-EDFD-489C-A722-B100B05A9602}.Debug|x86.Build.0 = Debug|x86
+		{C3F22A9A-EDFD-489C-A722-B100B05A9602}.Release|x86.ActiveCfg = Release|x86
+		{C3F22A9A-EDFD-489C-A722-B100B05A9602}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 EndGlobal

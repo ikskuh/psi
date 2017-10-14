@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Text.RegularExpressions;
 using CompilerKit;
-namespace MetaCompiler
+namespace CompilerKit
 {
-	class GrammarParser : Parser<GrammarTokenType>
+	public sealed class GrammarParser : Parser<GrammarTokenType>
 	{
 		public GrammarParser(GrammarTokenizer tokenizer) : base(tokenizer)
 		{
@@ -23,6 +23,7 @@ namespace MetaCompiler
 
 				grammar.Rules.Add(new Rule
 				{
+					Location = name.Location,
 					Name = name.Text,
 					Syntax = syntax,
 				});

@@ -5,11 +5,6 @@
 <#@ import namespace="System.Text.RegularExpressions" #>
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Collections.Generic" #>
-using System;
-using System.IO;
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
-using CompilerKit;
 
 sealed partial class <#=TokenizerName#> : Tokenizer<<#=TokenType#>>
 {
@@ -41,11 +36,4 @@ sealed partial class <#=TokenizerName#> : Tokenizer<<#=TokenType#>>
 				return (text) => text;
 		}
 	}
-}
-
-public enum <#=TokenType#>
-{
-<# foreach(var tdef in Source) { #>
-	<#= tdef.Key #>,
-<# } #>
 }

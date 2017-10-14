@@ -12,7 +12,7 @@ namespace CompilerKit
 		private readonly string fileName;
 
 		private string fulltext;
-		private int cursor = 0, lineNo = 1;
+		private int cursor = 0, lineNo = 1, colNo = 1;
 		private Token<T> current;
 		private TextReader reader;
 		private bool closeOnDispose;
@@ -84,10 +84,21 @@ namespace CompilerKit
 				var token = this.PostProcess(new Token<T>(
 					tokdef.Type,
 					matsch.Value,
-					new CodeLocation(this.fileName, lineNo)));
+					new CodeLocation(this.fileName, this.lineNo, this.colNo)));
 
-				lineNo += matsch.Value.Count(c => (c == '\n'));
-				this.cursor += matsch.Length;
+				for (int i = 0; i < matsch.Length; i++)
+				{
+					if (this.fulltext[this.cursor] == '\n')
+					{
+						this.lineNo++;
+						this.colNo = 1;
+					}
+					else
+					{
+						this.colNo++;
+					}
+					this.cursor += 1;
+				}
 
 				// Restart ReadNext() to skip ignored tokens
 				// recursion somehow feels bad here

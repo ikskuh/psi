@@ -11,211 +11,71 @@
 namespace CompilerKit {
     using System.Linq;
     using System.Text;
-    using System.Text.RegularExpressions;
-    using System.IO;
     using System.Collections.Generic;
     using System;
     
     
-    public partial class TokenizerGenerator : TokenizerGeneratorBase {
+    public partial class HeaderGenerator : HeaderGeneratorBase {
         
         public virtual string TransformText() {
             this.GenerationEnvironment = null;
             
-            #line 8 ""
-            this.Write("\nsealed partial class ");
+            #line 1 ""
+            this.Write("﻿");
             
             #line default
             #line hidden
             
-            #line 9 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture(TokenizerName));
+            #line 6 ""
+            this.Write("\nusing System;\nusing System.IO;\nusing System.Collections.Generic;\nusing System.Text.RegularExpressions;\nusing CompilerKit;\n\npublic enum ");
             
             #line default
             #line hidden
             
-            #line 9 ""
-            this.Write(" : Tokenizer<");
-            
-            #line default
-            #line hidden
-            
-            #line 9 ""
+            #line 13 ""
             this.Write(this.ToStringHelper.ToStringWithCulture(TokenType));
             
             #line default
             #line hidden
             
-            #line 9 ""
-            this.Write(">\n{\n\tpublic ");
+            #line 13 ""
+            this.Write("\n{\n");
             
             #line default
             #line hidden
             
-            #line 11 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture(TokenizerName));
-            
-            #line default
-            #line hidden
-            
-            #line 11 ""
-            this.Write("(TextReader reader, string fileName) : this(reader, fileName, true)\n\t{\n\t\n\t}\n\n\tpublic ");
+            #line 15 ""
+ foreach(var tdef in Tokens) { 
             
             #line default
             #line hidden
             
             #line 16 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture(TokenizerName));
+            this.Write("\t");
             
             #line default
             #line hidden
             
             #line 16 ""
-            this.Write("(TextReader reader, string fileName, bool closeOnDispose) : base(reader, fileName, closeOnDispose)\n\t{\n");
-            
-            #line default
-            #line hidden
-            
-            #line 18 ""
- foreach(var tdef in Source) { 
-            
-            #line default
-            #line hidden
-            
-            #line 19 ""
-            this.Write("\t\tthis.RegisterToken(");
-            
-            #line default
-            #line hidden
-            
-            #line 19 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture(TokenType));
-            
-            #line default
-            #line hidden
-            
-            #line 19 ""
-            this.Write(".");
-            
-            #line default
-            #line hidden
-            
-            #line 19 ""
             this.Write(this.ToStringHelper.ToStringWithCulture( tdef.Key ));
             
             #line default
             #line hidden
             
-            #line 19 ""
-            this.Write(", new Regex(@\"");
+            #line 16 ""
+            this.Write(",\n");
             
             #line default
             #line hidden
             
-            #line 19 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture( tdef.Value.ToString().Replace("\"", "\"\"") ));
-            
-            #line default
-            #line hidden
-            
-            #line 19 ""
-            this.Write("\", ");
-            
-            #line default
-            #line hidden
-            
-            #line 19 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture( MakeEnum(tdef.Value.Options) ));
-            
-            #line default
-            #line hidden
-            
-            #line 19 ""
-            this.Write("));\n");
-            
-            #line default
-            #line hidden
-            
-            #line 20 ""
+            #line 17 ""
  } 
             
             #line default
             #line hidden
             
-            #line 21 ""
-            this.Write("\t\t\t\n\t\tthis.Initialize();\n\t}\n\n\tpartial void Initialize();\n\n\tprotected override Func<string,string> GetPostProcessor(");
-            
-            #line default
-            #line hidden
-            
-            #line 27 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture(TokenType));
-            
-            #line default
-            #line hidden
-            
-            #line 27 ""
-            this.Write(" type)\n\t{\n\t\tswitch(type)\n\t\t{\n");
-            
-            #line default
-            #line hidden
-            
-            #line 31 ""
- foreach(var step in Source.PostProcessings) { 
-            
-            #line default
-            #line hidden
-            
-            #line 32 ""
-            this.Write("\t\t\tcase ");
-            
-            #line default
-            #line hidden
-            
-            #line 32 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture(TokenType));
-            
-            #line default
-            #line hidden
-            
-            #line 32 ""
-            this.Write(".");
-            
-            #line default
-            #line hidden
-            
-            #line 32 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture( step.Key ));
-            
-            #line default
-            #line hidden
-            
-            #line 32 ""
-            this.Write(":\n\t\t\t\treturn ");
-            
-            #line default
-            #line hidden
-            
-            #line 33 ""
-            this.Write(this.ToStringHelper.ToStringWithCulture( step.Value ));
-            
-            #line default
-            #line hidden
-            
-            #line 33 ""
-            this.Write(";\n");
-            
-            #line default
-            #line hidden
-            
-            #line 34 ""
- } 
-            
-            #line default
-            #line hidden
-            
-            #line 35 ""
-            this.Write("\t\t\tdefault:\n\t\t\t\treturn (text) => text;\n\t\t}\n\t}\n}\n");
+            #line 18 ""
+            this.Write("}");
             
             #line default
             #line hidden
@@ -226,7 +86,7 @@ namespace CompilerKit {
         }
     }
     
-    public class TokenizerGeneratorBase {
+    public class HeaderGeneratorBase {
         
         private global::System.Text.StringBuilder builder;
         

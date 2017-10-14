@@ -3,10 +3,10 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProjectGuid>{51BA2EFE-74BE-4654-926E-03C7D4A75578}</ProjectGuid>
+    <ProjectGuid>{C3F22A9A-EDFD-489C-A722-B100B05A9602}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>MetaCompiler</RootNamespace>
-    <AssemblyName>MetaCompiler</AssemblyName>
+    <RootNamespace>PsiCompiler</RootNamespace>
+    <AssemblyName>PsiCompiler</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
@@ -34,7 +34,22 @@
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Extensions.cs" />
+    <Compile Include="Grammar\PsiLanguage.gen.cs">
+      <DependentUpon>PsiLanguage.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Grammar\PsiParser.cs" />
+    <Compile Include="Grammar\PsiTokenizer.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Grammar\Psi.grm" />
+    <None Include="Grammar\Psi.tok" />
+    <None Include="Grammar\PsiLanguage.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>PsiLanguage.gen.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Grammar\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CompilerKit\CompilerKit.csproj">

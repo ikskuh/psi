@@ -8,8 +8,14 @@ vardecl     := ("const" | "var") "identifier" [ ":" <type> ] [ "=" <expression> 
 
 assertion   := "assert" <expression>;
 
-type        :=  "identifier";
+type        := "identifier";
 
-expression  := <literal> | "identifier";
+expression  := <product>;
 
-literal     := 'string' | 'number';
+product     := <sum> { ( "*" | "/" ) <sum> } ;
+
+sum         := <value> { ( "+" | "-" ) <value> } ;
+
+value       := <literal> | "identifier";
+
+literal     := 'String' | 'Number';

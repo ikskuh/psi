@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-namespace MetaCompiler
+namespace CompilerKit
 {
 	public abstract class Syntax
 	{

@@ -35,7 +35,7 @@
       <HintPath>..\packages\Microsoft.VisualStudio.TextTemplating.Interfaces.11.0.11.0.50727\lib\net45\Microsoft.VisualStudio.TextTemplating.Interfaces.11.0.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualStudio.TextTemplating.15.0">
-      <HintPath>..\packages\Microsoft.VisualStudio.TextTemplating.15.0.15.0.26606\lib\net45\Microsoft.VisualStudio.TextTemplating.15.0.dll</HintPath>
+      <HintPath>..\packages\Microsoft.VisualStudio.TextTemplating.15.0.15.4.27004\lib\net45\Microsoft.VisualStudio.TextTemplating.15.0.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -52,6 +52,25 @@
       <DependentUpon>TokenizerGenerator.tt</DependentUpon>
     </Compile>
     <Compile Include="Tokenizer\TokenDefinitionFile.cs" />
+    <Compile Include="Grammar\Alternative.cs" />
+    <Compile Include="Grammar\Grammar.cs" />
+    <Compile Include="Grammar\GrammarParser.cs" />
+    <Compile Include="Grammar\GrammarTokenizer.gen.cs">
+      <DependentUpon>GrammarTokenizer.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Grammar\Loop.cs" />
+    <Compile Include="Grammar\Optional.cs" />
+    <Compile Include="Grammar\Rule.cs" />
+    <Compile Include="Grammar\RuleReference.cs" />
+    <Compile Include="Grammar\Sequence.cs" />
+    <Compile Include="Grammar\Syntax.cs" />
+    <Compile Include="Grammar\Terminal.cs" />
+    <Compile Include="Parser\ParserGenerator.cs">
+      <DependentUpon>ParserGenerator.tt</DependentUpon>
+    </Compile>
+    <Compile Include="HeaderGenerator.cs">
+      <DependentUpon>HeaderGenerator.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -59,10 +78,24 @@
       <Generator>TextTemplatingFilePreprocessor</Generator>
       <LastGenOutput>TokenizerGenerator.cs</LastGenOutput>
     </None>
+    <None Include="Grammar\Grammar.tok" />
+    <None Include="Grammar\GrammarTokenizer.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GrammarTokenizer.gen.cs</LastGenOutput>
+    </None>
+    <None Include="Parser\ParserGenerator.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>ParserGenerator.cs</LastGenOutput>
+    </None>
+    <None Include="HeaderGenerator.tt">
+      <Generator>TextTemplatingFilePreprocessor</Generator>
+      <LastGenOutput>HeaderGenerator.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Parser\" />
     <Folder Include="Tokenizer\" />
+    <Folder Include="Grammar\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>  

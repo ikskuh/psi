@@ -1,0 +1,13 @@
+﻿# Psi Language Tokens, required by psi.grm
+
+# Type Literals
+
+Number := -?\d+(\.\d+)?
+
+String := ".*?(?<!\\)"
+
+
+# Post Processings
+
+PP(String) := (text) => text.Substring(1, text.Length - 2)
+

@@ -5,11 +5,27 @@
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Text.RegularExpressions" #>
 <#@ import namespace="System.IO" #>
-<#@ import namespace="CompilerKit" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".gen.cs" #>
 
-namespace MetaCompiler
+<#
+	var prefix = "Psi";
+	
+	CompilerKit.Grammar grammar;
+	CompilerKit.TokenDefinitionFile tokens;
+	
+	Host.LogErrors(CompilerKit.Generator.Load(
+		Host.ResolvePath("Psi.grm"), 
+		Host.ResolvePath("Psi.tok"), 
+		out grammar, 
+		out tokens));
+#>
+
+namespace PsiCompiler
 {
-	<#= CompilerKit.Generator.Tokenizer("Grammar", Host.ResolvePath("Grammar.tok")) #>
+	<#= CompilerKit.Generator.Header(prefix, tokens) #>
+
+	<#= CompilerKit.Generator.Tokenizer(prefix, tokens) #>
+	
+	<#= CompilerKit.Generator.Parser(prefix, grammar) #>
 }

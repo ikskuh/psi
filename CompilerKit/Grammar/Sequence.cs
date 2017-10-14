@@ -1,5 +1,5 @@
 ﻿using System;
-namespace MetaCompiler
+namespace CompilerKit
 {
 	public class Sequence : Syntax
 	{
