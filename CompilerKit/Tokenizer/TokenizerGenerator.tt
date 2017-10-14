@@ -1,0 +1,51 @@
+﻿<#@ template debug="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Text.RegularExpressions" #>
+<#@ import namespace="System.IO" #>
+<#@ import namespace="System.Collections.Generic" #>
+using System;
+using System.IO;
+using System.Collections.Generic;
+using System.Text.RegularExpressions;
+using CompilerKit;
+
+sealed partial class <#=TokenizerName#> : Tokenizer<<#=TokenType#>>
+{
+	public <#=TokenizerName#>(TextReader reader, string fileName) : this(reader, fileName, true)
+	{
+	
+	}
+
+	public <#=TokenizerName#>(TextReader reader, string fileName, bool closeOnDispose) : base(reader, fileName, closeOnDispose)
+	{
+<# foreach(var tdef in Source) { #>
+		this.RegisterToken(<#=TokenType#>.<#= tdef.Key #>, new Regex(@"<#= tdef.Value.ToString().Replace("\"", "\"\"") #>", <#= MakeEnum(tdef.Value.Options) #>));
+<# } #>
+			
+		this.Initialize();
+	}
+
+	partial void Initialize();
+
+	protected override Func<string,string> GetPostProcessor(<#=TokenType#> type)
+	{
+		switch(type)
+		{
+<# foreach(var step in Source.PostProcessings) { #>
+			case <#=TokenType#>.<#= step.Key #>:
+				return <#= step.Value #>;
+<# } #>
+			default:
+				return (text) => text;
+		}
+	}
+}
+
+public enum <#=TokenType#>
+{
+<# foreach(var tdef in Source) { #>
+	<#= tdef.Key #>,
+<# } #>
+}

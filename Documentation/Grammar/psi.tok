@@ -1,0 +1,5 @@
+﻿# Psi Language Tokens, required by psi.grm
+
+number := -?\d+(\.\d+)?
+
+string := ".*?(?<!\\)"

@@ -1,0 +1,40 @@
+﻿# Generic Stuff
+Whitespace               := \s+
+Comment:Singleline       := #.*
+
+# Identifiers
+
+RuleName                 := \w+
+RuleReference            := \<\w+\>
+TerminalReference        := ".*?(?<!\\)"
+ExtTerminalReference     := '.*?(?<!\\)'
+
+# Structure
+
+BeginOfDefinition        := \:\=
+EndOfDefinition          := \;
+
+# Operators
+
+GroupBegin               := \(
+GroupEnd                 := \)
+
+LoopBegin                := \{
+LoopEnd                  := \}
+
+OptionalBegin            := \[
+OptionalEnd              := \]
+
+Alternative              := \|
+
+# Post Processings
+PP(RuleReference)        := (text) => text.Substring(1, text.Length - 2)
+PP(TerminalReference)    := (text) => text.Substring(1, text.Length - 2)
+PP(ExtTerminalReference) := (text) => text.Substring(1, text.Length - 2)
+PP(Whitespace)           := (text) => null; // discard
+PP(Comment)              := (text) => null; // discard
+
+# THIS MUST BE LAST!
+# Invalid Token:
+
+Invalid                  := \S+

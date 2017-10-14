@@ -1,0 +1,15 @@
+﻿program     := { <declaration> };
+
+declaration := <vardecl> | <moddecl> | <assertion>;
+
+moddecl     := "module" "{" <program> "}";
+
+vardecl     := ("const" | "var") "identifier" [ ":" <type> ] [ "=" <expression> ] [ ";" ];
+
+assertion   := "assert" <expression>;
+
+type        :=  "identifier";
+
+expression  := <literal> | "identifier";
+
+literal     := 'string' | 'number';
