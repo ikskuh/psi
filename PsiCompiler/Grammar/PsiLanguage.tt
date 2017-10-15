@@ -11,21 +11,15 @@
 <#
 	var prefix = "Psi";
 	
-	CompilerKit.Grammar grammar;
-	CompilerKit.TokenDefinitionFile tokens;
-	
-	Host.LogErrors(CompilerKit.Generator.Load(
-		Host.ResolvePath("Psi.grm"), 
-		Host.ResolvePath("Psi.tok"), 
-		out grammar, 
-		out tokens));
+	var tokens = CompilerKit.TokenDefinitionFile.Load(Host.ResolvePath("Psi.tok"));
 #>
+
+using System;
+using System.IO;
+using System.Text.RegularExpressions;
+using CompilerKit;
 
 namespace PsiCompiler
 {
-	<#= CompilerKit.Generator.Header(prefix, tokens) #>
-
 	<#= CompilerKit.Generator.Tokenizer(prefix, tokens) #>
-	
-	<#= CompilerKit.Generator.Parser(prefix, grammar) #>
 }

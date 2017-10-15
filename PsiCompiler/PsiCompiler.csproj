@@ -14,19 +14,33 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;</DefineConstants>
+    <DefineConstants>DEBUG;EXPORT_GPPG</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <ExternalConsole>true</ExternalConsole>
+    <PlatformTarget>x86</PlatformTarget>
+    <CustomCommands>
+      <CustomCommands>
+        <Command>
+          <type>BeforeBuild</type>
+          <command>../../gppg-distro-1_5_2/binaries/Gppg.exe Psi.y</command>
+          <workingdir>${ProjectDir}/Grammar/</workingdir>
+        </Command>
+      </CustomCommands>
+    </CustomCommands>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <DefineConstants>EXPORT_GPPG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <ExternalConsole>true</ExternalConsole>
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <ExternalConsole>true</ExternalConsole>
-    <PlatformTarget>x86</PlatformTarget>
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'Default' ">
+    <StartAction>Project</StartAction>
+    <ExternalConsole>false</ExternalConsole>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -39,14 +53,17 @@
     </Compile>
     <Compile Include="Grammar\PsiParser.cs" />
     <Compile Include="Grammar\PsiTokenizer.cs" />
+    <Compile Include="Grammar\ShiftReduceParserCode.cs" />
+    <Compile Include="Grammar\ParserNode.cs" />
+    <Compile Include="Grammar\PsiLexer.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Grammar\Psi.grm" />
     <None Include="Grammar\Psi.tok" />
     <None Include="Grammar\PsiLanguage.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>PsiLanguage.gen.cs</LastGenOutput>
     </None>
+    <None Include="Grammar\Psi.y" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Grammar\" />

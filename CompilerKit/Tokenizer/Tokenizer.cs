@@ -109,7 +109,7 @@ namespace CompilerKit
 				return;
 			}
 
-			throw new InvalidOperationException($"Unexpected symbol {this.fulltext[this.cursor]}");
+			throw new InvalidOperationException($"Unexpected symbol '{this.fulltext[this.cursor]}'");
 		}
 
 		public Token<T> Peek()

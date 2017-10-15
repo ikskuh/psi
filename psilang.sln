@@ -10,6 +10,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{057E8ADA-B3F6-4C31-8E37-82107D516621}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{96BA2189-31EE-4432-8476-B2EED2A4A000}"
+	ProjectSection(SolutionItems) = preProject
+		Sources\CompilerTest.psi = Sources\CompilerTest.psi
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

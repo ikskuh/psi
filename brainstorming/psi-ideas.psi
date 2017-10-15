@@ -16,7 +16,7 @@ Syntax Changes:
     - Allow a semicolon at the end of a declaration, but
       don't enforce it. This allows cleaner syntax for function
       definitions
-    - Parameters can be prefixed with either `in`, `inout` or `out` for denoting
+    - Parameters can be prefixed with `this`, `in`, `inout` or `out` for denoting
       its semantic.
     - A new keyword is introduced: `new`.
       It allows declaring the following expression: `new T(...)` where `T` is a constructor
@@ -41,8 +41,7 @@ Syntax Changes:
     - Enumeration literals are introduced: `:%w+`
     - Alternative enumeration constructor is introduced:
       `enum<type>(key1 = value1, key2 = value2, key3 = value3, ...)`
-    - On declaration of an enum type, the colon prefix is not necessary, but may be used:
-      `enum(:a, :b, c, d)`
+    - On declaration of an enum type, the colon prefix is not allowed.
 
 Semantic Changes:
     - The standard library contains a type `ref<T>` that allows having a garbage-collected
@@ -140,6 +139,11 @@ Annotations:
     - `string` is an alias for `array<char>`
     - Implement classes/objects by using closure instantiation and returning only the public interface
 
+Removals:
+  - Modify-and-writeback operators (`+=`, `-=`, …)
+  - `generic` system, only fixed, pre-implemented generics are supported
+  - `optional` is removed (too complex for first version)
+    
 Think About:
     - How to handle default values in function types?
         - Bound to function, kinda un-useful

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 
 namespace PsiCompiler
 {
@@ -6,7 +7,12 @@ namespace PsiCompiler
 	{
 		public static void Main(string[] args)
 		{
-			Console.WriteLine("Hello World!");
+			using (var lexer = new PsiLexer("/home/felix/projects/psilang/Sources/CompilerTest.psi"))
+			{
+				var parser = new PsiParser(lexer);
+
+				Console.WriteLine("Success: {0}", parser.Parse());
+			}
 		}
 	}
 }

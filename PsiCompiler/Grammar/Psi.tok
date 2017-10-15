@@ -1,13 +1,123 @@
 ﻿# Psi Language Tokens, required by psi.grm
 
+# Comments
+Comment:Singleline     := \/\/.*
+LongComment:Multiline  := \/\*.*?\*\/
+Whitespace             := \s+
+
+# Brackets
+
+CURLY_O    := \{
+CURLY_C    := \}
+ROUND_O    := \(
+ROUND_C    := \)
+POINTY_O   := \<
+POINTY_C   := \>
+SQUARE_O   := \[
+SQUARE_C   := \]
+
+# Keywords
+
+IMPORT     := import
+EXPORT     := export
+MODULE     := module
+ASSERT     := assert
+ERROR      := error
+CONST      := const
+VAR        := var
+TYPE       := type
+FN         := fn
+NEW        := new
+OPERATOR   := operator
+
+# Type Names
+ENUM       := enum
+RECORD     := record
+OPTION     := option
+
+# Parameter Spec
+INOUT      := inout
+IN         := in
+OUT        := out
+THIS       := this
+
+# Control flow
+FOR        := for
+WHILE      := while
+LOOP       := loop
+UNTIL      := unitl
+IF         := if
+ELSE       := else
+SELECT     := select
+WHEN       := when
+OTHERWISE  := otherwise
+RESTRICT   := restrict
+
+# Control flow control
+BREAK      := break
+CONTINUE   := continue
+NEXT       := next
+RETURN     := return
+GOTO       := goto
+
+# Operators
+
+MAPSTO     := \=\>
+
+FORWARD    := \-\>
+BACKWAR    := \<\-
+
+# Comparison operators
+LEQUAL     := \<\=
+GEQUAL     := \>\=
+EQUAL      := \=\=
+NEQUAL     := \!\=
+LESS       := \<
+MORE       := \>
+
+IS         := \=
+ASSIGN     := \:\=
+
+CONCAT     := \-\-
+
+DOT        := \.
+META       := \'
+COMMA      := \,
+TERMINATOR := \;
+COLON      := \:
+
+LAMBDA     := \\
+
+# Arithmetic operators
+PLUS       := \+
+MINUS      := \-
+EXP        := \*\*
+MULT       := \*
+MOD        := \%
+DIV        := \/
+
+# Logic operators
+AND        := \&
+OR         := \|
+INVERT     := \~
+XOR        := \^
+
 # Type Literals
 
-Number := -?\d+(\.\d+)?
+NUMBER     := -?\d+(\.\d+)?
 
-String := ".*?(?<!\\)"
+STRING     := ".*?(?<!\\)"
 
+ENUMVAL    := \:[\w-[\d]]\w*
+
+# Must not start with a number, but is allowed to any word character
+IDENT      := [\w-[\d]]\w*
 
 # Post Processings
 
-PP(String) := (text) => text.Substring(1, text.Length - 2)
+PP(Comment)     := (text) => null
+PP(LongComment) := (text) => null
+PP(Whitespace)  := (text) => null
+
+PP(STRING)      := (text) => text.Substring(1, text.Length - 2)
 

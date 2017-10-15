@@ -1,0 +1,33 @@
+// kommentar
+
+/**
+ * Mehrzeilen-Kommentar
+ */
+
+const name = 10;
+
+const name : type;
+
+const name : type = 10;
+
+var name = 10;
+
+var name : type;
+
+var name : type = 10;
+
+export const name = 10;
+
+export const name : type;
+
+export const name : type = 10;
+
+export var name = 10;
+
+export var name : type;
+
+export var name : type = 10;
+
+assert value;
+
+assert 10;

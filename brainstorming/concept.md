@@ -50,7 +50,7 @@ Implicit Casting:
 	Named Type → Unnamed Type
 ```
 const foo : named = a;
-const f : fn(x : enum(a,b,c);
+const f : fn(x : enum(a,b,c));
 f(foo);
 ```
 
