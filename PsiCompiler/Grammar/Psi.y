@@ -45,7 +45,7 @@
 %type <Module> module program
 %type <Name> modname
 %type <Assertion> assertion
-%type <Expression> expression expr_or expr_xor expr_and equality comparison expr_arrows sum term expo shifting unary value
+%type <Expression> type expression expr_or expr_xor expr_and equality comparison expr_arrows sum term expo shifting unary value
 %type <Declaration> declaration typedecl vardecl
 %type <Boolean> export storage
 
@@ -93,7 +93,7 @@ typedecl    : TYPE identifier IS expression TERMINATOR {
             }
             ;
 
-vardecl     : storage identifier COLON expression terminator {
+vardecl     : storage identifier COLON type terminator {
             	$$ = new Declaration($2.Text, $4, null);
             	$$.IsConst = (bool)$1;
             }
@@ -101,11 +101,17 @@ vardecl     : storage identifier COLON expression terminator {
             	$$ = new Declaration($2.Text, null, $4);
             	$$.IsConst = (bool)$1;
             }
-            | storage identifier COLON expression IS expression terminator {
+            | storage identifier COLON type IS expression terminator {
             	$$ = new Declaration($2.Text, $4, $6);
             	$$.IsConst = (bool)$1;
             }
             ;
+            
+type        : value
+			{
+				$$ = $1;
+			}
+			;
 
 terminator  : /* optional */
             | TERMINATOR;
@@ -198,7 +204,7 @@ expr_or     : expr_or OR expr_xor
 			}
 			;
 
-expr_xor    : expr_xor OR expr_and
+expr_xor    : expr_xor XOR expr_and
 			{
 				$$ = Apply($1, $3, PsiOperator.Xor);
 			}
@@ -254,14 +260,13 @@ comparison  : comparison LEQUAL expr_arrows
 			}
 			;
 
-
 expr_arrows : expr_arrows FORWARD sum
 			{
-				$$ = Apply($1, $3, PsiOperator.Equals);
+				$$ = Apply($1, $3, PsiOperator.Forward);
 			}
-			| expr_arrows NEQUAL sum
+			| expr_arrows BACKWARD sum
 			{
-				$$ = Apply($1, $3, PsiOperator.NotEquals);
+				$$ = Apply($1, $3, PsiOperator.Backward);
 			}
 			| sum
 			{
