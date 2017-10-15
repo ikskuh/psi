@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{96BA
 		Sources\CompilerTest.psi = Sources\CompilerTest.psi
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiCompiler.Test", "PsiCompiler.Test\PsiCompiler.Test.csproj", "{52595DDD-3D97-497C-8CC7-913E1416F13A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -32,5 +34,9 @@ Global
 		{C3F22A9A-EDFD-489C-A722-B100B05A9602}.Debug|x86.Build.0 = Debug|x86
 		{C3F22A9A-EDFD-489C-A722-B100B05A9602}.Release|x86.ActiveCfg = Release|x86
 		{C3F22A9A-EDFD-489C-A722-B100B05A9602}.Release|x86.Build.0 = Release|x86
+		{52595DDD-3D97-497C-8CC7-913E1416F13A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{52595DDD-3D97-497C-8CC7-913E1416F13A}.Debug|x86.Build.0 = Debug|Any CPU
+		{52595DDD-3D97-497C-8CC7-913E1416F13A}.Release|x86.ActiveCfg = Release|Any CPU
+		{52595DDD-3D97-497C-8CC7-913E1416F13A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

@@ -80,11 +80,20 @@ namespace CompilerKit
 				if (matsch.Index != start) // We don't start at the begin of our cursor.
 					continue;
 
-				// Post process our recognized token
-				var token = this.PostProcess(new Token<T>(
+				var raw = new Token<T>(
 					tokdef.Type,
 					matsch.Value,
-					new CodeLocation(this.fileName, this.lineNo, this.colNo)));
+					new CodeLocation(this.fileName, this.lineNo, this.colNo));
+
+				// Post process our recognized token
+				var token = this.PostProcess(raw);
+
+				if (this.TraceTokens && (token != null || this.TraceIgnoredTokens))
+				{
+					System.Diagnostics.Debug.WriteLine(
+						string.Format("{0}: {1} '{2}' → '{3}'", raw.Location, raw.Type, raw.Text, token?.Text ?? "<null>"),
+						"Lexer");
+				}
 
 				for (int i = 0; i < matsch.Length; i++)
 				{
@@ -147,5 +156,9 @@ namespace CompilerKit
 				return (this.current == null);
 			}
 		}
+
+		public bool TraceTokens { get; set; } = false;
+
+		public bool TraceIgnoredTokens { get; set; } = false;
 	}
 }

@@ -7,19 +7,16 @@
 <#@ import namespace="System.IO" #>
 <#@ import namespace="System.Collections.Generic" #>
 <#@ output extension=".gen.cs" #>
-
-<#
-	var prefix = "Psi";
-	
-	var tokens = CompilerKit.TokenDefinitionFile.Load(Host.ResolvePath("Psi.tok"));
-#>
-
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using CompilerKit;
 
-namespace PsiCompiler
+namespace PsiCompiler.Grammar
 {
+	<#
+	var prefix = "Psi";
+	var tokens = CompilerKit.TokenDefinitionFile.Load(Host.ResolvePath("Psi.tok"));
+	#>
 	<#= CompilerKit.Generator.Tokenizer(prefix, tokens) #>
 }

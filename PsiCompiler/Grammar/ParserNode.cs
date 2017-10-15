@@ -1,22 +1,318 @@
 ﻿using System;
 using CompilerKit;
 
-namespace PsiCompiler
+namespace PsiCompiler.Grammar
 {
-	public class ParserNode
+	public struct ParserNode
 	{
-		public readonly int Value;
-
-		public readonly Token<PsiTokenType> Token;
-
-		public ParserNode(int value)
+		private Token<PsiTokenType> _Token;
+		private Expression _Expression;
+		private Module _Module;
+		private Assertion _Assertion;
+		private CompoundName _Name;
+		private Declaration _Declaration;
+		private bool? _Boolean;
+		private PsiOperator? _Operator;
+		
+		public ParserNode(Token<PsiTokenType> value)
 		{
-			this.Value = value;
+			this._Token = value.NotNull();
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = null;
 		}
 		
-		public ParserNode(Token<PsiTokenType> token)
+		public ParserNode(Expression value)
 		{
-			this.Token = token;
+			this._Token = null;
+			this._Expression = value.NotNull();
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+		}
+		
+		public ParserNode(Module value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = value.NotNull();
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+		}
+		
+		public ParserNode(Assertion value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = value.NotNull();
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+		}
+		
+		public ParserNode(CompoundName value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = value.NotNull();
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+		}
+		
+		public ParserNode(Declaration value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = value.NotNull();
+			this._Boolean = null;
+			this._Operator = null;
+		}
+		
+		public ParserNode(bool? value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = value.NotNull();
+			this._Operator = null;
+		}
+		
+		public ParserNode(PsiOperator? value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = value.NotNull();
+		}
+		
+		public Token<PsiTokenType> Token
+		{
+			get
+			{
+				if(this._Token == null)
+					throw new InvalidOperationException("ParserNode is not a Token");
+				return this._Token;
+			}
+			set
+			{
+				this._Token = value;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+			}
+		}
+		
+		public Expression Expression
+		{
+			get
+			{
+				if(this._Expression == null)
+					throw new InvalidOperationException("ParserNode is not a Expression");
+				return this._Expression;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = value;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+			}
+		}
+		
+		public Module Module
+		{
+			get
+			{
+				if(this._Module == null)
+					throw new InvalidOperationException("ParserNode is not a Module");
+				return this._Module;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = value;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+			}
+		}
+		
+		public Assertion Assertion
+		{
+			get
+			{
+				if(this._Assertion == null)
+					throw new InvalidOperationException("ParserNode is not a Assertion");
+				return this._Assertion;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = value;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+			}
+		}
+		
+		public CompoundName Name
+		{
+			get
+			{
+				if(this._Name == null)
+					throw new InvalidOperationException("ParserNode is not a Name");
+				return this._Name;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = value;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+			}
+		}
+		
+		public Declaration Declaration
+		{
+			get
+			{
+				if(this._Declaration == null)
+					throw new InvalidOperationException("ParserNode is not a Declaration");
+				return this._Declaration;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = value;
+				this._Boolean = null;
+				this._Operator = null;
+			}
+		}
+		
+		public bool? Boolean
+		{
+			get
+			{
+				if(this._Boolean == null)
+					throw new InvalidOperationException("ParserNode is not a Boolean");
+				return this._Boolean;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = value;
+				this._Operator = null;
+			}
+		}
+		
+		public PsiOperator? Operator
+		{
+			get
+			{
+				if(this._Operator == null)
+					throw new InvalidOperationException("ParserNode is not a Operator");
+				return this._Operator;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = value;
+			}
+		}
+		
+		public static implicit operator ParserNode(Token<PsiTokenType> value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(Expression value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(Module value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(Assertion value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(CompoundName value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(Declaration value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(bool? value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(PsiOperator? value) => new ParserNode(value);
+		
+		public override string ToString()
+		{
+			if(this._Token != null)
+				return "Node(Token): " + _Token.ToString();
+			if(this._Expression != null)
+				return "Node(Expression): " + _Expression.ToString();
+			if(this._Module != null)
+				return "Node(Module): " + _Module.ToString();
+			if(this._Assertion != null)
+				return "Node(Assertion): " + _Assertion.ToString();
+			if(this._Name != null)
+				return "Node(Name): " + _Name.ToString();
+			if(this._Declaration != null)
+				return "Node(Declaration): " + _Declaration.ToString();
+			if(this._Boolean != null)
+				return "Node(Boolean): " + _Boolean.ToString();
+			if(this._Operator != null)
+				return "Node(Operator): " + _Operator.ToString();
+			return "<???>";
 		}
 	}
 }

@@ -1,33 +1,10 @@
-// kommentar
 
-/**
- * Mehrzeilen-Kommentar
- */
 
-const name = 10;
+assert  10 + 20  * 30;
+assert  10 * 20  + 30;
 
-const name : type;
+assert 10 + 20 * 30 + 40;
+assert 10 * 20 + 30 * 40;
 
-const name : type = 10;
-
-var name = 10;
-
-var name : type;
-
-var name : type = 10;
-
-export const name = 10;
-
-export const name : type;
-
-export const name : type = 10;
-
-export var name = 10;
-
-export var name : type;
-
-export var name : type = 10;
-
-assert value;
-
-assert 10;
+assert 10 + 20 + 30;
+assert 10 * 20 / 30;

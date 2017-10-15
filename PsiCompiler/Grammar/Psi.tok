@@ -1,12 +1,11 @@
 ﻿# Psi Language Tokens, required by psi.grm
 
 # Comments
-Comment:Singleline     := \/\/.*
-LongComment:Multiline  := \/\*.*?\*\/
+Comment                := \/\/.*
+LongComment:Singleline := \/\*.*?\*\/
 Whitespace             := \s+
 
 # Brackets
-
 CURLY_O    := \{
 CURLY_C    := \}
 ROUND_O    := \(
@@ -17,7 +16,6 @@ SQUARE_O   := \[
 SQUARE_C   := \]
 
 # Keywords
-
 IMPORT     := import
 EXPORT     := export
 MODULE     := module
@@ -62,10 +60,30 @@ GOTO       := goto
 
 # Operators
 
+# Writeback operators
+WB_CONCAT  := \-\-\=
+WB_PLUS    := \+\=
+WB_MINUS   := \-\=
+WB_EXP     := \*\*\=
+WB_MULT    := \*\=
+WB_MOD     := \%\=
+WB_DIV     := \/\=
+WB_AND     := \&\=
+WB_OR      := \|\=
+WB_INVERT  := \~\=
+WB_XOR     := \^\=
+WB_ASR     := \>\>\>\=
+WB_SHL     := \<\<\=
+WB_SHR     := \>\>\=
+
 MAPSTO     := \=\>
 
+ASR        := \>\>\>
+SHL        := \<\<
+SHR        := \>\>
+
 FORWARD    := \-\>
-BACKWAR    := \<\-
+BACKWARD   := \<\-
 
 # Comparison operators
 LEQUAL     := \<\=
@@ -120,4 +138,3 @@ PP(LongComment) := (text) => null
 PP(Whitespace)  := (text) => null
 
 PP(STRING)      := (text) => text.Substring(1, text.Length - 2)
-

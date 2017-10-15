@@ -242,22 +242,25 @@ namespace QUT.Gppg {
                 }
                 else if (action < 0)   // reduce
                 {
-                    try {
-                        Reduce( -action );
-                        if (action == -1)	// accept
-                            return true;
-                    }
-                    catch (Exception x) {
-                        if (x is AbortException)
-                            return false;
-                        else if (x is AcceptException)
-                            return true;
-                        else if (x is ErrorException && !ErrorRecovery())
-                            return false;
-                        else
-                            throw;  // Rethrow x, preserving information.
-
-                    }
+					try
+					{
+						Reduce(-action);
+						if (action == -1)   // accept
+							return true;
+					}
+					catch (AbortException)
+					{
+						return false;
+					}
+					catch (AcceptException)
+					{
+						return true;
+					}
+					catch (ErrorException)
+					{
+						if (!ErrorRecovery())
+							return false; 
+					}
                 }
                 else if (action == 0)   // error
                     if (!ErrorRecovery())

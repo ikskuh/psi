@@ -2,7 +2,7 @@
 using System.IO;
 using QUT.Gppg;
 
-namespace PsiCompiler
+namespace PsiCompiler.Grammar
 {
 	/*
 	 * Copied from GPPG documentation.
@@ -48,9 +48,12 @@ namespace PsiCompiler
 
 			var token = this.tokenizer.Read();
 
-			Console.WriteLine("{0}", token);
+			var op = Converter.ToOperator(token);
 
-			this.yylval = new ParserNode(token);
+			if (op != null)
+				this.yylval = new ParserNode(op);
+			else
+				this.yylval = new ParserNode(token);
 
 			return (int)token.Type;
 		}
@@ -58,6 +61,18 @@ namespace PsiCompiler
 		public override void yyerror(string format, params object[] args)
 		{
 			Console.Error.WriteLine(format, args);
+		}
+		
+		public bool Trace
+		{
+			get { return this.tokenizer.TraceTokens; }
+			set { this.tokenizer.TraceTokens = value; }
+		}
+		
+		public bool TraceAll
+		{
+			get { return this.tokenizer.TraceIgnoredTokens; }
+			set { this.tokenizer.TraceIgnoredTokens = value; }
 		}
 	}
 }

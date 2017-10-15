@@ -1,13 +1,11 @@
-﻿
-
-using System;
+﻿using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using CompilerKit;
 
-namespace PsiCompiler
+namespace PsiCompiler.Grammar
 {
-	
+		
 sealed partial class PsiTokenizer : Tokenizer<PsiTokenType>
 {
 	public PsiTokenizer(TextReader reader, string fileName) : this(reader, fileName, true)
@@ -17,8 +15,8 @@ sealed partial class PsiTokenizer : Tokenizer<PsiTokenType>
 
 	public PsiTokenizer(TextReader reader, string fileName, bool closeOnDispose) : base(reader, fileName, closeOnDispose)
 	{
-		this.RegisterToken(PsiTokenType.Comment, new Regex(@"\/\/.*", RegexOptions.Compiled|RegexOptions.Singleline));
-		this.RegisterToken(PsiTokenType.LongComment, new Regex(@"\/\*.*?\*\/", RegexOptions.Multiline|RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.Comment, new Regex(@"\/\/.*", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.LongComment, new Regex(@"\/\*.*?\*\/", RegexOptions.Compiled|RegexOptions.Singleline));
 		this.RegisterToken(PsiTokenType.Whitespace, new Regex(@"\s+", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.CURLY_O, new Regex(@"\{", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.CURLY_C, new Regex(@"\}", RegexOptions.Compiled));
@@ -61,9 +59,26 @@ sealed partial class PsiTokenizer : Tokenizer<PsiTokenType>
 		this.RegisterToken(PsiTokenType.NEXT, new Regex(@"next", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.RETURN, new Regex(@"return", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.GOTO, new Regex(@"goto", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.WB_CONCAT, new Regex(@"\-\-\=", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.WB_PLUS, new Regex(@"\+\=", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.WB_MINUS, new Regex(@"\-\=", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.WB_EXP, new Regex(@"\*\*\=", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.WB_MULT, new Regex(@"\*\=", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.WB_MOD, new Regex(@"\%\=", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.WB_DIV, new Regex(@"\/\=", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.WB_AND, new Regex(@"\&\=", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.WB_OR, new Regex(@"\|\=", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.WB_INVERT, new Regex(@"\~\=", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.WB_XOR, new Regex(@"\^\=", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.WB_ASR, new Regex(@"\>\>\>\=", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.WB_SHL, new Regex(@"\<\<\=", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.WB_SHR, new Regex(@"\>\>\=", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.MAPSTO, new Regex(@"\=\>", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.ASR, new Regex(@"\>\>\>", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.SHL, new Regex(@"\<\<", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.SHR, new Regex(@"\>\>", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.FORWARD, new Regex(@"\-\>", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.BACKWAR, new Regex(@"\<\-", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.BACKWARD, new Regex(@"\<\-", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.LEQUAL, new Regex(@"\<\=", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.GEQUAL, new Regex(@"\>\=", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.EQUAL, new Regex(@"\=\=", RegexOptions.Compiled));
