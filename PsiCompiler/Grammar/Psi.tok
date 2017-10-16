@@ -138,3 +138,4 @@ PP(LongComment) := (text) => null
 PP(Whitespace)  := (text) => null
 
 PP(STRING)      := (text) => text.Substring(1, text.Length - 2)
+PP(ENUMVAL)     := (text) => text.Substring(1)

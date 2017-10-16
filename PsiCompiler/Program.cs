@@ -4,12 +4,13 @@ using System.IO;
 namespace PsiCompiler
 {
 	using PsiCompiler.Grammar;
+    using System.Diagnostics;
 
-	class MainClass
+    class MainClass
 	{
 		public static void Main(string[] args)
 		{
-			var module = Load("/home/felix/projects/psilang/Sources/CompilerTest.psi");
+			var module = Load("../../../Sources/CompilerTest.psi");
 
 			if (module != null)
 			{
@@ -20,13 +21,18 @@ namespace PsiCompiler
 			{
 				Console.WriteLine("Failed to parse!");
 			}
+
+            if (Debugger.IsAttached)
+                Console.ReadLine();
 		}
 
 		private static Module Load(string fileName)
 		{
 			using (var lexer = new PsiLexer(fileName))
-			{			
-				var parser = new PsiParser(lexer);
+            {
+                lexer.Trace = true;
+
+                var parser = new PsiParser(lexer);
 
 				var success = parser.Parse();
 				if (success)
@@ -39,7 +45,9 @@ namespace PsiCompiler
 		private static Module LoadSource(string fileName, string source)
 		{
 			using (var lexer = new PsiLexer(new StringReader(source), fileName))
-			{			
+			{
+                lexer.Trace = true;
+
 				var parser = new PsiParser(lexer);
 
 				var success = parser.Parse();

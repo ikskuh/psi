@@ -1,18 +1,2 @@
 
-
-assert  10 + 20  * 30;
-assert  10 * 20  + 30;
-
-assert 10 + 20 * 30 + 40;
-assert 10 * 20 + 30 * 40;
-
-assert 10 + 20 + 30;
-assert 10 * 20 / 30;
-
-assert true | false & true;
-
-assert 10 -> 20;
-
-assert 10 -> 20 -> 30;
-
-assert a == b;
+assert foo[10];

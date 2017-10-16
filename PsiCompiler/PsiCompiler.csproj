@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -53,6 +53,8 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Grammar\ParserNode.cs">
       <DependentUpon>ParserNode.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Grammar\PsiParser.cs" />
     <Compile Include="Grammar\ShiftReduceParserCode.cs" />
@@ -90,8 +92,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Grammar\" />
-    <Folder Include="Grammar\AST\" />
+    <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CompilerKit\CompilerKit.csproj">
@@ -100,4 +101,8 @@
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PreBuildEvent>cd $(ProjectDir)Grammar
+"C:\Users\Felix\Desktop\gppg-distro-1_5_2\binaries\Gppg.exe" Psi.y</PreBuildEvent>
+  </PropertyGroup>
 </Project>

@@ -16,10 +16,10 @@
 %token <Token> CURLY_O, CURLY_C, ROUND_O, ROUND_C, POINTY_O, POINTY_C, SQUARE_O, SQUARE_C
 
 // Keywords
-%token <Token> IMPORT, EXPORT, MODULE, ASSERT, ERROR, CONST, VAR, TYPE, FN, NEW
-%token <Token> OPERATOR, ENUM, RECORD, OPTION, INOUT, IN, OUT, THIS, FOR, WHILE, LOOP, UNTIL
-%token <Token> IF, ELSE, SELECT, WHEN, OTHERWISE, RESTRICT, BREAK, CONTINUE, NEXT, RETURN, GOTO
-%token <Token> MAPSTO, COMMA, TERMINATOR, COLON, LAMBDA
+%token <String> IMPORT, EXPORT, MODULE, ASSERT, ERROR, CONST, VAR, TYPE, FN, NEW
+%token <String> OPERATOR, ENUM, RECORD, OPTION, INOUT, IN, OUT, THIS, FOR, WHILE, LOOP, UNTIL
+%token <String> IF, ELSE, SELECT, WHEN, OTHERWISE, RESTRICT, BREAK, CONTINUE, NEXT, RETURN, GOTO
+%token <String> MAPSTO, COMMA, TERMINATOR, COLON, LAMBDA
 
 // Operators
 %left <PsiOperator> PLUS, MINUS, MULT, DIV
@@ -31,7 +31,7 @@
 %left <PsiOperator> WB_AND, WB_OR, WB_INVERT, WB_XOR, WB_CONCAT, WB_EXP, WB_MOD
 %left <PsiOperator> WB_ASR, WB_SHL, WB_SHR
 
-%token <Token> NUMBER, STRING, ENUMVAL, IDENT
+%token <String> NUMBER, STRING, ENUMVAL, IDENT
 
 // lexer ignored tokens:
 %token Comment,	LongComment, Whitespace
@@ -41,7 +41,7 @@
 
 %namespace PsiCompiler.Grammar
 
-%type <Token> identifier
+%type <String> identifier
 %type <Module> module program
 %type <Name> modname
 %type <Assertion> assertion
@@ -69,11 +69,11 @@ module      : MODULE modname CURLY_O program CURLY_C {
             ;
 
 modname     : identifier {
-            	$$ = new CompoundName($1.Text); 
+            	$$ = new CompoundName($1); 
             }
             | modname DOT identifier {
             	$$ = $1;
-            	$$.Add($3.Text);
+            	$$.Add($3);
         	}
             ;
 
@@ -88,21 +88,21 @@ declaration : export typedecl {
             ;
             
 typedecl    : TYPE identifier IS expression TERMINATOR {
-            	$$ = new Declaration($2.Text, TypeDeclaration, $4);
+            	$$ = new Declaration($2, TypeDeclaration, $4);
             	$$.IsConst = true;
             }
             ;
 
 vardecl     : storage identifier COLON type terminator {
-            	$$ = new Declaration($2.Text, $4, null);
+            	$$ = new Declaration($2, $4, null);
             	$$.IsConst = (bool)$1;
             }
             | storage identifier IS    expression terminator {
-            	$$ = new Declaration($2.Text, null, $4);
+            	$$ = new Declaration($2, null, $4);
             	$$.IsConst = (bool)$1;
             }
             | storage identifier COLON type IS expression terminator {
-            	$$ = new Declaration($2.Text, $4, $6);
+            	$$ = new Declaration($2, $4, $6);
             	$$.IsConst = (bool)$1;
             }
             ;
@@ -130,7 +130,7 @@ expression  : expression IS expr_or
 			}
 			| expression ASSIGN expr_or
 			{
-				$$ = Apply($1, $3, PsiOperator.CopyAssign);
+				$$ = Apply($1, $3, PsiOperator.SemanticAssign);
 			}
 			| expression WB_CONCAT expr_or
 			{
@@ -356,17 +356,25 @@ unary       : PLUS value
 			}
 			;
 
-value       : ROUND_O expression ROUND_C
+value       : value DOT identifier
+			{
+				$$ = ApplyDot($1, $3);
+			}
+			| value META identifier
+			{
+				$$ = ApplyMeta($1, $3);
+			}
+			| ROUND_O expression ROUND_C
             {
                 $$ = $2;
             }
             | identifier
 			{
-            	$$ = new VariableReference($1.Text);
+            	$$ = new VariableReference($1);
             }
             | NUMBER
 			{
-				$$ = new NumberLiteral($1.Text);
+				$$ = new NumberLiteral($1);
             }
             ;
 
@@ -427,4 +435,14 @@ private static Expression Apply(Expression lhs, Expression rhs, PsiOperator op)
 private static Expression Apply(Expression expr, PsiOperator op)
 {
 	return new UnaryOperation(op, expr);
+}
+
+private static Expression ApplyDot(Expression exp, string field)
+{
+	return new DotExpression(exp, field);
+}
+
+private static Expression ApplyMeta(Expression exp, string field)
+{
+	return new MetaExpression(exp, field);
 }

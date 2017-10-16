@@ -338,20 +338,41 @@ namespace PsiCompiler.Test
 			Assert.AreEqual(2, module.Assertions.Count);
 			Assert.AreEqual(0, module.Declarations.Count);
 		}
-		
-		// TODO: Test all expression/literal types
 
-		private static Module Load(string source)
-		{
-			using (var lexer = new PsiLexer(new StringReader(source), "???"))
-			{
-				var parser = new PsiParser(lexer);
-				var success = parser.Parse();
-				if (success)
-					return parser.Result;
-				else
-					return null;
-			}
-		}
-	}
+        // TODO: Test all expression/literal types
+
+        /*
+
+        assert  10 + 20  * 30;
+        assert  10 * 20  + 30;
+
+        assert 10 + 20 * 30 + 40;
+        assert 10 * 20 + 30 * 40;
+
+        assert 10 + 20 + 30;
+        assert 10 * 20 / 30;
+
+        assert true | false & true;
+
+        assert 10 -> 20;
+
+        assert 10 -> 20 -> 30;
+
+        assert a == b != c == d;
+        */
+
+
+private static Module Load(string source)
+{
+using (var lexer = new PsiLexer(new StringReader(source), "???"))
+{
+    var parser = new PsiParser(lexer);
+    var success = parser.Parse();
+    if (success)
+        return parser.Result;
+    else
+        return null;
+}
+}
+}
 }

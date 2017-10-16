@@ -1,4 +1,14 @@
-﻿using System;
+﻿
+
+
+
+
+
+
+
+
+
+using System;
 using CompilerKit;
 
 namespace PsiCompiler.Grammar
@@ -13,6 +23,7 @@ namespace PsiCompiler.Grammar
 		private Declaration _Declaration;
 		private bool? _Boolean;
 		private PsiOperator? _Operator;
+		private string _String;
 		
 		public ParserNode(Token<PsiTokenType> value)
 		{
@@ -24,6 +35,8 @@ namespace PsiCompiler.Grammar
 			this._Declaration = null;
 			this._Boolean = null;
 			this._Operator = null;
+			this._String = null;
+
 		}
 		
 		public ParserNode(Expression value)
@@ -36,6 +49,8 @@ namespace PsiCompiler.Grammar
 			this._Declaration = null;
 			this._Boolean = null;
 			this._Operator = null;
+			this._String = null;
+
 		}
 		
 		public ParserNode(Module value)
@@ -48,6 +63,8 @@ namespace PsiCompiler.Grammar
 			this._Declaration = null;
 			this._Boolean = null;
 			this._Operator = null;
+			this._String = null;
+
 		}
 		
 		public ParserNode(Assertion value)
@@ -60,6 +77,8 @@ namespace PsiCompiler.Grammar
 			this._Declaration = null;
 			this._Boolean = null;
 			this._Operator = null;
+			this._String = null;
+
 		}
 		
 		public ParserNode(CompoundName value)
@@ -72,6 +91,8 @@ namespace PsiCompiler.Grammar
 			this._Declaration = null;
 			this._Boolean = null;
 			this._Operator = null;
+			this._String = null;
+
 		}
 		
 		public ParserNode(Declaration value)
@@ -84,6 +105,8 @@ namespace PsiCompiler.Grammar
 			this._Declaration = value.NotNull();
 			this._Boolean = null;
 			this._Operator = null;
+			this._String = null;
+
 		}
 		
 		public ParserNode(bool? value)
@@ -96,6 +119,8 @@ namespace PsiCompiler.Grammar
 			this._Declaration = null;
 			this._Boolean = value.NotNull();
 			this._Operator = null;
+			this._String = null;
+
 		}
 		
 		public ParserNode(PsiOperator? value)
@@ -108,6 +133,22 @@ namespace PsiCompiler.Grammar
 			this._Declaration = null;
 			this._Boolean = null;
 			this._Operator = value.NotNull();
+			this._String = null;
+
+		}
+		
+		public ParserNode(string value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+			this._String = value.NotNull();
+
 		}
 		
 		public Token<PsiTokenType> Token
@@ -128,6 +169,8 @@ namespace PsiCompiler.Grammar
 				this._Declaration = null;
 				this._Boolean = null;
 				this._Operator = null;
+				this._String = null;
+
 			}
 		}
 		
@@ -149,6 +192,8 @@ namespace PsiCompiler.Grammar
 				this._Declaration = null;
 				this._Boolean = null;
 				this._Operator = null;
+				this._String = null;
+
 			}
 		}
 		
@@ -170,6 +215,8 @@ namespace PsiCompiler.Grammar
 				this._Declaration = null;
 				this._Boolean = null;
 				this._Operator = null;
+				this._String = null;
+
 			}
 		}
 		
@@ -191,6 +238,8 @@ namespace PsiCompiler.Grammar
 				this._Declaration = null;
 				this._Boolean = null;
 				this._Operator = null;
+				this._String = null;
+
 			}
 		}
 		
@@ -212,6 +261,8 @@ namespace PsiCompiler.Grammar
 				this._Declaration = null;
 				this._Boolean = null;
 				this._Operator = null;
+				this._String = null;
+
 			}
 		}
 		
@@ -233,6 +284,8 @@ namespace PsiCompiler.Grammar
 				this._Declaration = value;
 				this._Boolean = null;
 				this._Operator = null;
+				this._String = null;
+
 			}
 		}
 		
@@ -254,6 +307,8 @@ namespace PsiCompiler.Grammar
 				this._Declaration = null;
 				this._Boolean = value;
 				this._Operator = null;
+				this._String = null;
+
 			}
 		}
 		
@@ -275,6 +330,31 @@ namespace PsiCompiler.Grammar
 				this._Declaration = null;
 				this._Boolean = null;
 				this._Operator = value;
+				this._String = null;
+
+			}
+		}
+		
+		public string String
+		{
+			get
+			{
+				if(this._String == null)
+					throw new InvalidOperationException("ParserNode is not a String");
+				return this._String;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+				this._String = value;
+
 			}
 		}
 		
@@ -294,6 +374,9 @@ namespace PsiCompiler.Grammar
 		
 		public static implicit operator ParserNode(PsiOperator? value) => new ParserNode(value);
 		
+		public static implicit operator ParserNode(string value) => new ParserNode(value);
+
+		
 		public override string ToString()
 		{
 			if(this._Token != null)
@@ -312,6 +395,9 @@ namespace PsiCompiler.Grammar
 				return "Node(Boolean): " + _Boolean.ToString();
 			if(this._Operator != null)
 				return "Node(Operator): " + _Operator.ToString();
+			if(this._String != null)
+				return "Node(String): " + _String.ToString();
+
 			return "<???>";
 		}
 	}

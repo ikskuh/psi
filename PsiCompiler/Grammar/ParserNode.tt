@@ -18,6 +18,8 @@
 	list.Add("Declaration", "Declaration");
 	list.Add("bool?", "Boolean");
 	list.Add("PsiOperator?", "Operator");
+	list.Add("string", "String");
+
 
 #>
 using System;

@@ -48,12 +48,15 @@ namespace PsiCompiler.Grammar
 
 			var token = this.tokenizer.Read();
 
+            if (Trace)
+                Console.WriteLine(token.ToString(), "Lexer");
+
 			var op = Converter.ToOperator(token);
 
 			if (op != null)
 				this.yylval = new ParserNode(op);
 			else
-				this.yylval = new ParserNode(token);
+				this.yylval = new ParserNode(token.Text);
 
 			return (int)token.Type;
 		}

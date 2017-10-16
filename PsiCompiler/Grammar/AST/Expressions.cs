@@ -20,9 +20,37 @@ namespace PsiCompiler.Grammar
 		public Expression Operand { get; }
 
 		public override string ToString() => Converter.ToString(Operator) + " " + Operand;
-	}
+    }
 
-	public sealed class BinaryOperation : Expression
+    public sealed class DotExpression : Expression
+    {
+        public DotExpression(Expression operand, string field)
+        {
+            this.Object = operand.NotNull();
+            this.FieldName = field.NotNull();
+        }
+
+        public string FieldName { get; }
+        public Expression Object { get; }
+
+        public override string ToString() => Object + "." + FieldName;
+    }
+
+    public sealed class MetaExpression : Expression
+    {
+        public MetaExpression(Expression operand, string field)
+        {
+            this.Object = operand.NotNull();
+            this.FieldName = field.NotNull();
+        }
+
+        public string FieldName { get; }
+        public Expression Object { get; }
+
+        public override string ToString() => Object + "." + FieldName;
+    }
+
+    public sealed class BinaryOperation : Expression
 	{
 		public BinaryOperation(PsiOperator @operator, Expression lhs, Expression rhs)
 		{
