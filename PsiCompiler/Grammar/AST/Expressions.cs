@@ -33,7 +33,7 @@ namespace PsiCompiler.Grammar
         public string FieldName { get; }
         public Expression Object { get; }
 
-        public override string ToString() => Object + "." + FieldName;
+        public override string ToString() => "(" + Object + "." + FieldName + ")";
     }
 
     public sealed class MetaExpression : Expression
@@ -47,7 +47,7 @@ namespace PsiCompiler.Grammar
         public string FieldName { get; }
         public Expression Object { get; }
 
-        public override string ToString() => Object + "." + FieldName;
+        public override string ToString() => "(" + Object + "'" + FieldName + ")";
     }
 
     public sealed class BinaryOperation : Expression

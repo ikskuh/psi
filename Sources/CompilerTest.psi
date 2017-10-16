@@ -1,2 +1,2 @@
 
-assert foo[10];
+assert foo'type.name;
