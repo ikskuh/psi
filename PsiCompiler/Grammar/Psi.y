@@ -391,6 +391,10 @@ value       : value DOT identifier
 			{
 				$$ = new StringLiteral($1);
             }
+            | ENUMVAL
+			{
+				$$ = new EnumLiteral($1);
+            }
             | NUMBER
 			{
 				$$ = new NumberLiteral($1);

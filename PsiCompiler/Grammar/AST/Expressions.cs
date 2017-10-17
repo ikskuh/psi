@@ -90,9 +90,21 @@ namespace PsiCompiler.Grammar
 		public string Text { get; }
 
 		public override string ToString() => "\"" + Text + "\"";
-	}
+    }
 
-	public sealed class VariableReference : Expression
+    public sealed class EnumLiteral : Expression
+    {
+        public EnumLiteral(string value)
+        {
+            this.Name = value.NotNull();
+        }
+
+        public string Name { get; }
+
+        public override string ToString() => ":" + Name;
+    }
+
+    public sealed class VariableReference : Expression
 	{
 		public VariableReference(string value)
 		{

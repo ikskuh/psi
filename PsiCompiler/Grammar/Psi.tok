@@ -5,6 +5,9 @@ Comment                := \/\/.*
 LongComment:Singleline := \/\*.*?\*\/
 Whitespace             := \s+
 
+# Must be before COLON def
+ENUMVAL    := \:[\w-[\d]]\w*
+
 # Brackets
 CURLY_O    := \{
 CURLY_C    := \}
@@ -16,11 +19,11 @@ SQUARE_O   := \[
 SQUARE_C   := \]
 
 # Keywords
-IMPORT     := import
-EXPORT     := export
-MODULE     := module
-ASSERT     := assert
-ERROR      := error
+IMPORT     := \bimport\b
+EXPORT     := \bexport\b
+MODULE     := \bmodule\b
+ASSERT     := \bassert\b
+ERROR      := \berror\b
 CONST      := const
 VAR        := var
 TYPE       := type
@@ -34,29 +37,29 @@ RECORD     := record
 OPTION     := option
 
 # Parameter Spec
-INOUT      := inout
-IN         := in
-OUT        := out
-THIS       := this
+INOUT      := \binout\b
+IN         := \bin\b
+OUT        := \bout\b
+THIS       := \bthis\b
 
 # Control flow
-FOR        := for
-WHILE      := while
-LOOP       := loop
-UNTIL      := unitl
-IF         := if
-ELSE       := else
-SELECT     := select
-WHEN       := when
-OTHERWISE  := otherwise
-RESTRICT   := restrict
+FOR        := \bfor\b
+WHILE      := \bwhile\b
+LOOP       := \bloop\b
+UNTIL      := \bunitl\b
+IF         := \bif\b
+ELSE       := \belse\b
+SELECT     := \bselect\b
+WHEN       := \bwhen\b
+OTHERWISE  := \botherwise\b
+RESTRICT   := \brestrict\b
 
 # Control flow control
-BREAK      := break
-CONTINUE   := continue
-NEXT       := next
-RETURN     := return
-GOTO       := goto
+BREAK      := \bbreak\b
+CONTINUE   := \bcontinue\b
+NEXT       := \bnext\b
+RETURN     := \breturn\b
+GOTO       := \bgoto\b
 
 # Operators
 
@@ -125,8 +128,6 @@ XOR        := \^
 NUMBER     := -?\d+(\.\d+)?
 
 STRING     := ".*?(?<!\\)"
-
-ENUMVAL    := \:[\w-[\d]]\w*
 
 # Must not start with a number, but is allowed to any word character
 IDENT      := [\w-[\d]]\w*

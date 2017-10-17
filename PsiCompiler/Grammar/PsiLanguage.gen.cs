@@ -1,11 +1,21 @@
-﻿using System;
+﻿
+
+
+
+
+
+
+
+
+using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using CompilerKit;
 
 namespace PsiCompiler.Grammar
 {
-		
+	
+	
 sealed partial class PsiTokenizer : Tokenizer<PsiTokenType>
 {
 	public PsiTokenizer(TextReader reader, string fileName) : this(reader, fileName, true)
@@ -18,6 +28,7 @@ sealed partial class PsiTokenizer : Tokenizer<PsiTokenType>
 		this.RegisterToken(PsiTokenType.Comment, new Regex(@"\/\/.*", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.LongComment, new Regex(@"\/\*.*?\*\/", RegexOptions.Compiled|RegexOptions.Singleline));
 		this.RegisterToken(PsiTokenType.Whitespace, new Regex(@"\s+", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.ENUMVAL, new Regex(@"\:[\w-[\d]]\w*", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.CURLY_O, new Regex(@"\{", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.CURLY_C, new Regex(@"\}", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.ROUND_O, new Regex(@"\(", RegexOptions.Compiled));
@@ -26,11 +37,11 @@ sealed partial class PsiTokenizer : Tokenizer<PsiTokenType>
 		this.RegisterToken(PsiTokenType.POINTY_C, new Regex(@"\>", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.SQUARE_O, new Regex(@"\[", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.SQUARE_C, new Regex(@"\]", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.IMPORT, new Regex(@"import", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.EXPORT, new Regex(@"export", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.MODULE, new Regex(@"module", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.ASSERT, new Regex(@"assert", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.ERROR, new Regex(@"error", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.IMPORT, new Regex(@"\bimport\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.EXPORT, new Regex(@"\bexport\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.MODULE, new Regex(@"\bmodule\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.ASSERT, new Regex(@"\bassert\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.ERROR, new Regex(@"\berror\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.CONST, new Regex(@"const", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.VAR, new Regex(@"var", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.TYPE, new Regex(@"type", RegexOptions.Compiled));
@@ -40,25 +51,25 @@ sealed partial class PsiTokenizer : Tokenizer<PsiTokenType>
 		this.RegisterToken(PsiTokenType.ENUM, new Regex(@"enum", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.RECORD, new Regex(@"record", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.OPTION, new Regex(@"option", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.INOUT, new Regex(@"inout", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.IN, new Regex(@"in", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.OUT, new Regex(@"out", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.THIS, new Regex(@"this", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.FOR, new Regex(@"for", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.WHILE, new Regex(@"while", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.LOOP, new Regex(@"loop", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.UNTIL, new Regex(@"unitl", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.IF, new Regex(@"if", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.ELSE, new Regex(@"else", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.SELECT, new Regex(@"select", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.WHEN, new Regex(@"when", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.OTHERWISE, new Regex(@"otherwise", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.RESTRICT, new Regex(@"restrict", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.BREAK, new Regex(@"break", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.CONTINUE, new Regex(@"continue", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.NEXT, new Regex(@"next", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.RETURN, new Regex(@"return", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.GOTO, new Regex(@"goto", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.INOUT, new Regex(@"\binout\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.IN, new Regex(@"\bin\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.OUT, new Regex(@"\bout\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.THIS, new Regex(@"\bthis\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.FOR, new Regex(@"\bfor\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.WHILE, new Regex(@"\bwhile\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.LOOP, new Regex(@"\bloop\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.UNTIL, new Regex(@"\bunitl\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.IF, new Regex(@"\bif\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.ELSE, new Regex(@"\belse\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.SELECT, new Regex(@"\bselect\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.WHEN, new Regex(@"\bwhen\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.OTHERWISE, new Regex(@"\botherwise\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.RESTRICT, new Regex(@"\brestrict\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.BREAK, new Regex(@"\bbreak\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.CONTINUE, new Regex(@"\bcontinue\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.NEXT, new Regex(@"\bnext\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.RETURN, new Regex(@"\breturn\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.GOTO, new Regex(@"\bgoto\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.WB_CONCAT, new Regex(@"\-\-\=", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.WB_PLUS, new Regex(@"\+\=", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.WB_MINUS, new Regex(@"\-\=", RegexOptions.Compiled));
@@ -106,7 +117,6 @@ sealed partial class PsiTokenizer : Tokenizer<PsiTokenType>
 		this.RegisterToken(PsiTokenType.XOR, new Regex(@"\^", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.NUMBER, new Regex(@"-?\d+(\.\d+)?", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.STRING, new Regex(@""".*?(?<!\\)""", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.ENUMVAL, new Regex(@"\:[\w-[\d]]\w*", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.IDENT, new Regex(@"[\w-[\d]]\w*", RegexOptions.Compiled));
 			
 		this.Initialize();
@@ -126,6 +136,8 @@ sealed partial class PsiTokenizer : Tokenizer<PsiTokenType>
 				return (text) => null;
 			case PsiTokenType.STRING:
 				return (text) => text.Substring(1, text.Length - 2);
+			case PsiTokenType.ENUMVAL:
+				return (text) => text.Substring(1);
 			default:
 				return (text) => text;
 		}

@@ -66,6 +66,8 @@
     <Compile Include="Grammar\AST\Declaration.cs" />
     <Compile Include="Grammar\PsiLanguage.gen.cs">
       <DependentUpon>PsiLanguage.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="Grammar\AST\CompoundName.cs" />
     <Compile Include="Grammar\ModulePrinter.cs" />

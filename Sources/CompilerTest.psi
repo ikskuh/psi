@@ -1,2 +1,2 @@
 
-assert foo(a: 10,"Hallo", name: ident = 10);
+assert :foo;
