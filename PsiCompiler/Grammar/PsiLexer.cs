@@ -49,7 +49,7 @@ namespace PsiCompiler.Grammar
 			var token = this.tokenizer.Read();
 
             if (Trace)
-                Console.WriteLine(token.ToString(), "Lexer");
+                Console.WriteLine("[LEXER] {0}", token);
 
 			var op = Converter.ToOperator(token);
 

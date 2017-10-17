@@ -26,7 +26,8 @@
 	list.Add("Parameter", "Parameter");
 	list.Add("ParameterPrefix?", "ParameterPrefix");
 	list.Add("FunctionTypeLiteral", "FunctionType");
-
+	list.Add("Statement", "Statement");
+	list.Add("List<Statement>", "StatementList");
 #>
 using System;
 using System.Collections.Generic;

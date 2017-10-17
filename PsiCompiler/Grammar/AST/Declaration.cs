@@ -1,7 +1,8 @@
 ﻿using System;
 namespace PsiCompiler.Grammar
 {
-	public sealed class Declaration
+    // Special statement: Can be stated outside of a block.
+	public sealed class Declaration : Statement
 	{
 		public Declaration(string name, Expression type, Expression value)
 		{

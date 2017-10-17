@@ -55,6 +55,8 @@
 %type <ParameterList> paramlist
 %type <Parameter> parameter
 %type <ParameterPrefix> prefix
+%type <Statement> statement block
+%type <StatementList> stmtlist
 
 %%
 
@@ -395,6 +397,14 @@ value       : value DOT identifier
 			{
 				$$ = $1;
 			}
+			| functiontype block
+			{
+				$$ = new FunctionLiteral($1, $2);
+			}
+			| functiontype MAPSTO expression
+			{
+				$$ = new FunctionLiteral($1, new ExpressionStatement($3));
+			}
             | STRING
 			{
 				$$ = new StringLiteral($1);
@@ -509,6 +519,40 @@ exprlist    : expression
 			}
 			;
 
+block       : CURLY_O stmtlist CURLY_C
+			{
+				$$ = new Block($2);
+			}
+			| CURLY_O CURLY_C
+			{
+				$$ = new Block(new List<Statement>());
+			}
+			;
+
+stmtlist    : /* empty */
+			{
+				$$ = new List<Statement>();
+			}
+			| stmtlist statement
+			{
+				$$ = $1;
+				$$.Add($2);
+			}
+			;
+
+statement   : declaration
+			{
+				$$ = $1;
+			}
+			| assertion
+			{
+				$$ = $1;
+			}
+			| block
+			{
+				$$ = $1;
+			}
+			;
 // Allow any keyword as an identifier
 // HACK: this may be useful when the tokenizer can be "informed" about
 //       requiring a specific token

@@ -1,7 +1,8 @@
 ﻿using System;
 namespace PsiCompiler.Grammar
 {
-	public sealed class Assertion
+    // Special statement: Can be stated outside of a block
+	public sealed class Assertion : Statement
 	{
 		public Assertion(Expression expression)
 		{

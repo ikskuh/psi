@@ -1,10 +1,10 @@
 
 // ==========================================================================
-//  GPPG error listing for yacc source file <Psi.y - 17.10.2017 23:09:15>
+//  GPPG error listing for yacc source file <Psi.y - 17.10.2017 23:45:53>
 // ==========================================================================
 //  Version:  1.5.2
 //  Machine:  DESKTOP-2U3VU0H
-//  DateTime: 17.10.2017 23:09:18
+//  DateTime: 17.10.2017 23:45:54
 //  UserName: Felix
 // ==========================================================================
 
@@ -62,16 +62,18 @@
 %type <Boolean> export storage
 %type <ArgumentList> arglist
 %type <Argument> argument
+%type <FunctionType> functiontype
 %type <ParameterList> paramlist
 %type <Parameter> parameter
+%type <ParameterPrefix> prefix
+%type <Statement> statement block
+%type <StatementList> stmtlist
 
 %%
-// Error: NonTerminal symbol "prefix" has no productions
-// Warning: Terminating prefix fixes the following size-4 NonTerminal set
-   // {paramlist, parameter, functiontype, prefix}
-// Error: There are 4 non-terminating NonTerminal Symbols
-   //  {paramlist, parameter, functiontype, prefix}
-// ----------------------------------------------------------------------
+// Warning: NonTerminal symbol "stmtlist" is unreachable
+// Warning: NonTerminal symbol "block" is unreachable
+// Warning: NonTerminal symbol "statement" is unreachable
+// ------------------------------------------------------
 
 program     : /* empty */         { $$ = new Module(); }
             | program assertion   { $$ = $1.Add($2); }
@@ -426,13 +428,25 @@ value       : value DOT identifier
 
 functiontype: FN ROUND_O paramlist ROUND_C FORWARD type
 			{
-				$$ = new FunctionTypeLiteral(
+				$$ = new FunctionTypeLiteral($3, $6);
+			}
+			| FN ROUND_O ROUND_C FORWARD type
+			{
+				$$ = new FunctionTypeLiteral(new List<Parameter>(), $5);
+			}
+			| FN ROUND_O paramlist ROUND_C
+			{
+				$$ = new FunctionTypeLiteral($3, null);
+			}
+			| FN ROUND_O ROUND_C
+			{
+				$$ = new FunctionTypeLiteral(new List<Parameter>(), null);
 			}
 			;
 
 paramlist   : paramlist COMMA parameter
 			{
-				$$ = $1
+				$$ = $1;
 				$$.Add($3);
 			}
 			| parameter
@@ -444,7 +458,37 @@ paramlist   : paramlist COMMA parameter
 
 parameter   : prefix identifier COLON type IS expression
 			{
-			
+				$$ = new Parameter((ParameterPrefix)$1, $2, $4, $6);
+			}
+			| prefix identifier IS expression
+			{
+				$$ = new Parameter((ParameterPrefix)$1, $2, null, $4);
+			}
+			| prefix identifier COLON type
+			{
+				$$ = new Parameter((ParameterPrefix)$1, $2, $4, null);
+			}
+			;
+
+prefix      : /* empty */
+			{
+				$$ = ParameterPrefix.None;
+			}
+			| prefix IN
+			{
+				$$ = $1 | ParameterPrefix.In;
+			}
+			| prefix OUT
+			{
+				$$ = $1 | ParameterPrefix.Out;
+			}
+			| prefix INOUT
+			{
+				$$ = $1 | ParameterPrefix.InOut;
+			}
+			| prefix THIS
+			{
+				$$ = $1 | ParameterPrefix.This;
 			}
 			;
 
@@ -482,6 +526,40 @@ exprlist    : expression
 			}
 			;
 
+block       : CURLY_O stmtlist CURLY_C
+			{
+				$$ = new Block($2);
+			}
+			| CURLY_O CURLY_C
+			{
+				$$ = new Block(new List<Statement>());
+			}
+			;
+
+stmtlist    : /* empty */
+			{
+				$$ = new List<Statement>();
+			}
+			| stmtlist statement
+			{
+				$$ = $1;
+				$$.Add($2);
+			}
+			;
+
+statement   : declaration
+			{
+				$$ = $1;
+			}
+			| assertion
+			{
+				$$ = $1;
+			}
+			| block
+			{
+				$$ = $1;
+			}
+			;
 // Allow any keyword as an identifier
 // HACK: this may be useful when the tokenizer can be "informed" about
 //       requiring a specific token

@@ -1,3 +1,8 @@
 
 
-type Callback = fn();
+var Callback : fn() = fn()
+{
+	assert true;
+};
+
+var Callback : fn() = fn() => 10;

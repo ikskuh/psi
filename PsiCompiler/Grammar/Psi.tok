@@ -24,17 +24,17 @@ EXPORT     := \bexport\b
 MODULE     := \bmodule\b
 ASSERT     := \bassert\b
 ERROR      := \berror\b
-CONST      := const
-VAR        := var
-TYPE       := type
-FN         := fn
-NEW        := new
-OPERATOR   := operator
+CONST      := \bconst\b
+VAR        := \bvar\b
+TYPE       := \btype\b
+FN         := \bfn\b
+NEW        := \bnew\b
+OPERATOR   := \boperator\b
 
 # Type Names
-ENUM       := enum
-RECORD     := record
-OPTION     := option
+ENUM       := \benum\b
+RECORD     := \brecord\b
+OPTION     := \boption\b
 
 # Parameter Spec
 INOUT      := \binout\b

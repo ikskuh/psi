@@ -224,4 +224,19 @@ namespace PsiCompiler.Grammar
         This = 4,
 
     }
+
+    public sealed class FunctionLiteral : Expression
+    {
+        public FunctionLiteral(FunctionTypeLiteral type, Statement body)
+        {
+            this.Type = type;
+            this.Body = body;
+        }
+
+        public FunctionTypeLiteral Type { get; }
+
+        public Statement Body { get; }
+
+        public override string ToString() => string.Format("{0} => {1}", Type, Body);
+    }
 }
