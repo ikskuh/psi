@@ -19,10 +19,12 @@
 	list.Add("bool?", "Boolean");
 	list.Add("PsiOperator?", "Operator");
 	list.Add("string", "String");
+	list.Add("List<Expression>", "ExpressionList");
 
 
 #>
 using System;
+using System.Collections.Generic;
 using CompilerKit;
 
 namespace PsiCompiler.Grammar

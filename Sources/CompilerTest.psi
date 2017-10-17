@@ -1,2 +1,2 @@
 
-assert foo'type.name;
+assert foo[10,"Hallo",ident];

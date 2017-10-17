@@ -1,5 +1,7 @@
 ﻿using System;
 using CompilerKit;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace PsiCompiler.Grammar
 {
@@ -101,4 +103,19 @@ namespace PsiCompiler.Grammar
 
 		public override string ToString() => Variable;
 	}
+
+    public sealed class ArrayIndexingExpression : Expression
+    {
+        public ArrayIndexingExpression(Expression value, IEnumerable<Expression> indices)
+        {
+            this.Value = value.NotNull();
+            this.Indices = indices.ToArray();
+        }
+           
+        public Expression Value { get; }
+
+        public IReadOnlyList<Expression> Indices { get; }
+
+        public override string ToString() => string.Format("{0}[{1}]", Value, string.Join(", ", Indices));
+    }
 }

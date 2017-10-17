@@ -359,10 +359,12 @@ namespace PsiCompiler.Test
         assert 10 -> 20 -> 30;
 
         assert a == b != c == d;
+        
+        assert foo'type.name;
         */
 
 
-private static Module Load(string source)
+        private static Module Load(string source)
 {
 using (var lexer = new PsiLexer(new StringReader(source), "???"))
 {

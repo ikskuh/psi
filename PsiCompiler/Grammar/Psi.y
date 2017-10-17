@@ -46,6 +46,7 @@
 %type <Name> modname
 %type <Assertion> assertion
 %type <Expression> type expression expr_or expr_xor expr_and equality comparison expr_arrows sum term expo shifting unary value
+%type <ExpressionList> exprlist
 %type <Declaration> declaration typedecl vardecl
 %type <Boolean> export storage
 
@@ -364,6 +365,10 @@ value       : value DOT identifier
 			{
 				$$ = ApplyMeta($1, $3);
 			}
+			| value SQUARE_O exprlist SQUARE_C
+			{
+				$$ = new ArrayIndexingExpression($1, $3);
+			}
 			| ROUND_O expression ROUND_C
             {
                 $$ = $2;
@@ -372,11 +377,27 @@ value       : value DOT identifier
 			{
             	$$ = new VariableReference($1);
             }
+            | STRING
+			{
+				$$ = new StringLiteral($1);
+            }
             | NUMBER
 			{
 				$$ = new NumberLiteral($1);
             }
             ;
+
+exprlist    : expression
+			{
+				$$ = new List<Expression>();
+				$$.Add($1);
+			}
+			| exprlist COMMA expression
+			{
+				$$ = $1;
+				$$.Add($3);
+			}
+			;
 
 // Allow any keyword as an identifier
 // HACK: this may be useful when the tokenizer can be "informed" about
