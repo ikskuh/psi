@@ -51,6 +51,10 @@
 %type <Boolean> export storage
 %type <ArgumentList> arglist
 %type <Argument> argument
+%type <FunctionType> functiontype
+%type <ParameterList> paramlist
+%type <Parameter> parameter
+%type <ParameterPrefix> prefix
 
 %%
 
@@ -387,6 +391,10 @@ value       : value DOT identifier
 			{
             	$$ = new VariableReference($1);
             }
+			| functiontype
+			{
+				$$ = $1;
+			}
             | STRING
 			{
 				$$ = new StringLiteral($1);
@@ -400,6 +408,72 @@ value       : value DOT identifier
 				$$ = new NumberLiteral($1);
             }
             ;
+
+functiontype: FN ROUND_O paramlist ROUND_C FORWARD type
+			{
+				$$ = new FunctionTypeLiteral($3, $6);
+			}
+			| FN ROUND_O ROUND_C FORWARD type
+			{
+				$$ = new FunctionTypeLiteral(new List<Parameter>(), $5);
+			}
+			| FN ROUND_O paramlist ROUND_C
+			{
+				$$ = new FunctionTypeLiteral($3, null);
+			}
+			| FN ROUND_O ROUND_C
+			{
+				$$ = new FunctionTypeLiteral(new List<Parameter>(), null);
+			}
+			;
+
+paramlist   : paramlist COMMA parameter
+			{
+				$$ = $1;
+				$$.Add($3);
+			}
+			| parameter
+			{
+				$$ = new List<Parameter>();
+				$$.Add($1);
+			}
+			;
+
+parameter   : prefix identifier COLON type IS expression
+			{
+				$$ = new Parameter((ParameterPrefix)$1, $2, $4, $6);
+			}
+			| prefix identifier IS expression
+			{
+				$$ = new Parameter((ParameterPrefix)$1, $2, null, $4);
+			}
+			| prefix identifier COLON type
+			{
+				$$ = new Parameter((ParameterPrefix)$1, $2, $4, null);
+			}
+			;
+
+prefix      : /* empty */
+			{
+				$$ = ParameterPrefix.None;
+			}
+			| prefix IN
+			{
+				$$ = $1 | ParameterPrefix.In;
+			}
+			| prefix OUT
+			{
+				$$ = $1 | ParameterPrefix.Out;
+			}
+			| prefix INOUT
+			{
+				$$ = $1 | ParameterPrefix.InOut;
+			}
+			| prefix THIS
+			{
+				$$ = $1 | ParameterPrefix.This;
+			}
+			;
 
 arglist     : arglist COMMA argument
 			{

@@ -22,6 +22,10 @@
 	list.Add("List<Expression>", "ExpressionList");
 	list.Add("List<Argument>", "ArgumentList");
 	list.Add("Argument", "Argument");
+	list.Add("List<Parameter>", "ParameterList");
+	list.Add("Parameter", "Parameter");
+	list.Add("ParameterPrefix?", "ParameterPrefix");
+	list.Add("FunctionTypeLiteral", "FunctionType");
 
 #>
 using System;

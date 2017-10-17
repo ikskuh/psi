@@ -1,2 +1,3 @@
 
-assert :foo;
+
+type Callback = fn();

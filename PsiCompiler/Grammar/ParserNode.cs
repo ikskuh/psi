@@ -28,6 +28,10 @@ namespace PsiCompiler.Grammar
 		private List<Expression> _ExpressionList;
 		private List<Argument> _ArgumentList;
 		private Argument _Argument;
+		private List<Parameter> _ParameterList;
+		private Parameter _Parameter;
+		private ParameterPrefix? _ParameterPrefix;
+		private FunctionTypeLiteral _FunctionType;
 		
 		public ParserNode(Token<PsiTokenType> value)
 		{
@@ -43,6 +47,10 @@ namespace PsiCompiler.Grammar
 			this._ExpressionList = null;
 			this._ArgumentList = null;
 			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
 
 		}
 		
@@ -60,6 +68,10 @@ namespace PsiCompiler.Grammar
 			this._ExpressionList = null;
 			this._ArgumentList = null;
 			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
 
 		}
 		
@@ -77,6 +89,10 @@ namespace PsiCompiler.Grammar
 			this._ExpressionList = null;
 			this._ArgumentList = null;
 			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
 
 		}
 		
@@ -94,6 +110,10 @@ namespace PsiCompiler.Grammar
 			this._ExpressionList = null;
 			this._ArgumentList = null;
 			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
 
 		}
 		
@@ -111,6 +131,10 @@ namespace PsiCompiler.Grammar
 			this._ExpressionList = null;
 			this._ArgumentList = null;
 			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
 
 		}
 		
@@ -128,6 +152,10 @@ namespace PsiCompiler.Grammar
 			this._ExpressionList = null;
 			this._ArgumentList = null;
 			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
 
 		}
 		
@@ -145,6 +173,10 @@ namespace PsiCompiler.Grammar
 			this._ExpressionList = null;
 			this._ArgumentList = null;
 			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
 
 		}
 		
@@ -162,6 +194,10 @@ namespace PsiCompiler.Grammar
 			this._ExpressionList = null;
 			this._ArgumentList = null;
 			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
 
 		}
 		
@@ -179,6 +215,10 @@ namespace PsiCompiler.Grammar
 			this._ExpressionList = null;
 			this._ArgumentList = null;
 			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
 
 		}
 		
@@ -196,6 +236,10 @@ namespace PsiCompiler.Grammar
 			this._ExpressionList = value.NotNull();
 			this._ArgumentList = null;
 			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
 
 		}
 		
@@ -213,6 +257,10 @@ namespace PsiCompiler.Grammar
 			this._ExpressionList = null;
 			this._ArgumentList = value.NotNull();
 			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
 
 		}
 		
@@ -230,6 +278,94 @@ namespace PsiCompiler.Grammar
 			this._ExpressionList = null;
 			this._ArgumentList = null;
 			this._Argument = value.NotNull();
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
+
+		}
+		
+		public ParserNode(List<Parameter> value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+			this._String = null;
+			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
+			this._ParameterList = value.NotNull();
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
+
+		}
+		
+		public ParserNode(Parameter value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+			this._String = null;
+			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = value.NotNull();
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
+
+		}
+		
+		public ParserNode(ParameterPrefix? value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+			this._String = null;
+			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = value.NotNull();
+			this._FunctionType = null;
+
+		}
+		
+		public ParserNode(FunctionTypeLiteral value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+			this._String = null;
+			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = value.NotNull();
 
 		}
 		
@@ -255,6 +391,10 @@ namespace PsiCompiler.Grammar
 				this._ExpressionList = null;
 				this._ArgumentList = null;
 				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
 
 			}
 		}
@@ -281,6 +421,10 @@ namespace PsiCompiler.Grammar
 				this._ExpressionList = null;
 				this._ArgumentList = null;
 				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
 
 			}
 		}
@@ -307,6 +451,10 @@ namespace PsiCompiler.Grammar
 				this._ExpressionList = null;
 				this._ArgumentList = null;
 				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
 
 			}
 		}
@@ -333,6 +481,10 @@ namespace PsiCompiler.Grammar
 				this._ExpressionList = null;
 				this._ArgumentList = null;
 				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
 
 			}
 		}
@@ -359,6 +511,10 @@ namespace PsiCompiler.Grammar
 				this._ExpressionList = null;
 				this._ArgumentList = null;
 				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
 
 			}
 		}
@@ -385,6 +541,10 @@ namespace PsiCompiler.Grammar
 				this._ExpressionList = null;
 				this._ArgumentList = null;
 				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
 
 			}
 		}
@@ -411,6 +571,10 @@ namespace PsiCompiler.Grammar
 				this._ExpressionList = null;
 				this._ArgumentList = null;
 				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
 
 			}
 		}
@@ -437,6 +601,10 @@ namespace PsiCompiler.Grammar
 				this._ExpressionList = null;
 				this._ArgumentList = null;
 				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
 
 			}
 		}
@@ -463,6 +631,10 @@ namespace PsiCompiler.Grammar
 				this._ExpressionList = null;
 				this._ArgumentList = null;
 				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
 
 			}
 		}
@@ -489,6 +661,10 @@ namespace PsiCompiler.Grammar
 				this._ExpressionList = value;
 				this._ArgumentList = null;
 				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
 
 			}
 		}
@@ -515,6 +691,10 @@ namespace PsiCompiler.Grammar
 				this._ExpressionList = null;
 				this._ArgumentList = value;
 				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
 
 			}
 		}
@@ -541,6 +721,130 @@ namespace PsiCompiler.Grammar
 				this._ExpressionList = null;
 				this._ArgumentList = null;
 				this._Argument = value;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
+
+			}
+		}
+		
+		public List<Parameter> ParameterList
+		{
+			get
+			{
+				if(this._ParameterList == null)
+					throw new InvalidOperationException("ParserNode is not a ParameterList");
+				return this._ParameterList;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+				this._String = null;
+				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
+				this._ParameterList = value;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
+
+			}
+		}
+		
+		public Parameter Parameter
+		{
+			get
+			{
+				if(this._Parameter == null)
+					throw new InvalidOperationException("ParserNode is not a Parameter");
+				return this._Parameter;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+				this._String = null;
+				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = value;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
+
+			}
+		}
+		
+		public ParameterPrefix? ParameterPrefix
+		{
+			get
+			{
+				if(this._ParameterPrefix == null)
+					throw new InvalidOperationException("ParserNode is not a ParameterPrefix");
+				return this._ParameterPrefix;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+				this._String = null;
+				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = value;
+				this._FunctionType = null;
+
+			}
+		}
+		
+		public FunctionTypeLiteral FunctionType
+		{
+			get
+			{
+				if(this._FunctionType == null)
+					throw new InvalidOperationException("ParserNode is not a FunctionType");
+				return this._FunctionType;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+				this._String = null;
+				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = value;
 
 			}
 		}
@@ -568,6 +872,14 @@ namespace PsiCompiler.Grammar
 		public static implicit operator ParserNode(List<Argument> value) => new ParserNode(value);
 		
 		public static implicit operator ParserNode(Argument value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(List<Parameter> value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(Parameter value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(ParameterPrefix? value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(FunctionTypeLiteral value) => new ParserNode(value);
 
 		
 		public override string ToString()
@@ -596,6 +908,14 @@ namespace PsiCompiler.Grammar
 				return "Node(ArgumentList): " + _ArgumentList.ToString();
 			if(this._Argument != null)
 				return "Node(Argument): " + _Argument.ToString();
+			if(this._ParameterList != null)
+				return "Node(ParameterList): " + _ParameterList.ToString();
+			if(this._Parameter != null)
+				return "Node(Parameter): " + _Parameter.ToString();
+			if(this._ParameterPrefix != null)
+				return "Node(ParameterPrefix): " + _ParameterPrefix.ToString();
+			if(this._FunctionType != null)
+				return "Node(FunctionType): " + _FunctionType.ToString();
 
 			return "<???>";
 		}

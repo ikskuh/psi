@@ -177,4 +177,51 @@ namespace PsiCompiler.Grammar
 
         public override string ToString() => string.Format("{0}: {1}", this.Name, this.Value);
     }
+
+    public sealed class FunctionTypeLiteral : Expression
+    {
+        public FunctionTypeLiteral(IEnumerable<Parameter> parameters, Expression returnType)
+        {
+            this.Parameters = parameters.ToArray();
+            this.ReturnType = returnType;
+        }
+
+        public IReadOnlyList<Parameter> Parameters { get; }
+
+        public Expression ReturnType { get; }
+
+        public override string ToString() => string.Format("fn({0}) -> {1}", string.Join(", ", Parameters), ReturnType);
+    }
+
+    public sealed class Parameter
+    {
+        public Parameter(ParameterPrefix prefix, string name, Expression type, Expression value)
+        {
+            this.Prefix = prefix;
+            this.Name = name.NotNull();
+            this.Type = type;
+            this.Value = value;
+        }
+
+        public string Name { get; }
+
+        public Expression Type { get; }
+
+        public Expression Value { get; }
+
+        public ParameterPrefix Prefix { get;  }
+
+        public override string ToString() => string.Format("{0} {1} : {2} = {3}", Prefix, Name, Type, Value);
+    }
+
+    [Flags]
+    public enum ParameterPrefix
+    {
+        None = 0,
+        In = 1,
+        Out = 2,
+        InOut = In | Out, // Mask together
+        This = 4,
+
+    }
 }
