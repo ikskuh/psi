@@ -49,6 +49,8 @@
 %type <ExpressionList> exprlist
 %type <Declaration> declaration typedecl vardecl
 %type <Boolean> export storage
+%type <ArgumentList> arglist
+%type <Argument> argument
 
 %%
 
@@ -369,6 +371,14 @@ value       : value DOT identifier
 			{
 				$$ = new ArrayIndexingExpression($1, $3);
 			}
+			| value ROUND_O ROUND_C
+			{
+				$$ = new FunctionCallExpression($1, new List<Argument>());
+			}
+			| value ROUND_O arglist ROUND_C
+			{
+				$$ = new FunctionCallExpression($1, $3);
+			}
 			| ROUND_O expression ROUND_C
             {
                 $$ = $2;
@@ -386,6 +396,28 @@ value       : value DOT identifier
 				$$ = new NumberLiteral($1);
             }
             ;
+
+arglist     : arglist COMMA argument
+			{
+				$$ = $1;
+				$$.Add($3);
+			}
+			| argument
+			{
+				$$ = new List<Argument>();
+				$$.Add($1);
+			}
+			;
+
+argument	: expression
+			{
+				$$ = new PositionalArgument($1);
+			}
+			| identifier COLON expression
+			{
+				$$ = new NamedArgument($1, $3);
+			}
+			;
 
 exprlist    : expression
 			{

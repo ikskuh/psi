@@ -20,7 +20,8 @@
 	list.Add("PsiOperator?", "Operator");
 	list.Add("string", "String");
 	list.Add("List<Expression>", "ExpressionList");
-
+	list.Add("List<Argument>", "ArgumentList");
+	list.Add("Argument", "Argument");
 
 #>
 using System;

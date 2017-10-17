@@ -26,6 +26,8 @@ namespace PsiCompiler.Grammar
 		private PsiOperator? _Operator;
 		private string _String;
 		private List<Expression> _ExpressionList;
+		private List<Argument> _ArgumentList;
+		private Argument _Argument;
 		
 		public ParserNode(Token<PsiTokenType> value)
 		{
@@ -39,6 +41,8 @@ namespace PsiCompiler.Grammar
 			this._Operator = null;
 			this._String = null;
 			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
 
 		}
 		
@@ -54,6 +58,8 @@ namespace PsiCompiler.Grammar
 			this._Operator = null;
 			this._String = null;
 			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
 
 		}
 		
@@ -69,6 +75,8 @@ namespace PsiCompiler.Grammar
 			this._Operator = null;
 			this._String = null;
 			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
 
 		}
 		
@@ -84,6 +92,8 @@ namespace PsiCompiler.Grammar
 			this._Operator = null;
 			this._String = null;
 			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
 
 		}
 		
@@ -99,6 +109,8 @@ namespace PsiCompiler.Grammar
 			this._Operator = null;
 			this._String = null;
 			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
 
 		}
 		
@@ -114,6 +126,8 @@ namespace PsiCompiler.Grammar
 			this._Operator = null;
 			this._String = null;
 			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
 
 		}
 		
@@ -129,6 +143,8 @@ namespace PsiCompiler.Grammar
 			this._Operator = null;
 			this._String = null;
 			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
 
 		}
 		
@@ -144,6 +160,8 @@ namespace PsiCompiler.Grammar
 			this._Operator = value.NotNull();
 			this._String = null;
 			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
 
 		}
 		
@@ -159,6 +177,8 @@ namespace PsiCompiler.Grammar
 			this._Operator = null;
 			this._String = value.NotNull();
 			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
 
 		}
 		
@@ -174,6 +194,42 @@ namespace PsiCompiler.Grammar
 			this._Operator = null;
 			this._String = null;
 			this._ExpressionList = value.NotNull();
+			this._ArgumentList = null;
+			this._Argument = null;
+
+		}
+		
+		public ParserNode(List<Argument> value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+			this._String = null;
+			this._ExpressionList = null;
+			this._ArgumentList = value.NotNull();
+			this._Argument = null;
+
+		}
+		
+		public ParserNode(Argument value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+			this._String = null;
+			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = value.NotNull();
 
 		}
 		
@@ -197,6 +253,8 @@ namespace PsiCompiler.Grammar
 				this._Operator = null;
 				this._String = null;
 				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
 
 			}
 		}
@@ -221,6 +279,8 @@ namespace PsiCompiler.Grammar
 				this._Operator = null;
 				this._String = null;
 				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
 
 			}
 		}
@@ -245,6 +305,8 @@ namespace PsiCompiler.Grammar
 				this._Operator = null;
 				this._String = null;
 				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
 
 			}
 		}
@@ -269,6 +331,8 @@ namespace PsiCompiler.Grammar
 				this._Operator = null;
 				this._String = null;
 				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
 
 			}
 		}
@@ -293,6 +357,8 @@ namespace PsiCompiler.Grammar
 				this._Operator = null;
 				this._String = null;
 				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
 
 			}
 		}
@@ -317,6 +383,8 @@ namespace PsiCompiler.Grammar
 				this._Operator = null;
 				this._String = null;
 				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
 
 			}
 		}
@@ -341,6 +409,8 @@ namespace PsiCompiler.Grammar
 				this._Operator = null;
 				this._String = null;
 				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
 
 			}
 		}
@@ -365,6 +435,8 @@ namespace PsiCompiler.Grammar
 				this._Operator = value;
 				this._String = null;
 				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
 
 			}
 		}
@@ -389,6 +461,8 @@ namespace PsiCompiler.Grammar
 				this._Operator = null;
 				this._String = value;
 				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
 
 			}
 		}
@@ -413,6 +487,60 @@ namespace PsiCompiler.Grammar
 				this._Operator = null;
 				this._String = null;
 				this._ExpressionList = value;
+				this._ArgumentList = null;
+				this._Argument = null;
+
+			}
+		}
+		
+		public List<Argument> ArgumentList
+		{
+			get
+			{
+				if(this._ArgumentList == null)
+					throw new InvalidOperationException("ParserNode is not a ArgumentList");
+				return this._ArgumentList;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+				this._String = null;
+				this._ExpressionList = null;
+				this._ArgumentList = value;
+				this._Argument = null;
+
+			}
+		}
+		
+		public Argument Argument
+		{
+			get
+			{
+				if(this._Argument == null)
+					throw new InvalidOperationException("ParserNode is not a Argument");
+				return this._Argument;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+				this._String = null;
+				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = value;
 
 			}
 		}
@@ -436,6 +564,10 @@ namespace PsiCompiler.Grammar
 		public static implicit operator ParserNode(string value) => new ParserNode(value);
 		
 		public static implicit operator ParserNode(List<Expression> value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(List<Argument> value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(Argument value) => new ParserNode(value);
 
 		
 		public override string ToString()
@@ -460,6 +592,10 @@ namespace PsiCompiler.Grammar
 				return "Node(String): " + _String.ToString();
 			if(this._ExpressionList != null)
 				return "Node(ExpressionList): " + _ExpressionList.ToString();
+			if(this._ArgumentList != null)
+				return "Node(ArgumentList): " + _ArgumentList.ToString();
+			if(this._Argument != null)
+				return "Node(Argument): " + _Argument.ToString();
 
 			return "<???>";
 		}

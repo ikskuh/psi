@@ -118,4 +118,51 @@ namespace PsiCompiler.Grammar
 
         public override string ToString() => string.Format("{0}[{1}]", Value, string.Join(", ", Indices));
     }
+
+    public sealed class FunctionCallExpression : Expression
+    {
+        public FunctionCallExpression(Expression value, IEnumerable<Argument> args)
+        {
+            this.Value = value.NotNull();
+            this.Arguments = args.ToArray();
+        }
+
+        public Expression Value { get; }
+
+        public IReadOnlyList<Argument> Arguments { get; }
+
+        public override string ToString() => string.Format("{0}({1})", Value, string.Join(", ", Arguments));
+    }
+
+    public abstract class Argument
+    {
+        protected Argument(Expression value)
+        {
+            this.Value = value.NotNull();
+        }
+
+        public Expression Value { get; }
+    }
+
+    public sealed class PositionalArgument : Argument
+    {
+        public PositionalArgument(Expression value) : base(value)
+        {
+
+        }
+
+        public override string ToString() => this.Value.ToString();
+    }
+
+    public sealed class NamedArgument : Argument
+    {
+        public NamedArgument(string name, Expression value) : base(value)
+         {
+            this.Name = name.NotNull();
+        }
+
+        public string Name { get; }
+
+        public override string ToString() => string.Format("{0}: {1}", this.Name, this.Value);
+    }
 }

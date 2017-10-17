@@ -1,2 +1,2 @@
 
-assert foo[10,"Hallo",ident];
+assert foo(a: 10,"Hallo", name: ident = 10);
