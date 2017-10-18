@@ -239,4 +239,31 @@ namespace PsiCompiler.Grammar
 
         public override string ToString() => string.Format("{0} => {1}", Type, Body);
     }
+
+    public sealed class GenericArgumentsExpression : Expression
+    {
+        public GenericArgumentsExpression(Expression value, IEnumerable<Expression> arguments)
+        {
+            this.Value = value.NotNull();
+            this.Arguments = arguments.ToArray();
+        }
+
+        public Expression Value { get; }
+
+        public IReadOnlyList<Expression> Arguments { get; }
+
+        public override string ToString() => string.Format("{0}<{1}>", Value, string.Join(", ", Arguments));
+    }
+
+    public sealed class ArrayLiteral : Expression
+    {
+        public ArrayLiteral(IEnumerable<Expression> values)
+        {
+            this.Values = values.ToArray();
+        }
+        
+        public IReadOnlyList<Expression> Values { get; }
+
+        public override string ToString() => string.Format("[ {0} ]", string.Join(", ", Values));
+    }
 }

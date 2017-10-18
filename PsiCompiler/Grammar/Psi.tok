@@ -13,8 +13,6 @@ CURLY_O    := \{
 CURLY_C    := \}
 ROUND_O    := \(
 ROUND_C    := \)
-POINTY_O   := \<
-POINTY_C   := \>
 SQUARE_O   := \[
 SQUARE_C   := \]
 

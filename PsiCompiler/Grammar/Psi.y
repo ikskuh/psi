@@ -13,7 +13,7 @@
 %YYSTYPE ParserNode
 
 // Brackets
-%token <Token> CURLY_O, CURLY_C, ROUND_O, ROUND_C, POINTY_O, POINTY_C, SQUARE_O, SQUARE_C
+%token <Token> CURLY_O, CURLY_C, ROUND_O, ROUND_C, SQUARE_O, SQUARE_C
 
 // Keywords
 %token <String> IMPORT, EXPORT, MODULE, ASSERT, ERROR, CONST, VAR, TYPE, FN, NEW
@@ -41,7 +41,7 @@
 
 %namespace PsiCompiler.Grammar
 
-%type <String> identifier
+%type <String> identifier opsym
 %type <Module> module program
 %type <Name> modname
 %type <Assertion> assertion
@@ -377,6 +377,10 @@ value       : value DOT identifier
 			{
 				$$ = new ArrayIndexingExpression($1, $3);
 			}
+			| SQUARE_O exprlist SQUARE_C
+			{
+				$$ = new ArrayLiteral($2);
+			}
 			| value ROUND_O ROUND_C
 			{
 				$$ = new FunctionCallExpression($1, new List<Argument>());
@@ -567,6 +571,7 @@ identifier  : IDENT
 			| TYPE
 			| FN
 			| NEW
+			| OPERATOR META opsym META
 			| OPERATOR
 			| ENUM
 			| RECORD
@@ -590,6 +595,11 @@ identifier  : IDENT
 			| NEXT
 			| RETURN
 			| GOTO
+			;
+
+opsym       : PLUS | MINUS | MULT | DIV | AND | OR | INVERT | XOR | CONCAT | DOT | META | EXP | MOD
+			| FORWARD | BACKWARD | LEQUAL | GEQUAL | EQUAL | NEQUAL | LESS | MORE | IS | ASSIGN
+			| ASR | SHL | SHR
 			;
 %%
 
