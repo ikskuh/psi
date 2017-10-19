@@ -9,7 +9,9 @@ namespace PsiCompiler.Grammar
 {
     public abstract class Statement
     {
+        sealed class NullStatement : Statement { }
 
+        public static readonly Statement Null = new NullStatement();
     }
 
     public sealed class Block : Statement, IReadOnlyList<Statement>
@@ -48,5 +50,40 @@ namespace PsiCompiler.Grammar
         public Expression Expression { get; }
 
         public override string ToString() => string.Format("{0} ;", Expression);
+    }
+
+    public sealed class FlowBreakStatement : Statement
+    {
+        public FlowBreakStatement(FlowBreakType type)
+        {
+            this.Type = type;
+        }
+
+        public FlowBreakStatement(FlowBreakType type, Expression value)
+        {
+            this.Type = type;
+            this.Value = value.NotNull();
+        }
+
+        public FlowBreakType Type { get; }
+
+        public Expression Value { get; }
+
+        public override string ToString()
+        {
+            if (this.Value != null)
+                return this.Type + " " + Value + ";";
+            else
+                return this.Type + ";";
+        }
+    }
+
+    public enum FlowBreakType
+    {
+        Continue,
+        Break,
+        Next,
+        Goto,
+        Return
     }
 }

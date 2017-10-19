@@ -8,7 +8,6 @@ TODO:
 		- Restrict
 		- For
 		- Break / Cont / Next / Goto / Return
-
 */
 
 
@@ -617,6 +616,34 @@ statement   : declaration
 			| block
 			{
 				$$ = $1;
+			}
+			| BREAK TERMINATOR
+			{
+				$$ = new FlowBreakStatement(FlowBreakType.Break);
+			}
+			| NEXT TERMINATOR
+			{
+				$$ = new FlowBreakStatement(FlowBreakType.Next);
+			}
+			| CONTINUE TERMINATOR
+			{
+				$$ = new FlowBreakStatement(FlowBreakType.Continue);
+			}
+			| RETURN expression TERMINATOR
+			{
+				$$ = new FlowBreakStatement(FlowBreakType.Return, $2);
+			}
+			| RETURN TERMINATOR
+			{
+				$$ = new FlowBreakStatement(FlowBreakType.Return);
+			}
+			| GOTO expression TERMINATOR
+			{
+				$$ = new FlowBreakStatement(FlowBreakType.Goto, $2);
+			}
+			| TERMINATOR
+			{
+				$$ = Statement.Null;
 			}
 			;
 // Allow any keyword as an identifier

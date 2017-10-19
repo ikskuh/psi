@@ -1,2 +1,10 @@
 
-var fun = f(\(a,b,c) => 10);
+var fun = fn()
+{
+	break;
+	next;
+	continue;
+	return;
+	return 10;
+	goto foo;
+};
