@@ -1,6 +1,21 @@
-﻿%{
-    Dictionary<string,int> regs = new Dictionary<string,int>();
-%}
+﻿/*
+TODO:
+	- Implement Statements
+		- If / Else
+		- Select / When / Otherwise
+		- Loop / Until
+		- While
+		- Restrict
+		- For
+		- Break / Cont / Next / Goto / Return
+	- Implement option type
+	- Implement lambda expression
+
+
+
+
+*/
+
 
 %start program
 
@@ -47,7 +62,7 @@
 %type <Assertion> assertion
 %type <Expression> type expression expr_or expr_xor expr_and equality comparison expr_arrows sum term expo shifting unary value
 %type <ExpressionList> exprlist
-%type <Declaration> declaration typedecl vardecl
+%type <Declaration> declaration typedecl vardecl field
 %type <Boolean> export storage
 %type <ArgumentList> arglist
 %type <Argument> argument
@@ -57,6 +72,8 @@
 %type <ParameterPrefix> prefix
 %type <Statement> statement block
 %type <StatementList> stmtlist
+%type <StringList> enumitems
+%type <FieldList> fieldlist
 
 %%
 
@@ -373,6 +390,14 @@ value       : value DOT identifier
 			{
 				$$ = ApplyMeta($1, $3);
 			}
+			| ENUM ROUND_O enumitems ROUND_C
+			{
+				$$ = new EnumTypeLiteral($3);
+			}
+			| RECORD ROUND_O fieldlist ROUND_C
+			{
+				$$ = new RecordTypeLiteral($3);
+			}
 			| value SQUARE_O exprlist SQUARE_C
 			{
 				$$ = new ArrayIndexingExpression($1, $3);
@@ -420,6 +445,44 @@ value       : value DOT identifier
             | NUMBER
 			{
 				$$ = new NumberLiteral($1);
+            }
+            ;
+
+enumitems   : enumitems COMMA identifier
+			{
+				$$ = $1;
+				$$.Add($3);
+			}
+			| identifier
+			{
+				$$ = new List<string>();
+				$$.Add($1);
+			}
+			;
+
+fieldlist   : fieldlist COMMA field
+			{
+				$$ = $1;
+				$$.Add($3);	
+			}
+			| field
+			{
+				$$ = new List<Declaration>();
+				$$.Add($1);
+			}
+			;
+
+field       : identifier COLON type terminator {
+            	$$ = new Declaration($1, $3, null);
+            	$$.IsField = true;
+            }
+            | identifier IS    expression terminator {
+            	$$ = new Declaration($1, null, $3);
+            	$$.IsField = true;
+            }
+            | identifier COLON type IS expression terminator {
+            	$$ = new Declaration($1, $3, $5);
+            	$$.IsField = true;
             }
             ;
 
@@ -573,9 +636,6 @@ identifier  : IDENT
 			| NEW
 			| OPERATOR META opsym META
 			| OPERATOR
-			| ENUM
-			| RECORD
-			| OPTION
 			| INOUT
 			| IN
 			| OUT

@@ -266,4 +266,28 @@ namespace PsiCompiler.Grammar
 
         public override string ToString() => string.Format("[ {0} ]", string.Join(", ", Values));
     }
+
+    public sealed class EnumTypeLiteral : Expression
+    {
+        public EnumTypeLiteral(IEnumerable<string> fields)
+        {
+            this.Items = fields.ToArray();
+        }
+
+        public IReadOnlyList<string> Items { get; }
+
+        public override string ToString() => string.Format("enum({0})", string.Join(", ", Items));
+    }
+
+    public sealed class RecordTypeLiteral : Expression
+    {
+        public RecordTypeLiteral(IEnumerable<Declaration> fields)
+        {
+            this.Fields = fields.ToArray();
+        }
+
+        public IReadOnlyList<Declaration> Fields { get; }
+
+        public override string ToString() => string.Format("record({0})", string.Join(", ", Fields));
+    }
 }

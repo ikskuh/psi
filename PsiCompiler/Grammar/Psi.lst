@@ -1,17 +1,34 @@
 
 // ==========================================================================
-//  GPPG error listing for yacc source file <Psi.y - 17.10.2017 23:45:53>
+//  GPPG error listing for yacc source file <Psi.y - 19.10.2017 09:10:42>
 // ==========================================================================
 //  Version:  1.5.2
 //  Machine:  DESKTOP-2U3VU0H
-//  DateTime: 17.10.2017 23:45:54
+//  DateTime: 19.10.2017 09:10:42
 //  UserName: Felix
 // ==========================================================================
 
 
-%{
-    Dictionary<string,int> regs = new Dictionary<string,int>();
-%}
+/*
+TODO:
+	- Implement Statements
+		- If / Else
+		- Select / When / Otherwise
+		- Loop / Until
+		- While
+		- Restrict
+		- For
+		- Break / Cont / Next / Goto / Return
+	- Implement record literals
+	- Implement enum literals
+	- Implement option type
+	- Implement lambda expression
+
+
+
+
+*/
+
 
 %start program
 
@@ -24,7 +41,7 @@
 %YYSTYPE ParserNode
 
 // Brackets
-%token <Token> CURLY_O, CURLY_C, ROUND_O, ROUND_C, POINTY_O, POINTY_C, SQUARE_O, SQUARE_C
+%token <Token> CURLY_O, CURLY_C, ROUND_O, ROUND_C, SQUARE_O, SQUARE_C
 
 // Keywords
 %token <String> IMPORT, EXPORT, MODULE, ASSERT, ERROR, CONST, VAR, TYPE, FN, NEW
@@ -52,13 +69,13 @@
 
 %namespace PsiCompiler.Grammar
 
-%type <String> identifier
+%type <String> identifier opsym
 %type <Module> module program
 %type <Name> modname
 %type <Assertion> assertion
 %type <Expression> type expression expr_or expr_xor expr_and equality comparison expr_arrows sum term expo shifting unary value
 %type <ExpressionList> exprlist
-%type <Declaration> declaration typedecl vardecl
+%type <Declaration> declaration typedecl vardecl field
 %type <Boolean> export storage
 %type <ArgumentList> arglist
 %type <Argument> argument
@@ -68,11 +85,12 @@
 %type <ParameterPrefix> prefix
 %type <Statement> statement block
 %type <StatementList> stmtlist
+%type <StringList> enumitems
+%type <FieldList> fieldlist
 
 %%
-// Warning: NonTerminal symbol "stmtlist" is unreachable
-// Warning: NonTerminal symbol "block" is unreachable
-// Warning: NonTerminal symbol "statement" is unreachable
+// Warning: NonTerminal symbol "fieldlist" is unreachable
+// Warning: NonTerminal symbol "field" is unreachable
 // ------------------------------------------------------
 
 program     : /* empty */         { $$ = new Module(); }
@@ -388,9 +406,17 @@ value       : value DOT identifier
 			{
 				$$ = ApplyMeta($1, $3);
 			}
+			| ENUM ROUND_O enumitems ROUND_C
+			{
+				$$ = new EnumTypeLiteral($3);
+			}
 			| value SQUARE_O exprlist SQUARE_C
 			{
 				$$ = new ArrayIndexingExpression($1, $3);
+			}
+			| SQUARE_O exprlist SQUARE_C
+			{
+				$$ = new ArrayLiteral($2);
 			}
 			| value ROUND_O ROUND_C
 			{
@@ -412,6 +438,14 @@ value       : value DOT identifier
 			{
 				$$ = $1;
 			}
+			| functiontype block
+			{
+				$$ = new FunctionLiteral($1, $2);
+			}
+			| functiontype MAPSTO expression
+			{
+				$$ = new FunctionLiteral($1, new ExpressionStatement($3));
+			}
             | STRING
 			{
 				$$ = new StringLiteral($1);
@@ -425,6 +459,36 @@ value       : value DOT identifier
 				$$ = new NumberLiteral($1);
             }
             ;
+
+enumitems   : enumitems COMMA identifier
+			{
+				$$ = $1;
+				$$.Add($3);
+			}
+			| identifier
+			{
+				$$ = new List<string>();
+				$$.Add($1);
+			}
+			;
+
+fieldlist   : fieldlist COMMA field
+			{
+				$$ = $1;
+				$$.Add($3);	
+			}
+			| field
+			{
+				$$ = new List<Declaration>();
+				$$.Add($1);
+			}
+			;
+
+field       : identifier COLON type IS expression
+			{
+			
+			}
+			;
 
 functiontype: FN ROUND_O paramlist ROUND_C FORWARD type
 			{
@@ -574,10 +638,8 @@ identifier  : IDENT
 			| TYPE
 			| FN
 			| NEW
+			| OPERATOR META opsym META
 			| OPERATOR
-			| ENUM
-			| RECORD
-			| OPTION
 			| INOUT
 			| IN
 			| OUT
@@ -597,6 +659,11 @@ identifier  : IDENT
 			| NEXT
 			| RETURN
 			| GOTO
+			;
+
+opsym       : PLUS | MINUS | MULT | DIV | AND | OR | INVERT | XOR | CONCAT | DOT | META | EXP | MOD
+			| FORWARD | BACKWARD | LEQUAL | GEQUAL | EQUAL | NEQUAL | LESS | MORE | IS | ASSIGN
+			| ASR | SHL | SHR
 			;
 %%
 

@@ -34,6 +34,8 @@ namespace PsiCompiler.Grammar
 		private FunctionTypeLiteral _FunctionType;
 		private Statement _Statement;
 		private List<Statement> _StatementList;
+		private List<string> _StringList;
+		private List<Declaration> _FieldList;
 		
 		public ParserNode(Token<PsiTokenType> value)
 		{
@@ -55,6 +57,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = null;
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -78,6 +82,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = null;
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -101,6 +107,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = null;
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -124,6 +132,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = null;
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -147,6 +157,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = null;
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -170,6 +182,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = null;
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -193,6 +207,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = null;
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -216,6 +232,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = null;
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -239,6 +257,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = null;
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -262,6 +282,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = null;
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -285,6 +307,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = null;
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -308,6 +332,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = null;
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -331,6 +357,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = null;
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -354,6 +382,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = null;
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -377,6 +407,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = null;
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -400,6 +432,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = value.NotNull();
 			this._Statement = null;
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -423,6 +457,8 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = value.NotNull();
 			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
 
 		}
 		
@@ -446,6 +482,58 @@ namespace PsiCompiler.Grammar
 			this._FunctionType = null;
 			this._Statement = null;
 			this._StatementList = value.NotNull();
+			this._StringList = null;
+			this._FieldList = null;
+
+		}
+		
+		public ParserNode(List<string> value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+			this._String = null;
+			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
+			this._Statement = null;
+			this._StatementList = null;
+			this._StringList = value.NotNull();
+			this._FieldList = null;
+
+		}
+		
+		public ParserNode(List<Declaration> value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+			this._String = null;
+			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
+			this._Statement = null;
+			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = value.NotNull();
 
 		}
 		
@@ -477,6 +565,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = null;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -509,6 +599,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = null;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -541,6 +633,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = null;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -573,6 +667,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = null;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -605,6 +701,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = null;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -637,6 +735,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = null;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -669,6 +769,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = null;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -701,6 +803,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = null;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -733,6 +837,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = null;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -765,6 +871,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = null;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -797,6 +905,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = null;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -829,6 +939,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = null;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -861,6 +973,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = null;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -893,6 +1007,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = null;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -925,6 +1041,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = null;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -957,6 +1075,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = value;
 				this._Statement = null;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -989,6 +1109,8 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = value;
 				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
 
 			}
 		}
@@ -1021,6 +1143,76 @@ namespace PsiCompiler.Grammar
 				this._FunctionType = null;
 				this._Statement = null;
 				this._StatementList = value;
+				this._StringList = null;
+				this._FieldList = null;
+
+			}
+		}
+		
+		public List<string> StringList
+		{
+			get
+			{
+				if(this._StringList == null)
+					throw new InvalidOperationException("ParserNode is not a StringList");
+				return this._StringList;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+				this._String = null;
+				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
+				this._Statement = null;
+				this._StatementList = null;
+				this._StringList = value;
+				this._FieldList = null;
+
+			}
+		}
+		
+		public List<Declaration> FieldList
+		{
+			get
+			{
+				if(this._FieldList == null)
+					throw new InvalidOperationException("ParserNode is not a FieldList");
+				return this._FieldList;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+				this._String = null;
+				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
+				this._Statement = null;
+				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = value;
 
 			}
 		}
@@ -1060,6 +1252,10 @@ namespace PsiCompiler.Grammar
 		public static implicit operator ParserNode(Statement value) => new ParserNode(value);
 		
 		public static implicit operator ParserNode(List<Statement> value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(List<string> value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(List<Declaration> value) => new ParserNode(value);
 
 		
 		public override string ToString()
@@ -1100,6 +1296,10 @@ namespace PsiCompiler.Grammar
 				return "Node(Statement): " + _Statement.ToString();
 			if(this._StatementList != null)
 				return "Node(StatementList): " + _StatementList.ToString();
+			if(this._StringList != null)
+				return "Node(StringList): " + _StringList.ToString();
+			if(this._FieldList != null)
+				return "Node(FieldList): " + _FieldList.ToString();
 
 			return "<???>";
 		}

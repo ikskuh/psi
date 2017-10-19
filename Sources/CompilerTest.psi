@@ -1,2 +1,2 @@
 
-assert [ 1, 2, 3 ] ;
+type foo = record(a : int = 10, b : int, c = 10);

@@ -28,6 +28,8 @@
 	list.Add("FunctionTypeLiteral", "FunctionType");
 	list.Add("Statement", "Statement");
 	list.Add("List<Statement>", "StatementList");
+	list.Add("List<string>", "StringList");
+	list.Add("List<Declaration>", "FieldList");
 #>
 using System;
 using System.Collections.Generic;

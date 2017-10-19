@@ -20,5 +20,15 @@ namespace PsiCompiler.Grammar
 		public bool IsExported { get; set; }
 		
 		public bool IsConst { get; set; }
-	}
+
+        public bool IsField { get; set; }
+
+        public override string ToString() => string.Format(
+            "{0}{1}{2} : {3} = {4}",
+            IsExported ? "export " : "",
+            IsField ? "" : IsConst ? "const " : "var ",
+            Name,
+            Type,
+            Value);
+    }
 }
