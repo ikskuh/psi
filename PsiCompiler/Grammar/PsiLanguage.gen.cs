@@ -48,7 +48,6 @@ sealed partial class PsiTokenizer : Tokenizer<PsiTokenType>
 		this.RegisterToken(PsiTokenType.OPERATOR, new Regex(@"\boperator\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.ENUM, new Regex(@"\benum\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.RECORD, new Regex(@"\brecord\b", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.OPTION, new Regex(@"\boption\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.INOUT, new Regex(@"\binout\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.IN, new Regex(@"\bin\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.OUT, new Regex(@"\bout\b", RegexOptions.Compiled));

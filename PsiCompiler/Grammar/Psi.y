@@ -8,11 +8,6 @@ TODO:
 		- Restrict
 		- For
 		- Break / Cont / Next / Goto / Return
-	- Implement option type
-	- Implement lambda expression
-
-
-
 
 */
 
@@ -32,7 +27,7 @@ TODO:
 
 // Keywords
 %token <String> IMPORT, EXPORT, MODULE, ASSERT, ERROR, CONST, VAR, TYPE, FN, NEW
-%token <String> OPERATOR, ENUM, RECORD, OPTION, INOUT, IN, OUT, THIS, FOR, WHILE, LOOP, UNTIL
+%token <String> OPERATOR, ENUM, RECORD, INOUT, IN, OUT, THIS, FOR, WHILE, LOOP, UNTIL
 %token <String> IF, ELSE, SELECT, WHEN, OTHERWISE, RESTRICT, BREAK, CONTINUE, NEXT, RETURN, GOTO
 %token <String> MAPSTO, COMMA, TERMINATOR, COLON, LAMBDA
 
@@ -72,7 +67,7 @@ TODO:
 %type <ParameterPrefix> prefix
 %type <Statement> statement block
 %type <StatementList> stmtlist
-%type <StringList> enumitems
+%type <StringList> idlist
 %type <FieldList> fieldlist
 
 %%
@@ -124,7 +119,7 @@ vardecl     : storage identifier COLON type terminator {
             	$$.IsConst = (bool)$1;
             }
             | storage identifier IS    expression terminator {
-            	$$ = new Declaration($2, null, $4);
+            	$$ = new Declaration($2, Undefined, $4);
             	$$.IsConst = (bool)$1;
             }
             | storage identifier COLON type IS expression terminator {
@@ -390,7 +385,7 @@ value       : value DOT identifier
 			{
 				$$ = ApplyMeta($1, $3);
 			}
-			| ENUM ROUND_O enumitems ROUND_C
+			| ENUM ROUND_O idlist ROUND_C
 			{
 				$$ = new EnumTypeLiteral($3);
 			}
@@ -434,6 +429,10 @@ value       : value DOT identifier
 			{
 				$$ = new FunctionLiteral($1, new ExpressionStatement($3));
 			}
+			| LAMBDA ROUND_O idlist ROUND_C MAPSTO expression
+			{
+				$$ = new LambdaLiteral($3, new ExpressionStatement($6));
+			}
             | STRING
 			{
 				$$ = new StringLiteral($1);
@@ -448,7 +447,7 @@ value       : value DOT identifier
             }
             ;
 
-enumitems   : enumitems COMMA identifier
+idlist      : idlist COMMA identifier
 			{
 				$$ = $1;
 				$$.Add($3);
@@ -477,7 +476,7 @@ field       : identifier COLON type terminator {
             	$$.IsField = true;
             }
             | identifier IS    expression terminator {
-            	$$ = new Declaration($1, null, $3);
+            	$$ = new Declaration($1, Undefined, $3);
             	$$.IsField = true;
             }
             | identifier COLON type IS expression terminator {
@@ -496,11 +495,11 @@ functiontype: FN ROUND_O paramlist ROUND_C FORWARD type
 			}
 			| FN ROUND_O paramlist ROUND_C
 			{
-				$$ = new FunctionTypeLiteral($3, null);
+				$$ = new FunctionTypeLiteral($3, Void);
 			}
 			| FN ROUND_O ROUND_C
 			{
-				$$ = new FunctionTypeLiteral(new List<Parameter>(), null);
+				$$ = new FunctionTypeLiteral(new List<Parameter>(), Void);
 			}
 			;
 
@@ -522,7 +521,7 @@ parameter   : prefix identifier COLON type IS expression
 			}
 			| prefix identifier IS expression
 			{
-				$$ = new Parameter((ParameterPrefix)$1, $2, null, $4);
+				$$ = new Parameter((ParameterPrefix)$1, $2, Undefined, $4);
 			}
 			| prefix identifier COLON type
 			{
@@ -670,7 +669,11 @@ public PsiParser(PsiLexer lexer) : base(lexer)
 
 public Module Result => this.CurrentSemanticValue.Module;
 
-public Expression TypeDeclaration { get; } = new VariableReference("<type>");
+public static Expression TypeDeclaration { get; } = new VariableReference("<type>");
+
+public static Expression Undefined { get; } = new VariableReference("<?>");
+
+public static Expression Void { get; } = new VariableReference("<void>");
 
 private static Expression Apply(Expression lhs, Expression rhs, PsiOperator op)
 {

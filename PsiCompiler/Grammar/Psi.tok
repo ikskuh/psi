@@ -32,7 +32,6 @@ OPERATOR   := \boperator\b
 # Type Names
 ENUM       := \benum\b
 RECORD     := \brecord\b
-OPTION     := \boption\b
 
 # Parameter Spec
 INOUT      := \binout\b

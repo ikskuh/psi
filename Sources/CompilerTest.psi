@@ -1,2 +1,2 @@
 
-type foo = record(a : int = 10, b : int, c = 10);
+var fun = f(\(a,b,c) => 10);

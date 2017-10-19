@@ -150,6 +150,7 @@ Removals:
   - Modify-and-writeback operators (`+=`, `-=`, …)
   - `generic` system, only fixed, pre-implemented generics are supported
   - `optional` is removed (too complex for first version)
+  - `option<...>` is postponed to later version
     
 Think About:
     - How to handle default values in function types?

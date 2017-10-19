@@ -240,6 +240,23 @@ namespace PsiCompiler.Grammar
         public override string ToString() => string.Format("{0} => {1}", Type, Body);
     }
 
+    public sealed class LambdaLiteral : Expression
+    {
+        public LambdaLiteral(IEnumerable<string> parameters, Statement body)
+        {
+            this.Type = new FunctionTypeLiteral(
+                parameters.Select(p => new Parameter(ParameterPrefix.None, p, PsiParser.Undefined, null)),
+                PsiParser.Void);
+            this.Body = body;
+        }
+
+        public FunctionTypeLiteral Type { get; }
+
+        public Statement Body { get; }
+
+        public override string ToString() => string.Format("{0} => {1}", Type, Body);
+    }
+
     public sealed class GenericArgumentsExpression : Expression
     {
         public GenericArgumentsExpression(Expression value, IEnumerable<Expression> arguments)
