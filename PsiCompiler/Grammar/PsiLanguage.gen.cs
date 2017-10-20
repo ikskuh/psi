@@ -55,7 +55,7 @@ sealed partial class PsiTokenizer : Tokenizer<PsiTokenType>
 		this.RegisterToken(PsiTokenType.FOR, new Regex(@"\bfor\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.WHILE, new Regex(@"\bwhile\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.LOOP, new Regex(@"\bloop\b", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.UNTIL, new Regex(@"\bunitl\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.UNTIL, new Regex(@"\buntil\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.IF, new Regex(@"\bif\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.ELSE, new Regex(@"\belse\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.SELECT, new Regex(@"\bselect\b", RegexOptions.Compiled));

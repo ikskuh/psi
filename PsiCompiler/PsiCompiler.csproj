@@ -105,7 +105,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>cd $(ProjectDir)Grammar
-"C:\Users\Felix\Desktop\gppg-distro-1_5_2\binaries\Gppg.exe" Psi.y</PreBuildEvent>
+    <PreBuildEvent>cd $(ProjectDir)\Grammar
+"$(SolutionDir)\Tools\GPPG\Gppg.exe" Psi.y</PreBuildEvent>
   </PropertyGroup>
 </Project>

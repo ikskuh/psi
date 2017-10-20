@@ -30,6 +30,8 @@
 	list.Add("List<Statement>", "StatementList");
 	list.Add("List<string>", "StringList");
 	list.Add("List<Declaration>", "FieldList");
+	list.Add("SelectOption", "SelectOption");
+	list.Add("List<SelectOption>", "SelectOptions");
 #>
 using System;
 using System.Collections.Generic;

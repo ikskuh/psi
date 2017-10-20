@@ -1,32 +1,19 @@
 
 // ==========================================================================
-//  GPPG error listing for yacc source file <Psi.y - 19.10.2017 09:10:42>
+//  GPPG error listing for yacc source file <Psi.y - 20.10.2017 15:37:10>
 // ==========================================================================
 //  Version:  1.5.2
-//  Machine:  DESKTOP-2U3VU0H
-//  DateTime: 19.10.2017 09:10:42
-//  UserName: Felix
+//  Machine:  DENKPLATTE-WIN
+//  DateTime: 20.10.2017 15:41:27
+//  UserName: xq
 // ==========================================================================
 
 
 /*
 TODO:
 	- Implement Statements
-		- If / Else
 		- Select / When / Otherwise
-		- Loop / Until
-		- While
-		- Restrict
 		- For
-		- Break / Cont / Next / Goto / Return
-	- Implement record literals
-	- Implement enum literals
-	- Implement option type
-	- Implement lambda expression
-
-
-
-
 */
 
 
@@ -45,7 +32,7 @@ TODO:
 
 // Keywords
 %token <String> IMPORT, EXPORT, MODULE, ASSERT, ERROR, CONST, VAR, TYPE, FN, NEW
-%token <String> OPERATOR, ENUM, RECORD, OPTION, INOUT, IN, OUT, THIS, FOR, WHILE, LOOP, UNTIL
+%token <String> OPERATOR, ENUM, RECORD, INOUT, IN, OUT, THIS, FOR, WHILE, LOOP, UNTIL
 %token <String> IF, ELSE, SELECT, WHEN, OTHERWISE, RESTRICT, BREAK, CONTINUE, NEXT, RETURN, GOTO
 %token <String> MAPSTO, COMMA, TERMINATOR, COLON, LAMBDA
 
@@ -85,13 +72,10 @@ TODO:
 %type <ParameterPrefix> prefix
 %type <Statement> statement block
 %type <StatementList> stmtlist
-%type <StringList> enumitems
+%type <StringList> idlist
 %type <FieldList> fieldlist
 
 %%
-// Warning: NonTerminal symbol "fieldlist" is unreachable
-// Warning: NonTerminal symbol "field" is unreachable
-// ------------------------------------------------------
 
 program     : /* empty */         { $$ = new Module(); }
             | program assertion   { $$ = $1.Add($2); }
@@ -140,7 +124,7 @@ vardecl     : storage identifier COLON type terminator {
             	$$.IsConst = (bool)$1;
             }
             | storage identifier IS    expression terminator {
-            	$$ = new Declaration($2, null, $4);
+            	$$ = new Declaration($2, Undefined, $4);
             	$$.IsConst = (bool)$1;
             }
             | storage identifier COLON type IS expression terminator {
@@ -406,9 +390,13 @@ value       : value DOT identifier
 			{
 				$$ = ApplyMeta($1, $3);
 			}
-			| ENUM ROUND_O enumitems ROUND_C
+			| ENUM ROUND_O idlist ROUND_C
 			{
 				$$ = new EnumTypeLiteral($3);
+			}
+			| RECORD ROUND_O fieldlist ROUND_C
+			{
+				$$ = new RecordTypeLiteral($3);
 			}
 			| value SQUARE_O exprlist SQUARE_C
 			{
@@ -446,6 +434,10 @@ value       : value DOT identifier
 			{
 				$$ = new FunctionLiteral($1, new ExpressionStatement($3));
 			}
+			| LAMBDA ROUND_O idlist ROUND_C MAPSTO expression
+			{
+				$$ = new LambdaLiteral($3, new ExpressionStatement($6));
+			}
             | STRING
 			{
 				$$ = new StringLiteral($1);
@@ -460,7 +452,7 @@ value       : value DOT identifier
             }
             ;
 
-enumitems   : enumitems COMMA identifier
+idlist      : idlist COMMA identifier
 			{
 				$$ = $1;
 				$$.Add($3);
@@ -484,11 +476,19 @@ fieldlist   : fieldlist COMMA field
 			}
 			;
 
-field       : identifier COLON type IS expression
-			{
-			
-			}
-			;
+field       : identifier COLON type terminator {
+            	$$ = new Declaration($1, $3, null);
+            	$$.IsField = true;
+            }
+            | identifier IS    expression terminator {
+            	$$ = new Declaration($1, Undefined, $3);
+            	$$.IsField = true;
+            }
+            | identifier COLON type IS expression terminator {
+            	$$ = new Declaration($1, $3, $5);
+            	$$.IsField = true;
+            }
+            ;
 
 functiontype: FN ROUND_O paramlist ROUND_C FORWARD type
 			{
@@ -500,11 +500,11 @@ functiontype: FN ROUND_O paramlist ROUND_C FORWARD type
 			}
 			| FN ROUND_O paramlist ROUND_C
 			{
-				$$ = new FunctionTypeLiteral($3, null);
+				$$ = new FunctionTypeLiteral($3, Void);
 			}
 			| FN ROUND_O ROUND_C
 			{
-				$$ = new FunctionTypeLiteral(new List<Parameter>(), null);
+				$$ = new FunctionTypeLiteral(new List<Parameter>(), Void);
 			}
 			;
 
@@ -526,7 +526,7 @@ parameter   : prefix identifier COLON type IS expression
 			}
 			| prefix identifier IS expression
 			{
-				$$ = new Parameter((ParameterPrefix)$1, $2, null, $4);
+				$$ = new Parameter((ParameterPrefix)$1, $2, Undefined, $4);
 			}
 			| prefix identifier COLON type
 			{
@@ -623,11 +623,73 @@ statement   : declaration
 			{
 				$$ = $1;
 			}
+			| BREAK TERMINATOR
+			{
+				$$ = new FlowBreakStatement(FlowBreakType.Break);
+			}
+			| NEXT TERMINATOR
+			{
+				$$ = new FlowBreakStatement(FlowBreakType.Next);
+			}
+			| CONTINUE TERMINATOR
+			{
+				$$ = new FlowBreakStatement(FlowBreakType.Continue);
+			}
+			| RETURN expression TERMINATOR
+			{
+				$$ = new FlowBreakStatement(FlowBreakType.Return, $2);
+			}
+			| RETURN TERMINATOR
+			{
+				$$ = new FlowBreakStatement(FlowBreakType.Return);
+			}
+			| GOTO expression TERMINATOR
+			{
+				$$ = new FlowBreakStatement(FlowBreakType.Goto, $2);
+			}
+			| IF ROUND_O expression ROUND_C statement ELSE statement
+			{
+				$$ = new IfElseStatement($3, $5, $7);
+			}
+			| IF ROUND_O expression ROUND_C statement
+			{
+				$$ = new IfElseStatement($3, $5, null);
+			}
+			| WHILE ROUND_O expression ROUND_C statement
+			{
+				$$ = new WhileLoopStatement($3, $5);
+			}
+			| LOOP statement UNTIL ROUND_O expression ROUND_C TERMINATOR
+			{
+				$$ = new LoopUntilStatement($5, $2);
+			}
+			| RESTRICT ROUND_O exprlist ROUND_C statement
+			{
+				$$ = new RestrictStatement($3, $5);
+			}
+			| FOR ROUND_O identifier IN expression ROUND_C statement
+			{
+				$$ = new ForLoopStatement($3, $5, $7);
+			}
+			| SELECT ROUND_O expression ROUND_C CURLY_O options CURLY_C
+			{
+				$$ = $1;
+			}
+			| TERMINATOR
+			{
+				$$ = Statement.Null;
+			}
 			;
+
+options     : /* empty */
+
 // Allow any keyword as an identifier
 // HACK: this may be useful when the tokenizer can be "informed" about
 //       requiring a specific token
 identifier  : IDENT
+//^^^^^^^^
+// Error: Syntax error, unexpected anchoredSymbol
+// ----------------------------------------------
 			| IMPORT
 			| EXPORT
 			| MODULE
@@ -674,7 +736,11 @@ public PsiParser(PsiLexer lexer) : base(lexer)
 
 public Module Result => this.CurrentSemanticValue.Module;
 
-public Expression TypeDeclaration { get; } = new VariableReference("<type>");
+public static Expression TypeDeclaration { get; } = new VariableReference("<type>");
+
+public static Expression Undefined { get; } = new VariableReference("<?>");
+
+public static Expression Void { get; } = new VariableReference("<void>");
 
 private static Expression Apply(Expression lhs, Expression rhs, PsiOperator op)
 {
