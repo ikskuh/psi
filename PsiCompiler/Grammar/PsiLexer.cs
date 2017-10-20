@@ -11,17 +11,14 @@ namespace PsiCompiler.Grammar
 	{
 		private readonly PsiTokenizer tokenizer;
 
-		//
-		// Version 1.2.0 needed the following code.
-		// In V1.2.1 the base class provides this empty default.
-		//
-		// public override LexLocation yylloc { 
-		//     get { return null; } 
-		//     set { /* skip */; }
-		// }
-		//
+        LexLocation currentLocation;
 
-		public PsiLexer(System.IO.TextReader reader, string fileName)
+        public override LexLocation yylloc {
+            get => currentLocation;
+            set => throw new NotSupportedException();
+        }
+
+        public PsiLexer(System.IO.TextReader reader, string fileName)
 		{
 			this.tokenizer = new PsiTokenizer(reader, fileName);
 		}
@@ -47,6 +44,12 @@ namespace PsiCompiler.Grammar
 				return (int)PsiTokenType.EOF;
 
 			var token = this.tokenizer.Read();
+
+            var loc = token.Location;
+
+            currentLocation = new LexLocation(
+                loc.Line, loc.Column,
+                loc.Line, loc.Column);
 
             if (Trace)
                 Console.WriteLine("[LEXER] {0}", token);

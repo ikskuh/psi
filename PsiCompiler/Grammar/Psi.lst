@@ -1,23 +1,24 @@
 
 // ==========================================================================
-//  GPPG error listing for yacc source file <Psi.y - 20.10.2017 15:37:10>
+//  GPPG error listing for yacc source file <Psi.y - 20.10.2017 16:00:25>
 // ==========================================================================
 //  Version:  1.5.2
 //  Machine:  DENKPLATTE-WIN
-//  DateTime: 20.10.2017 15:41:27
+//  DateTime: 20.10.2017 16:00:59
 //  UserName: xq
 // ==========================================================================
 
 
+%start program
+
 /*
 TODO:
-	- Implement Statements
-		- Select / When / Otherwise
-		- For
-*/
-
-
-%start program
+	- All types with pointy brackets
+		- `enum<real>` type
+		- `array<T,n>` type
+		- `ref<T>` type
+	- `new `T()` expression
+ */
 
 %parsertype PsiParser
 %tokentype PsiTokenType
@@ -74,8 +75,11 @@ TODO:
 %type <StatementList> stmtlist
 %type <StringList> idlist
 %type <FieldList> fieldlist
+%type <SelectOptions> options
 
 %%
+// Warning: NonTerminal symbol "opsym" is unreachable
+// --------------------------------------------------
 
 program     : /* empty */         { $$ = new Module(); }
             | program assertion   { $$ = $1.Add($2); }
@@ -673,7 +677,11 @@ statement   : declaration
 			}
 			| SELECT ROUND_O expression ROUND_C CURLY_O options CURLY_C
 			{
-				$$ = $1;
+				$$ = new SelectStatement($3, $6);
+			}
+			| expression TERMINATOR
+			{
+				$$ = new ExpressionStatement($1);
 			}
 			| TERMINATOR
 			{
@@ -682,46 +690,60 @@ statement   : declaration
 			;
 
 options     : /* empty */
+			{
+				$$ = new List<SelectOption>();
+			}
+			| options WHEN expression COLON stmtlist
+			{
+				$$ = $1;
+				$$.Add(new SelectOption($3, new Block($5)));
+			}
+			| options OTHERWISE COLON stmtlist
+			{
+				$$ = $1;
+				$$.Add(new SelectOption(new Block($4)));
+			}
+			;
 
 // Allow any keyword as an identifier
 // HACK: this may be useful when the tokenizer can be "informed" about
 //       requiring a specific token
 identifier  : IDENT
-//^^^^^^^^
-// Error: Syntax error, unexpected anchoredSymbol
-// ----------------------------------------------
-			| IMPORT
-			| EXPORT
-			| MODULE
-			| ASSERT
-			| ERROR
-			| CONST
-			| VAR
-			| TYPE
-			| FN
-			| NEW
-			| OPERATOR META opsym META
-			| OPERATOR
-			| INOUT
-			| IN
-			| OUT
-			| THIS
-			| FOR
-			| WHILE
-			| LOOP
-			| UNTIL
-			| IF
-			| ELSE
-			| SELECT
-			| WHEN
-			| OTHERWISE
-			| RESTRICT
-			| BREAK
-			| CONTINUE
-			| NEXT
-			| RETURN
-			| GOTO
 			;
+
+/*			
+| CONST
+| VAR
+| IMPORT
+| EXPORT
+| MODULE
+| ASSERT
+| ERROR
+| TYPE
+| FN
+| NEW
+| OPERATOR META opsym META
+| OPERATOR
+| INOUT
+| IN
+| OUT
+| THIS
+| FOR
+| WHILE
+| LOOP
+| UNTIL
+| IF
+| ELSE
+| SELECT
+| WHEN
+| OTHERWISE
+| RESTRICT
+| BREAK
+| CONTINUE
+| NEXT
+| RETURN
+| GOTO
+*/
 
 opsym       : PLUS | MINUS | MULT | DIV | AND | OR | INVERT | XOR | CONCAT | DOT | META | EXP | MOD
 			| FORWARD | BACKWARD | LEQUAL | GEQUAL | EQUAL | NEQUAL | LESS | MORE | IS | ASSIGN

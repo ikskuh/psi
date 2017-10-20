@@ -1,5 +1,14 @@
 ﻿%start program
 
+/*
+TODO:
+	- All types with pointy brackets
+		- `enum<real>` type
+		- `array<T,n>` type
+		- `ref<T>` type
+	- `new `T()` expression
+ */
+
 %parsertype PsiParser
 %tokentype PsiTokenType
 %visibility public
@@ -617,6 +626,10 @@ statement   : declaration
 			{
 				$$ = new FlowBreakStatement(FlowBreakType.Continue);
 			}
+			| ERROR expression TERMINATOR
+			{
+				$$ = new FlowBreakStatement(FlowBreakType.Error, $2);
+			}
 			| RETURN expression TERMINATOR
 			{
 				$$ = new FlowBreakStatement(FlowBreakType.Return, $2);
@@ -657,6 +670,10 @@ statement   : declaration
 			{
 				$$ = new SelectStatement($3, $6);
 			}
+			| expression TERMINATOR
+			{
+				$$ = new ExpressionStatement($1);
+			}
 			| TERMINATOR
 			{
 				$$ = Statement.Null;
@@ -679,46 +696,47 @@ options     : /* empty */
 			}
 			;
 
-// Allow any keyword as an identifier
-// HACK: this may be useful when the tokenizer can be "informed" about
-//       requiring a specific token
 identifier  : IDENT
-			| IMPORT
-			| EXPORT
-			| MODULE
-			| ASSERT
-			| ERROR
-			| CONST
-			| VAR
-			| TYPE
-			| FN
-			| NEW
 			| OPERATOR META opsym META
-			| OPERATOR
-			| INOUT
-			| IN
-			| OUT
-			| THIS
-			| FOR
-			| WHILE
-			| LOOP
-			| UNTIL
-			| IF
-			| ELSE
-			| SELECT
-			| WHEN
-			| OTHERWISE
-			| RESTRICT
-			| BREAK
-			| CONTINUE
-			| NEXT
-			| RETURN
-			| GOTO
 			;
+
+/*			
+| CONST
+| VAR
+| IMPORT
+| EXPORT
+| MODULE
+| ASSERT
+| ERROR
+| TYPE
+| FN
+| NEW
+| OPERATOR
+| INOUT
+| IN
+| OUT
+| THIS
+| FOR
+| WHILE
+| LOOP
+| UNTIL
+| IF
+| ELSE
+| SELECT
+| WHEN
+| OTHERWISE
+| RESTRICT
+| BREAK
+| CONTINUE
+| NEXT
+| RETURN
+| GOTO
+*/
 
 opsym       : PLUS | MINUS | MULT | DIV | AND | OR | INVERT | XOR | CONCAT | DOT | META | EXP | MOD
 			| FORWARD | BACKWARD | LEQUAL | GEQUAL | EQUAL | NEQUAL | LESS | MORE | IS | ASSIGN
 			| ASR | SHL | SHR
+			| SQUARE_O SQUARE_C // array indexing operator symbol
 			;
 %%
 

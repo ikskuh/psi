@@ -84,7 +84,8 @@ namespace PsiCompiler.Grammar
         Break,
         Next,
         Goto,
-        Return
+        Return,
+        Error
     }
 
     public sealed class IfElseStatement : Statement
