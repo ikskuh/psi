@@ -5,8 +5,8 @@ TODO:
 	- All types with pointy brackets
 		- `enum<real>` type
 		- `array<T,n>` type
+		- `array<T>` type
 		- `ref<T>` type
-	- `new `T()` expression
  */
 
 %parsertype PsiParser
@@ -366,6 +366,10 @@ unary       : PLUS value
 			| INVERT value
 			{
 				$$ = Apply($2, PsiOperator.Invert);
+			}
+			| NEW value
+			{
+				$$ = Apply($2, PsiOperator.New);
 			}
 			| value
 			{

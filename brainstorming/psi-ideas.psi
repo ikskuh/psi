@@ -135,6 +135,14 @@ Semantic Changes:
                         - Expose functions `append(item : T)`, `insert(item : T, index = 0)`
                     - Expose meta operators `'range` for an index iteratable and `'pairs` for a key-value iteratable
                     - Is value-iteratable by a for loop
+	- `new` does not call a constructor, but allocate-moves an already existing object into a reference object.
+	  With this, the syntax gets easier to remember, but doesn't look different in most cases:
+	  ```
+	  var foo : ref<T> = new Point(10,20);
+	  // is equal to:
+	  var bar = Point(10,20);
+	  var foo = new bar;
+	  ```
 
 Annotations:
     - `0 -> 10` reads as "0 up to 10 (inclusive)"

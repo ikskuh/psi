@@ -1,3 +1,5 @@
+var obj = new list();
+
 var fun = fn()
 {
     const operator '[]' = fn(inout pt : Point, idx : int, value : real) -> real

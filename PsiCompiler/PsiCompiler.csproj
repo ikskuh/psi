@@ -75,6 +75,8 @@
     <Compile Include="PsiOperator.cs" />
     <Compile Include="Grammar\TokenConverter.cs">
       <DependentUpon>TokenConverter.tt</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
     </Compile>
   </ItemGroup>
   <ItemGroup>
