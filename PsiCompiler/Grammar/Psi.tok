@@ -56,7 +56,7 @@ RESTRICT   := \brestrict\b
 # Control flow control
 BREAK      := \bbreak\b
 CONTINUE   := \bcontinue\b
-NEXT       := \bnext\b
+FALLTROUGH := \bfallthrough\b
 RETURN     := \breturn\b
 GOTO       := \bgoto\b
 

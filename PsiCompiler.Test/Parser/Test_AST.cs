@@ -20,6 +20,21 @@ namespace PsiCompiler.Test
 			Assert.IsInstanceOf(typeof(NumberLiteral), ass.Expression);
 			Assert.AreEqual("10", ((NumberLiteral)ass.Expression).Value);
 		}
+		
+		[Test]
+		public void Import()
+		{
+			var module = Load("import std.io;");
+			Assert.AreEqual(1, module.Imports.Count);
+
+			var import = module.Imports[0];
+			Assert.NotNull(import);
+
+			Assert.AreEqual(2, import.Count);
+
+			Assert.AreEqual("std", import[0]);
+			Assert.AreEqual("io", import[1]);
+		}
 
 		[Test]
 		public void SubmoduleEmpty()

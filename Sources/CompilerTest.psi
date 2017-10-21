@@ -1,71 +1,7 @@
+import std;
+import std.io;
 
-type foo = array<int,10>;
-
-/*
-
-const name = a & b ^ c & d;
-
-var obj = new list();
-
-var fun = fn()
+const main = fn(args : array<string>) -> int
 {
-    const operator '[]' = fn(inout pt : Point, idx : int, value : real) -> real
-    {
-        select(idx)
-        {
-            when 0:
-                pt.x = value;
-                break;
-            when 1:
-                pt.y = value;
-                break;
-            otherwise:
-                error "Invalid index passed to point indexer.";
-        }
-        return value;
-    }
-
-	const operator '+' = fn(a : Point, b : Point) -> Point
-    {
-        return Point(
-            a.x + b.x,
-            a.y + b.y);
-    }
+	print("Hello, World!");
 };
-
-
-var fun = fn()
-{
-    for(i in 0 -> 10)
-        print(i);
-		
-    var arr = [ 3, 4, 5 ];
-
-    for(p in arr)
-        print("value = %1".arg(v));
-
-    for(i in arr'range)
-        print("index = %1".arg(i));
-
-    for(v in arr'pairs)
-        print(p.index, p.value);
-};
-
-const main = fn()
-{
-	const print = fn(this i : int, j : int)
-    {
-        io.write(i, ",", j, "\n");
-    }
-
-    const print = fn(this p : Point)
-    {
-        io.write("(", p.x, ",", p.y, ")\n");
-    }
-
-    var pt = Point(x = 10, y = 20);
-    pt.print(); // Prints "(10,20)\n"
-    print(pt);  // Prints exactly the same
-    5.print(6); // Prints "5,6\n"
-}
-//*/

@@ -1,12 +1,5 @@
 ﻿%start program
 
-/*
-TODO:
-	- All types with pointy brackets
-		- `array<T,n>` type
-		- `array<T>` type
- */
-
 %parsertype PsiParser
 %tokentype PsiTokenType
 %visibility public
@@ -21,7 +14,7 @@ TODO:
 // Keywords
 %token <String> IMPORT, EXPORT, MODULE, ASSERT, ERROR, CONST, VAR, TYPE, FN, NEW
 %token <String> OPERATOR, ENUM, RECORD, INOUT, IN, OUT, THIS, FOR, WHILE, LOOP, UNTIL
-%token <String> IF, ELSE, SELECT, WHEN, OTHERWISE, RESTRICT, BREAK, CONTINUE, NEXT, RETURN, GOTO
+%token <String> IF, ELSE, SELECT, WHEN, OTHERWISE, RESTRICT, BREAK, CONTINUE, FALLTROUGH, RETURN, GOTO
 %token <String> MAPSTO, COMMA, TERMINATOR, COLON, LAMBDA, REF, ARRAY
 
 // Operators
@@ -46,7 +39,7 @@ TODO:
 
 %type <String> identifier opsym
 %type <Module> module program
-%type <Name> modname
+%type <Name> modname import
 %type <Assertion> assertion
 %type <Expression> type expression expr_or expr_xor expr_and equality comparison expr_arrows sum term expo shifting unary value
 %type <ExpressionList> exprlist
@@ -70,12 +63,19 @@ program     : /* empty */         { $$ = new Module(); }
             | program assertion   { $$ = $1.Add($2); }
             | program declaration { $$ = $1.Add($2); }
             | program module      { $$ = $1.Add($2); }
+            | program import      { $$ = $1.Add($2); }
             ;
 
 assertion   : ASSERT expression TERMINATOR {
             	$$ = new Assertion($2); 
             }
             ;
+
+import      : IMPORT modname TERMINATOR
+			{
+				$$ = $2;
+			}
+			;
 
 module      : MODULE modname CURLY_O program CURLY_C {
 				$$ = $4;
@@ -636,9 +636,9 @@ statement   : declaration
 			{
 				$$ = new FlowBreakStatement(FlowBreakType.Break);
 			}
-			| NEXT TERMINATOR
+			| FALLTROUGH TERMINATOR
 			{
-				$$ = new FlowBreakStatement(FlowBreakType.Next);
+				$$ = new FlowBreakStatement(FlowBreakType.Fallthrough);
 			}
 			| CONTINUE TERMINATOR
 			{
@@ -720,13 +720,11 @@ identifier  : IDENT
 
 /*			
 | CONST
-| VAR
 | IMPORT
 | EXPORT
 | MODULE
 | ASSERT
 | ERROR
-| TYPE
 | FN
 | NEW
 | OPERATOR
@@ -746,7 +744,6 @@ identifier  : IDENT
 | RESTRICT
 | BREAK
 | CONTINUE
-| NEXT
 | RETURN
 | GOTO
 */

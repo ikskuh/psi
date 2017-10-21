@@ -56,7 +56,7 @@ sealed partial class PsiTokenizer : Tokenizer<PsiTokenType>
 		this.RegisterToken(PsiTokenType.RESTRICT, new Regex(@"\brestrict\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.BREAK, new Regex(@"\bbreak\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.CONTINUE, new Regex(@"\bcontinue\b", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.NEXT, new Regex(@"\bnext\b", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.FALLTROUGH, new Regex(@"\bfallthrough\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.RETURN, new Regex(@"\breturn\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.GOTO, new Regex(@"\bgoto\b", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.WB_CONCAT, new Regex(@"\-\-\=", RegexOptions.Compiled));

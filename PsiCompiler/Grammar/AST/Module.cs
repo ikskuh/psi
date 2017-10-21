@@ -22,6 +22,12 @@ namespace PsiCompiler.Grammar
 			this.Declarations.Add(value);
 			return this;
 		}
+
+		public Module Add(CompoundName value)
+		{
+			this.Imports.Add(value);
+			return this;
+		}
 	
 		public CompoundName Name { get; set; }
 	
@@ -30,6 +36,8 @@ namespace PsiCompiler.Grammar
 		public IList<Declaration> Declarations { get; } = new List<Declaration>();
 		
 		public IList<Module> Submodules { get; } = new List<Module>();
+		
+		public IList<CompoundName> Imports { get; } = new List<CompoundName>();
 
 		public override string ToString() => this.Name?.ToString() ?? "<unnamed module>";
 	}

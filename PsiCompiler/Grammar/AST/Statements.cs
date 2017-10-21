@@ -82,7 +82,7 @@ namespace PsiCompiler.Grammar
     {
         Continue,
         Break,
-        Next,
+        Fallthrough,
         Goto,
         Return,
         Error
