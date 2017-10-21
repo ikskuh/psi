@@ -267,6 +267,7 @@ namespace PsiCompiler.Grammar
         public override string ToString() => string.Format("{0} => {1}", Type, Body);
     }
 
+	/*
     public sealed class GenericArgumentsExpression : Expression
     {
         public GenericArgumentsExpression(Expression value, IEnumerable<Expression> arguments)
@@ -281,6 +282,7 @@ namespace PsiCompiler.Grammar
 
         public override string ToString() => string.Format("{0}<{1}>", Value, string.Join(", ", Arguments));
     }
+    */
 
     public sealed class ArrayLiteral : Expression
     {
@@ -296,15 +298,45 @@ namespace PsiCompiler.Grammar
 
     public sealed class EnumTypeLiteral : Expression
     {
-        public EnumTypeLiteral(IEnumerable<string> fields)
+        public EnumTypeLiteral(IEnumerable<string> items)
         {
-            this.Items = fields.ToArray();
+            this.Items = items.ToArray();
         }
 
         public IReadOnlyList<string> Items { get; }
 
         public override string ToString() => string.Format("enum({0})", string.Join(", ", Items));
     }
+
+    public sealed class TypedEnumTypeLiteral : Expression
+    {
+        public TypedEnumTypeLiteral(Expression type, IEnumerable<Declaration> items)
+        {
+			this.Type = type.NotNull();
+            this.Items = items.NotNull().ToArray();
+			if (this.Items.Any(i => !i.IsField || i.IsConst || i.IsExported || i.Type != PsiParser.Undefined))
+				throw new InvalidOperationException();
+        }
+        
+        public Expression Type { get; }
+
+        public IReadOnlyList<Declaration> Items { get; }
+
+        public override string ToString() => string.Format("enum<{0}>({1})", Type, string.Join(", ", Items));
+    }
+
+	public sealed class ReferenceTypeLiteral : Expression
+	{
+		public ReferenceTypeLiteral(Expression objectType)
+		{
+			this.ObjectType = objectType.NotNull();
+		}
+		
+		public Expression ObjectType { get; }
+
+		public override string ToString() => string.Format("ref<{0}>", ObjectType);
+ 
+	}
 
     public sealed class RecordTypeLiteral : Expression
     {

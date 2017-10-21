@@ -141,6 +141,81 @@ namespace PsiCompiler.Test
 			Assert.IsInstanceOf(typeof(NumberLiteral), field.Value);
 		}
 		
+		
+		
+		[Test]
+		public void EmptyTypedEnumTypeLiteral()
+		{
+			var module = Load("const name = enum<float>();");
+			Assert.IsNull(module);
+		}
+		
+		[Test]
+		public void SingleTypedEnumTypeLiteral()
+		{
+			var module = Load("const name = enum<float>(a = 10);");
+			var expression = module.Declarations[0].Value;
+
+			Assert.IsInstanceOf(typeof(TypedEnumTypeLiteral), expression);
+			var val = (TypedEnumTypeLiteral)expression;
+
+			Assert.NotNull(val.Items);
+			Assert.AreEqual(1, val.Items.Count);
+
+			var item = val.Items[0];
+			
+			Assert.NotNull(item);
+
+			Assert.IsFalse(item.IsConst);
+			Assert.IsFalse(item.IsExported);
+			Assert.IsTrue(item.IsField);
+
+			Assert.AreEqual(item.Name, "a");
+
+			Assert.AreSame(PsiParser.Undefined, item.Type);
+
+			Assert.IsInstanceOf(typeof(NumberLiteral), item.Value);
+			Assert.AreEqual("10", ((NumberLiteral)item.Value).Value);
+		}
+		
+		[Test]
+		public void MultipleTypedEnumTypeLiteral()
+		{
+			var module = Load("const name = enum<float>(a = 10, b = 20);");
+			var expression = module.Declarations[0].Value;
+
+			Assert.IsInstanceOf(typeof(TypedEnumTypeLiteral), expression);
+			var val = (TypedEnumTypeLiteral)expression;
+
+			Assert.NotNull(val.Items);
+			Assert.AreEqual(2, val.Items.Count);
+
+			Assert.AreEqual("a", val.Items[0].Name);
+			Assert.AreSame(PsiParser.Undefined, val.Items[0].Type);
+			Assert.IsInstanceOf(typeof(NumberLiteral), val.Items[0].Value);
+			Assert.AreEqual("10", ((NumberLiteral)val.Items[0].Value).Value);
+			
+			Assert.AreEqual("b", val.Items[1].Name);
+			Assert.AreSame(PsiParser.Undefined, val.Items[1].Type);
+			Assert.IsInstanceOf(typeof(NumberLiteral), val.Items[1].Value);
+			Assert.AreEqual("10", ((NumberLiteral)val.Items[1].Value).Value);
+		}
+		
+		[Test]
+		public void ReferenceType()
+		{
+			var module = Load("const name = ref<int>;");
+			var expression = module.Declarations[0].Value;
+
+			Assert.IsInstanceOf(typeof(ReferenceTypeLiteral), expression);
+			var val = (ReferenceTypeLiteral)expression;
+
+			Assert.NotNull(val.ObjectType);
+
+			Assert.IsInstanceOf(typeof(VariableReference), val.ObjectType);
+			Assert.AreEqual("int", ((VariableReference)val.ObjectType).Variable);
+		}
+		
 		// TODO: Test for function type literals
 	}
 }

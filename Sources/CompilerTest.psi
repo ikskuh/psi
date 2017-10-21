@@ -1,7 +1,10 @@
 
-const name = a & b ^ c & d;
+type foo = ref<int>;
 
 /*
+
+const name = a & b ^ c & d;
+
 var obj = new list();
 
 var fun = fn()
@@ -65,4 +68,4 @@ const main = fn()
     print(pt);  // Prints exactly the same
     5.print(6); // Prints "5,6\n"
 }
-*/
+//*/

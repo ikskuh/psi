@@ -3,7 +3,6 @@
 /*
 TODO:
 	- All types with pointy brackets
-		- `enum<real>` type
 		- `array<T,n>` type
 		- `array<T>` type
 		- `ref<T>` type
@@ -24,7 +23,7 @@ TODO:
 %token <String> IMPORT, EXPORT, MODULE, ASSERT, ERROR, CONST, VAR, TYPE, FN, NEW
 %token <String> OPERATOR, ENUM, RECORD, INOUT, IN, OUT, THIS, FOR, WHILE, LOOP, UNTIL
 %token <String> IF, ELSE, SELECT, WHEN, OTHERWISE, RESTRICT, BREAK, CONTINUE, NEXT, RETURN, GOTO
-%token <String> MAPSTO, COMMA, TERMINATOR, COLON, LAMBDA
+%token <String> MAPSTO, COMMA, TERMINATOR, COLON, LAMBDA, REF
 
 // Operators
 %left <PsiOperator> PLUS, MINUS, MULT, DIV
@@ -388,6 +387,14 @@ value       : value DOT identifier
 			| ENUM ROUND_O idlist ROUND_C
 			{
 				$$ = new EnumTypeLiteral($3);
+			}
+			| ENUM LESS type MORE ROUND_O fieldlist ROUND_C
+			{
+				$$ = new TypedEnumTypeLiteral($3, $6);
+			}
+			| REF LESS type MORE
+			{
+				$$ = new ReferenceTypeLiteral($3);
 			}
 			| RECORD ROUND_O fieldlist ROUND_C
 			{
