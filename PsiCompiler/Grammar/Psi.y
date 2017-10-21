@@ -1,17 +1,13 @@
-﻿/*
+﻿%start program
+
+/*
 TODO:
-	- Implement Statements
-		- If / Else
-		- Select / When / Otherwise
-		- Loop / Until
-		- While
-		- Restrict
-		- For
-		- Break / Cont / Next / Goto / Return
-*/
-
-
-%start program
+	- All types with pointy brackets
+		- `enum<real>` type
+		- `array<T,n>` type
+		- `array<T>` type
+		- `ref<T>` type
+ */
 
 %parsertype PsiParser
 %tokentype PsiTokenType
@@ -68,6 +64,7 @@ TODO:
 %type <StatementList> stmtlist
 %type <StringList> idlist
 %type <FieldList> fieldlist
+%type <SelectOptions> options
 
 %%
 
@@ -370,6 +367,10 @@ unary       : PLUS value
 			{
 				$$ = Apply($2, PsiOperator.Invert);
 			}
+			| NEW value
+			{
+				$$ = Apply($2, PsiOperator.New);
+			}
 			| value
 			{
 				$$ = $1;
@@ -629,6 +630,10 @@ statement   : declaration
 			{
 				$$ = new FlowBreakStatement(FlowBreakType.Continue);
 			}
+			| ERROR expression TERMINATOR
+			{
+				$$ = new FlowBreakStatement(FlowBreakType.Error, $2);
+			}
 			| RETURN expression TERMINATOR
 			{
 				$$ = new FlowBreakStatement(FlowBreakType.Return, $2);
@@ -641,51 +646,101 @@ statement   : declaration
 			{
 				$$ = new FlowBreakStatement(FlowBreakType.Goto, $2);
 			}
+			| IF ROUND_O expression ROUND_C statement ELSE statement
+			{
+				$$ = new IfElseStatement($3, $5, $7);
+			}
+			| IF ROUND_O expression ROUND_C statement
+			{
+				$$ = new IfElseStatement($3, $5, null);
+			}
+			| WHILE ROUND_O expression ROUND_C statement
+			{
+				$$ = new WhileLoopStatement($3, $5);
+			}
+			| LOOP statement UNTIL ROUND_O expression ROUND_C TERMINATOR
+			{
+				$$ = new LoopUntilStatement($5, $2);
+			}
+			| RESTRICT ROUND_O exprlist ROUND_C statement
+			{
+				$$ = new RestrictStatement($3, $5);
+			}
+			| FOR ROUND_O identifier IN expression ROUND_C statement
+			{
+				$$ = new ForLoopStatement($3, $5, $7);
+			}
+			| SELECT ROUND_O expression ROUND_C CURLY_O options CURLY_C
+			{
+				$$ = new SelectStatement($3, $6);
+			}
+			| expression TERMINATOR
+			{
+				$$ = new ExpressionStatement($1);
+			}
 			| TERMINATOR
 			{
 				$$ = Statement.Null;
 			}
 			;
-// Allow any keyword as an identifier
-// HACK: this may be useful when the tokenizer can be "informed" about
-//       requiring a specific token
-identifier  : IDENT
-			| IMPORT
-			| EXPORT
-			| MODULE
-			| ASSERT
-			| ERROR
-			| CONST
-			| VAR
-			| TYPE
-			| FN
-			| NEW
-			| OPERATOR META opsym META
-			| OPERATOR
-			| INOUT
-			| IN
-			| OUT
-			| THIS
-			| FOR
-			| WHILE
-			| LOOP
-			| UNTIL
-			| IF
-			| ELSE
-			| SELECT
-			| WHEN
-			| OTHERWISE
-			| RESTRICT
-			| BREAK
-			| CONTINUE
-			| NEXT
-			| RETURN
-			| GOTO
+
+options     : /* empty */
+			{
+				$$ = new List<SelectOption>();
+			}
+			| options WHEN expression COLON stmtlist
+			{
+				$$ = $1;
+				$$.Add(new SelectOption($3, new Block($5)));
+			}
+			| options OTHERWISE COLON stmtlist
+			{
+				$$ = $1;
+				$$.Add(new SelectOption(new Block($4)));
+			}
 			;
+
+identifier  : IDENT
+			| OPERATOR META opsym META
+			;
+
+/*			
+| CONST
+| VAR
+| IMPORT
+| EXPORT
+| MODULE
+| ASSERT
+| ERROR
+| TYPE
+| FN
+| NEW
+| OPERATOR
+| INOUT
+| IN
+| OUT
+| THIS
+| FOR
+| WHILE
+| LOOP
+| UNTIL
+| IF
+| ELSE
+| SELECT
+| WHEN
+| OTHERWISE
+| RESTRICT
+| BREAK
+| CONTINUE
+| NEXT
+| RETURN
+| GOTO
+*/
 
 opsym       : PLUS | MINUS | MULT | DIV | AND | OR | INVERT | XOR | CONCAT | DOT | META | EXP | MOD
 			| FORWARD | BACKWARD | LEQUAL | GEQUAL | EQUAL | NEQUAL | LESS | MORE | IS | ASSIGN
 			| ASR | SHL | SHR
+			| SQUARE_O SQUARE_C // array indexing operator symbol
 			;
 %%
 

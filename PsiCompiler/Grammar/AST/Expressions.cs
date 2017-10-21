@@ -10,7 +10,8 @@ namespace PsiCompiler.Grammar
 		
 	}
 
-	public sealed class UnaryOperation : Expression
+
+    public sealed class UnaryOperation : Expression
 	{
 		public UnaryOperation(PsiOperator @operator, Expression operand)
 		{

@@ -12,6 +12,7 @@
 		
 		// Unary operators
 		{ "INVERT",      "Invert",                        "~"   },
+		{ "error",       "New",                           "new" },
 		/* PLUS */
 		/* MINUS */
 		

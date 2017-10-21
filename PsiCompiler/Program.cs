@@ -30,32 +30,16 @@ namespace PsiCompiler
 		{
 			using (var lexer = new PsiLexer(fileName))
             {
-                lexer.Trace = true;
-
                 var parser = new PsiParser(lexer);
 
 				var success = parser.Parse();
+
 				if (success)
 					return parser.Result;
-				else
-					return null;
+                Console.WriteLine("Line: {0}", lexer.yylloc.StartLine);
+				return null;
 			}
 		}
 
-		private static Module LoadSource(string fileName, string source)
-		{
-			using (var lexer = new PsiLexer(new StringReader(source), fileName))
-			{
-                lexer.Trace = true;
-
-				var parser = new PsiParser(lexer);
-
-				var success = parser.Parse();
-				if (success)
-					return parser.Result;
-				else
-					return null;
-			}
-		}
 	}
 }

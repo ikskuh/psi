@@ -3,6 +3,7 @@ namespace PsiCompiler
 {
 	public enum PsiOperator
 	{
+        New,
 		Plus, Minus, Concat,
 		Multiply, Divide, Modulo, Exponentiate,
 		Invert, And, Or, Xor,

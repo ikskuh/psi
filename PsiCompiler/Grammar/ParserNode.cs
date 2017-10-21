@@ -36,6 +36,8 @@ namespace PsiCompiler.Grammar
 		private List<Statement> _StatementList;
 		private List<string> _StringList;
 		private List<Declaration> _FieldList;
+		private SelectOption _SelectOption;
+		private List<SelectOption> _SelectOptions;
 		
 		public ParserNode(Token<PsiTokenType> value)
 		{
@@ -59,6 +61,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -84,6 +88,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -109,6 +115,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -134,6 +142,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -159,6 +169,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -184,6 +196,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -209,6 +223,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -234,6 +250,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -259,6 +277,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -284,6 +304,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -309,6 +331,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -334,6 +358,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -359,6 +385,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -384,6 +412,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -409,6 +439,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -434,6 +466,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -459,6 +493,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -484,6 +520,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = value.NotNull();
 			this._StringList = null;
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -509,6 +547,8 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = value.NotNull();
 			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
 
 		}
 		
@@ -534,6 +574,62 @@ namespace PsiCompiler.Grammar
 			this._StatementList = null;
 			this._StringList = null;
 			this._FieldList = value.NotNull();
+			this._SelectOption = null;
+			this._SelectOptions = null;
+
+		}
+		
+		public ParserNode(SelectOption value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+			this._String = null;
+			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
+			this._Statement = null;
+			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
+			this._SelectOption = value.NotNull();
+			this._SelectOptions = null;
+
+		}
+		
+		public ParserNode(List<SelectOption> value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+			this._String = null;
+			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
+			this._Statement = null;
+			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = value.NotNull();
 
 		}
 		
@@ -567,6 +663,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -601,6 +699,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -635,6 +735,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -669,6 +771,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -703,6 +807,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -737,6 +843,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -771,6 +879,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -805,6 +915,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -839,6 +951,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -873,6 +987,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -907,6 +1023,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -941,6 +1059,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -975,6 +1095,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -1009,6 +1131,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -1043,6 +1167,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -1077,6 +1203,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -1111,6 +1239,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -1145,6 +1275,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = value;
 				this._StringList = null;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -1179,6 +1311,8 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = value;
 				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
 
 			}
 		}
@@ -1213,6 +1347,80 @@ namespace PsiCompiler.Grammar
 				this._StatementList = null;
 				this._StringList = null;
 				this._FieldList = value;
+				this._SelectOption = null;
+				this._SelectOptions = null;
+
+			}
+		}
+		
+		public SelectOption SelectOption
+		{
+			get
+			{
+				if(this._SelectOption == null)
+					throw new InvalidOperationException("ParserNode is not a SelectOption");
+				return this._SelectOption;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+				this._String = null;
+				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
+				this._Statement = null;
+				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
+				this._SelectOption = value;
+				this._SelectOptions = null;
+
+			}
+		}
+		
+		public List<SelectOption> SelectOptions
+		{
+			get
+			{
+				if(this._SelectOptions == null)
+					throw new InvalidOperationException("ParserNode is not a SelectOptions");
+				return this._SelectOptions;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+				this._String = null;
+				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
+				this._Statement = null;
+				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = value;
 
 			}
 		}
@@ -1256,6 +1464,10 @@ namespace PsiCompiler.Grammar
 		public static implicit operator ParserNode(List<string> value) => new ParserNode(value);
 		
 		public static implicit operator ParserNode(List<Declaration> value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(SelectOption value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(List<SelectOption> value) => new ParserNode(value);
 
 		
 		public override string ToString()
@@ -1300,6 +1512,10 @@ namespace PsiCompiler.Grammar
 				return "Node(StringList): " + _StringList.ToString();
 			if(this._FieldList != null)
 				return "Node(FieldList): " + _FieldList.ToString();
+			if(this._SelectOption != null)
+				return "Node(SelectOption): " + _SelectOption.ToString();
+			if(this._SelectOptions != null)
+				return "Node(SelectOptions): " + _SelectOptions.ToString();
 
 			return "<???>";
 		}
