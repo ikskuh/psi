@@ -27,20 +27,45 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.2.6.4\lib\nunit.framework.dll</HintPath>
+      <HintPath>..\packages\NUnit.3.8.1\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestParser.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+    <Compile Include="Parser\Declarations\Test_AST_Declarations.cs" />
+    <Compile Include="Parser\Test_AST.cs" />
+    <Compile Include="Parser\Test_AST_Base.cs" />
+    <Compile Include="Parser\Expressions\Test_AST_Expressions.cs" />
+    <Compile Include="Parser\Expressions\Test_AST_BinaryExpression.cs">
+      <DependentUpon>Test_AST_BinaryExpression.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Parser\Expressions\Test_AST_UnaryExpression.cs">
+      <DependentUpon>Test_AST_UnaryExpression.tt</DependentUpon>
+    </Compile>
+    <Compile Include="Parser\Expressions\Test_AST_TypeLiterals.cs" />
+    <Compile Include="Parser\Expressions\Test_AST_FunctionCalls.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\PsiCompiler\PsiCompiler.csproj">
       <Project>{C3F22A9A-EDFD-489C-A722-B100B05A9602}</Project>
       <Name>PsiCompiler</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Parser\Expressions\Test_AST_BinaryExpression.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Test_AST_BinaryExpression.cs</LastGenOutput>
+    </None>
+    <None Include="Parser\Expressions\Test_AST_UnaryExpression.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Test_AST_UnaryExpression.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Parser\" />
+    <Folder Include="Parser\Expressions\" />
+    <Folder Include="Parser\Statements\" />
+    <Folder Include="Parser\Declarations\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -23,7 +23,7 @@
       <CustomCommands>
         <Command>
           <type>BeforeBuild</type>
-          <command>../../gppg-distro-1_5_2/binaries/Gppg.exe Psi.y</command>
+          <command>${SolutionDir}/Tools/GPPG/Gppg.exe Psi.y</command>
           <workingdir>${ProjectDir}/Grammar/</workingdir>
         </Command>
       </CustomCommands>
@@ -78,6 +78,7 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
+    <Compile Include="PsiString.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Grammar\Psi.tok" />

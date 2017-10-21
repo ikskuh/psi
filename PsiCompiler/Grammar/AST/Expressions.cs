@@ -10,20 +10,63 @@ namespace PsiCompiler.Grammar
 		
 	}
 
-
-    public sealed class UnaryOperation : Expression
+	public sealed class NumberLiteral : Expression
 	{
-		public UnaryOperation(PsiOperator @operator, Expression operand)
+		public NumberLiteral(string value)
 		{
-			this.Operator = @operator;
-			this.Operand = operand.NotNull();
+			this.Value = value.NotNull();
 		}
 		
-		public PsiOperator Operator { get; }
-		public Expression Operand { get; }
+		public string Value { get; }
 
-		public override string ToString() => Converter.ToString(Operator) + " " + Operand;
+		public override string ToString() => Value;
+	}
+
+	public sealed class StringLiteral : Expression
+	{
+		/// <summary>
+		/// Takes an escaped string literal
+		/// </summary>
+		/// <param name="value">Value.</param>
+		public StringLiteral(string value)
+		{
+			var text = value.NotNull();
+			
+			this.Text = PsiString.Unescape(text);
+		}
+		
+		/// <summary>
+		/// Unescaped string literal
+		/// </summary>
+		/// <value>The text.</value>
+		public string Text { get; }
+
+		public override string ToString() => "\"" + Text + "\"";
     }
+
+    public sealed class EnumLiteral : Expression
+    {
+        public EnumLiteral(string value)
+        {
+            this.Name = value.NotNull();
+        }
+
+        public string Name { get; }
+
+        public override string ToString() => ":" + Name;
+    }
+
+    public sealed class VariableReference : Expression
+	{
+		public VariableReference(string value)
+		{
+			this.Variable = value.NotNull();
+		}
+		
+		public string Variable { get; }
+
+		public override string ToString() => Variable;
+	}
 
     public sealed class DotExpression : Expression
     {
@@ -53,6 +96,20 @@ namespace PsiCompiler.Grammar
         public override string ToString() => "(" + Object + "'" + FieldName + ")";
     }
 
+    public sealed class UnaryOperation : Expression
+	{
+		public UnaryOperation(PsiOperator @operator, Expression operand)
+		{
+			this.Operator = @operator;
+			this.Operand = operand.NotNull();
+		}
+		
+		public PsiOperator Operator { get; }
+		public Expression Operand { get; }
+
+		public override string ToString() => Converter.ToString(Operator) + " " + Operand;
+    }
+
     public sealed class BinaryOperation : Expression
 	{
 		public BinaryOperation(PsiOperator @operator, Expression lhs, Expression rhs)
@@ -67,54 +124,6 @@ namespace PsiCompiler.Grammar
 		public Expression RightHandSide { get; }
 
 		public override string ToString() => "(" + LeftHandSide + " " + Converter.ToString(Operator) + " " + RightHandSide + ")";
-	}
-
-	public sealed class NumberLiteral : Expression
-	{
-		public NumberLiteral(string value)
-		{
-			this.Value = value.NotNull();
-		}
-		
-		public string Value { get; }
-
-		public override string ToString() => Value;
-	}
-
-	public sealed class StringLiteral : Expression
-	{
-		public StringLiteral(string value)
-		{
-			this.Text = value.NotNull();
-		}
-		
-		public string Text { get; }
-
-		public override string ToString() => "\"" + Text + "\"";
-    }
-
-    public sealed class EnumLiteral : Expression
-    {
-        public EnumLiteral(string value)
-        {
-            this.Name = value.NotNull();
-        }
-
-        public string Name { get; }
-
-        public override string ToString() => ":" + Name;
-    }
-
-    public sealed class VariableReference : Expression
-	{
-		public VariableReference(string value)
-		{
-			this.Variable = value.NotNull();
-		}
-		
-		public string Variable { get; }
-
-		public override string ToString() => Variable;
 	}
 
     public sealed class ArrayIndexingExpression : Expression

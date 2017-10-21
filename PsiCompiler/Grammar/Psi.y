@@ -141,67 +141,67 @@ export      : /* optional */ { $$ = false; }
             | EXPORT         { $$ = true;  }
             ;
 
-expression  : expression IS expr_or
+expression  : expression IS expression
 			{
 				$$ = Apply($1, $3, PsiOperator.CopyAssign);
 			}
-			| expression ASSIGN expr_or
+			| expression ASSIGN expression
 			{
 				$$ = Apply($1, $3, PsiOperator.SemanticAssign);
 			}
-			| expression WB_CONCAT expr_or
+			| expression WB_CONCAT expression
 			{
 				$$ = Apply($1, $3, PsiOperator.WritebackConcat);
 			}
-			| expression WB_PLUS expr_or
+			| expression WB_PLUS expression
 			{
 				$$ = Apply($1, $3, PsiOperator.WritebackPlus);
 			}
-			| expression WB_MINUS expr_or
+			| expression WB_MINUS expression
 			{
 				$$ = Apply($1, $3, PsiOperator.WritebackMinus);
 			}
-			| expression WB_EXP expr_or
+			| expression WB_EXP expression
 			{
 				$$ = Apply($1, $3, PsiOperator.WritebackExponentiate);
 			}
-			| expression WB_MULT expr_or
+			| expression WB_MULT expression
 			{
 				$$ = Apply($1, $3, PsiOperator.WritebackMultiply);
 			}
-			| expression WB_MOD expr_or
+			| expression WB_MOD expression
 			{
 				$$ = Apply($1, $3, PsiOperator.WritebackModulo);
 			}
-			| expression WB_DIV expr_or
+			| expression WB_DIV expression
 			{
 				$$ = Apply($1, $3, PsiOperator.WritebackDivide);
 			}
-			| expression WB_AND expr_or
+			| expression WB_AND expression
 			{
 				$$ = Apply($1, $3, PsiOperator.WritebackAnd);
 			}
-			| expression WB_OR expr_or
+			| expression WB_OR expression
 			{
 				$$ = Apply($1, $3, PsiOperator.WritebackOr);
 			}
-			| expression WB_INVERT expr_or
+			| expression WB_INVERT expression
 			{
 				$$ = Apply($1, $3, PsiOperator.WritebackInvert);
 			}
-			| expression WB_XOR expr_or
+			| expression WB_XOR expression
 			{
 				$$ = Apply($1, $3, PsiOperator.WritebackXor);
 			}
-			| expression WB_ASR expr_or
+			| expression WB_ASR expression
 			{
 				$$ = Apply($1, $3, PsiOperator.WritebackArithmeticShiftRight);
 			}
-			| expression WB_SHL expr_or
+			| expression WB_SHL expression
 			{
 				$$ = Apply($1, $3, PsiOperator.WritebackShiftLeft);
 			}
-			| expression WB_SHR expr_or
+			| expression WB_SHR expression
 			{
 				$$ = Apply($1, $3, PsiOperator.WritebackShiftRight);
 			}
@@ -211,7 +211,7 @@ expression  : expression IS expr_or
 			}
 			;
 
-expr_or     : expr_or OR expr_xor
+expr_or     : expr_or OR expr_or
 			{
 				$$ = Apply($1, $3, PsiOperator.Or);
 			}
@@ -221,7 +221,7 @@ expr_or     : expr_or OR expr_xor
 			}
 			;
 
-expr_xor    : expr_xor XOR expr_and
+expr_xor    : expr_xor XOR expr_xor
 			{
 				$$ = Apply($1, $3, PsiOperator.Xor);
 			}
@@ -231,7 +231,7 @@ expr_xor    : expr_xor XOR expr_and
 			}
 			;
 
-expr_and    : expr_and AND equality
+expr_and    : expr_and AND expr_and
 			{
 				$$ = Apply($1, $3, PsiOperator.And);
 			}
@@ -241,11 +241,11 @@ expr_and    : expr_and AND equality
 			}
 			;
 
-equality    : equality EQUAL comparison
+equality    : equality EQUAL equality
 			{
 				$$ = Apply($1, $3, PsiOperator.Equals);
 			}
-			| equality NEQUAL comparison
+			| equality NEQUAL equality
 			{
 				$$ = Apply($1, $3, PsiOperator.NotEquals);
 			}
@@ -255,19 +255,19 @@ equality    : equality EQUAL comparison
 			}
 			;
 
-comparison  : comparison LEQUAL expr_arrows
+comparison  : comparison LEQUAL comparison
 			{
 				$$ = Apply($1, $3, PsiOperator.LessOrEqual);
 			}
-			| comparison GEQUAL expr_arrows
+			| comparison GEQUAL comparison
 			{
 				$$ = Apply($1, $3, PsiOperator.MoreOrEqual);
 			}
-			| comparison LESS expr_arrows
+			| comparison LESS comparison
 			{
 				$$ = Apply($1, $3, PsiOperator.Less);
 			}
-			| comparison MORE expr_arrows
+			| comparison MORE comparison
 			{
 				$$ = Apply($1, $3, PsiOperator.More);
 			}
@@ -277,11 +277,11 @@ comparison  : comparison LEQUAL expr_arrows
 			}
 			;
 
-expr_arrows : expr_arrows FORWARD sum
+expr_arrows : expr_arrows FORWARD expr_arrows
 			{
 				$$ = Apply($1, $3, PsiOperator.Forward);
 			}
-			| expr_arrows BACKWARD sum
+			| expr_arrows BACKWARD expr_arrows
 			{
 				$$ = Apply($1, $3, PsiOperator.Backward);
 			}
@@ -291,15 +291,15 @@ expr_arrows : expr_arrows FORWARD sum
 			}
 			;
 			
-sum         : sum PLUS term
+sum         : sum PLUS sum
 			{
 				$$ = Apply($1, $3, PsiOperator.Plus);
 			}
-			| sum MINUS term
+			| sum MINUS sum
 			{
 				$$ = Apply($1, $3, PsiOperator.Minus);
 			}
-			| sum CONCAT term
+			| sum CONCAT sum
 			{
 				$$ = Apply($1, $3, PsiOperator.Concat);
 			}
@@ -309,15 +309,15 @@ sum         : sum PLUS term
 			}
 			;
 			
-term        : term MULT expo
+term        : term MULT term
 			{
 				$$ = Apply($1, $3, PsiOperator.Multiply);
 			}
-			| term DIV expo
+			| term DIV term
 			{
 				$$ = Apply($1, $3, PsiOperator.Divide);
 			}
-			| term MOD expo
+			| term MOD term
 			{
 				$$ = Apply($1, $3, PsiOperator.Modulo);
 			}
@@ -327,7 +327,7 @@ term        : term MULT expo
 			}
 			;
 			
-expo        : expo EXP shifting
+expo        : expo EXP expo
 			{
 				$$ = Apply($1, $3, PsiOperator.Exponentiate);
 			}
@@ -337,15 +337,15 @@ expo        : expo EXP shifting
 			}
 			;
 
-shifting    : shifting ASR unary
+shifting    : shifting ASR shifting
 			{
 				$$ = Apply($1, $3, PsiOperator.ArithmeticShiftRight);
 			}
-			| shifting SHR unary
+			| shifting SHR shifting
 			{
 				$$ = Apply($1, $3, PsiOperator.ShiftRight);
 			}
-			| shifting SHL unary
+			| shifting SHL shifting
 			{
 				$$ = Apply($1, $3, PsiOperator.ShiftLeft);
 			}

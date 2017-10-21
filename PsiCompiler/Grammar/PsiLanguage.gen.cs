@@ -1,21 +1,11 @@
-﻿
-
-
-
-
-
-
-
-
-using System;
+﻿using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using CompilerKit;
 
 namespace PsiCompiler.Grammar
 {
-	
-	
+		
 sealed partial class PsiTokenizer : Tokenizer<PsiTokenType>
 {
 	public PsiTokenizer(TextReader reader, string fileName) : this(reader, fileName, true)
@@ -112,8 +102,8 @@ sealed partial class PsiTokenizer : Tokenizer<PsiTokenType>
 		this.RegisterToken(PsiTokenType.OR, new Regex(@"\|", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.INVERT, new Regex(@"\~", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.XOR, new Regex(@"\^", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.NUMBER, new Regex(@"-?\d+(\.\d+)?", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.STRING, new Regex(@""".*?(?<!\\)""", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.NUMBER, new Regex(@"0x[A-Fa-f0-9]+|\d+(\.\d+)?", RegexOptions.Compiled));
+		this.RegisterToken(PsiTokenType.STRING, new Regex(@"""(?:\\""|.)*?""", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.IDENT, new Regex(@"[\w-[\d]]\w*", RegexOptions.Compiled));
 			
 		this.Initialize();

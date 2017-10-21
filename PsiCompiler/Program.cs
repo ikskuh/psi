@@ -21,9 +21,6 @@ namespace PsiCompiler
 			{
 				Console.WriteLine("Failed to parse!");
 			}
-
-            if (Debugger.IsAttached)
-                Console.ReadLine();
 		}
 
 		private static Module Load(string fileName)

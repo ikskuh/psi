@@ -1,0 +1,165 @@
+﻿﻿<#@ template language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#
+	var tokens = new TokenList()
+	{
+		{ "WB_ASR",      "WritebackArithmeticShiftRight", ">>>=" }, // 0
+		{ "WB_SHL",      "WritebackShiftLeft",            "<<="  },
+		{ "WB_SHR",      "WritebackShiftRight",           ">>="  },
+		{ "WB_PLUS",     "WritebackPlus",                 "+="   },
+		{ "WB_MINUS",    "WritebackMinus",                "-="   },
+		{ "WB_CONCAT",   "WritebackConcat",               "--="  },
+		{ "WB_MULT",     "WritebackMultiply",             "*="   },
+		{ "WB_DIV",      "WritebackDivide",               "/="   },
+		{ "WB_MOD",      "WritebackModulo",               "%="   },
+		{ "WB_EXP",      "WritebackExponentiate",         "**="  },
+		{ "WB_INVERT",   "WritebackInvert",               "~="   },
+		{ "WB_AND",      "WritebackAnd",                  "&="   },
+		{ "WB_OR",       "WritebackOr",                   "|="   },
+		{ "WB_XOR",      "WritebackXor",                  "^="   },
+		{ "IS",          "CopyAssign",                    "="    }, 
+		{ "ASSIGN",      "SemanticAssign",                ":="   }, // 15
+		
+		
+		{ "OR",          "Or",                            "|"    }, // 16
+		
+		
+		{ "XOR",         "Xor",                           "^"    }, // 17
+		
+		
+		{ "AND",         "And",                           "&"    }, // 18
+		
+		
+		{ "EQUAL",       "Equals",                        "=="   }, // 19
+		{ "NEQUAL",      "NotEquals",                     "!="   }, // 20
+		
+		
+		{ "LEQUAL",      "LessOrEqual",                   "<="   }, // 21
+		{ "GEQUAL",      "MoreOrEqual",                   ">="   },
+		{ "LESS",        "Less",                          "<"    },
+		{ "MORE",        "More",                          ">"    }, // 24
+		
+		
+		{ "FORWARD",     "Forward",                       "->"   }, // 25
+		{ "BACKWARD",    "Backward",                      "<-"   }, // 26
+		
+		
+		{ "PLUS",        "Plus",                          "+"    }, // 27
+		{ "MINUS",       "Minus",                         "-"    },
+		{ "CONCAT",      "Concat",                        "--"   }, // 29
+		
+		
+		{ "MULT",        "Multiply",                      "*"    }, // 30
+		{ "DIV",         "Divide",                        "/"    },
+		{ "MOD",         "Modulo",                        "%"    }, // 32
+		
+		
+		{ "EXP",         "Exponentiate",                  "**"   }, // 33
+		
+		
+		{ "ASR",         "ArithmeticShiftRight",          ">>>"  }, // 34
+		{ "SHL",         "ShiftLeft",                     "<<"   },
+		{ "SHR",         "ShiftRight",                    ">>"   }, // 36
+	};
+	
+	var precedences = new int[][]
+	{
+		new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 },
+		new[] { 16 },
+		new[] { 17 },
+		new[] { 18 },
+		new[] { 19, 20 },
+		new[] { 21, 22, 23, 24 },
+		new[] { 25, 26 },
+		new[] { 27, 28, 29 },
+		new[] { 30, 31, 32 },
+		new[] { 33 },
+		new[] { 34, 35, 36 },
+	};
+#>
+using System;
+using System.Collections.Generic;
+using NUnit.Framework;
+using PsiCompiler.Grammar;
+
+namespace PsiCompiler.Test
+{
+	[TestFixture]
+	public class Test_AST_BinaryExpressions : Test_AST_Base
+	{
+<#
+	foreach(var element in tokens)
+	{
+#>
+		[Test]
+		public void BinaryOperatorExpression_<#=element.Item2#>()
+		{
+			var module = Load("const name = a <#=element.Item3#> b;");
+			var expression = module.Declarations[0].Value;
+
+			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
+			var op = (BinaryOperation)expression;
+			
+			Assert.AreEqual(PsiOperator.<#=element.Item2#>, op.Operator);
+			Assert.IsInstanceOf(typeof(VariableReference), op.LeftHandSide);
+			Assert.IsInstanceOf(typeof(VariableReference), op.RightHandSide);
+			
+			Assert.AreEqual("a", ((VariableReference)op.LeftHandSide).Variable);
+			Assert.AreEqual("b", ((VariableReference)op.RightHandSide).Variable);
+		}
+		
+<#
+	}
+	for(int i = 0; i < precedences.Length; i++)
+	{
+		for(int j = i + 1; j < precedences.Length; j++)
+		{
+			foreach(var iMin in precedences[i])
+			{
+				foreach(var iMax in precedences[j])
+				{
+					var min = tokens[iMin];
+					var max = tokens[iMax];
+#>
+		[Test]
+		public void BinaryOperatorExpression_<#=min.Item2#>_<#=max.Item2#>()
+		{
+			var module = Load("const name = a <#=max.Item3#> b <#=min.Item3#> c <#=max.Item3#> d;");
+			var expression = module.Declarations[0].Value;
+
+			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
+			var op = (BinaryOperation)expression;
+			
+			Assert.AreEqual(PsiOperator.<#=min.Item2#>, op.Operator);
+			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
+			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
+
+			var lhs = (BinaryOperation)op.LeftHandSide;
+			var rhs = (BinaryOperation)op.RightHandSide;
+
+			Assert.AreEqual(PsiOperator.<#=max.Item2#>, lhs.Operator);
+			Assert.AreEqual(PsiOperator.<#=max.Item2#>, rhs.Operator);
+		}
+		
+<#
+				}
+			}
+		}
+	}
+#>
+
+	}
+}
+
+<#+
+class TokenList : List<Tuple<string,string,string>>
+	{
+		public void Add(string tok, string op, string str)
+		{
+			this.Add(Tuple.Create(tok, op, str));
+		}
+	}
+#>
