@@ -66,7 +66,8 @@ program     : /* empty */         { $$ = new Module(); }
             | program import      { $$ = $1.Add($2); }
             ;
 
-assertion   : ASSERT expression TERMINATOR {
+assertion   : ASSERT expression TERMINATOR
+			{
             	$$ = new Assertion($2); 
             }
             ;
@@ -77,46 +78,55 @@ import      : IMPORT modname TERMINATOR
 			}
 			;
 
-module      : MODULE modname CURLY_O program CURLY_C {
+module      : MODULE modname CURLY_O program CURLY_C
+			{
 				$$ = $4;
 				$$.Name = $2;
 			}
             ;
 
-modname     : identifier {
+modname     : identifier
+			{
             	$$ = new CompoundName($1); 
             }
-            | modname DOT identifier {
+            | modname DOT identifier
+			{
             	$$ = $1;
             	$$.Add($3);
         	}
             ;
 
-declaration : export typedecl {
+declaration : export typedecl
+			{
             	$$ = $2;
             	$$.IsExported = (bool)$1;
             }
-            | export vardecl {
+            | export vardecl
+			{
             	$$ = $2;
             	$$.IsExported = (bool)$1;
             }
             ;
             
-typedecl    : TYPE identifier IS expression TERMINATOR {
+typedecl    : TYPE identifier IS expression TERMINATOR
+			{
             	$$ = new Declaration($2, TypeDeclaration, $4);
             	$$.IsConst = true;
             }
             ;
 
-vardecl     : storage identifier COLON type terminator {
+vardecl     : storage identifier COLON type terminator
+			{
             	$$ = new Declaration($2, $4, null);
             	$$.IsConst = (bool)$1;
             }
-            | storage identifier IS    expression terminator {
+            | storage identifier IS    expression terminator
+            {
             	$$ = new Declaration($2, Undefined, $4);
             	$$.IsConst = (bool)$1;
             }
-            | storage identifier COLON type IS expression terminator {
+            | storage identifier COLON type IS expression terminator
+			{
             	$$ = new Declaration($2, $4, $6);
             	$$.IsConst = (bool)$1;
             }

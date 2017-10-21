@@ -16,6 +16,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{96BA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiCompiler.Test", "PsiCompiler.Test\PsiCompiler.Test.csproj", "{52595DDD-3D97-497C-8CC7-913E1416F13A}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{8CB20006-FBED-4F17-B6DF-C9DCECC961B0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GrammarConverter", "Tools\GrammarConverter\GrammarConverter.csproj", "{C8E7BA5E-A33E-4111-BBA2-DCFF9E6EC8A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x86 = Debug|x86
@@ -38,5 +42,12 @@ Global
 		{52595DDD-3D97-497C-8CC7-913E1416F13A}.Debug|x86.Build.0 = Debug|Any CPU
 		{52595DDD-3D97-497C-8CC7-913E1416F13A}.Release|x86.ActiveCfg = Release|Any CPU
 		{52595DDD-3D97-497C-8CC7-913E1416F13A}.Release|x86.Build.0 = Release|Any CPU
+		{C8E7BA5E-A33E-4111-BBA2-DCFF9E6EC8A2}.Debug|x86.ActiveCfg = Debug|x86
+		{C8E7BA5E-A33E-4111-BBA2-DCFF9E6EC8A2}.Debug|x86.Build.0 = Debug|x86
+		{C8E7BA5E-A33E-4111-BBA2-DCFF9E6EC8A2}.Release|x86.ActiveCfg = Release|x86
+		{C8E7BA5E-A33E-4111-BBA2-DCFF9E6EC8A2}.Release|x86.Build.0 = Release|x86
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C8E7BA5E-A33E-4111-BBA2-DCFF9E6EC8A2} = {8CB20006-FBED-4F17-B6DF-C9DCECC961B0}
 	EndGlobalSection
 EndGlobal
