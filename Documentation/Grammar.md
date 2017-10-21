@@ -125,22 +125,22 @@ unary       : '+' value
 
 value       : value '.' identifier
             | value '\'' identifier
-            | 'enum' ')' idlist ')'
-            | 'enum' '<' type '>' ')' fieldlist ')'
+            | 'enum' '(' idlist ')'
+            | 'enum' '<' type '>' '(' fieldlist ')'
             | 'ref' '<' type '>'
-            | 'record' ')' fieldlist ')'
+            | 'record' '(' fieldlist ')'
             | 'array' '<' type '>'
             | 'array' '<' type ',' '0x[A-Fa-f0-9]+|\d+(\.\d+)?' '>'
             | value '[' exprlist ']'
             | '[' exprlist ']'
-            | value ')' ')'
-            | value ')' arglist ')'
-            | ')' expression ')'
+            | value '(' ')'
+            | value '(' arglist ')'
+            | '(' expression ')'
             | identifier
             | functiontype
             | functiontype block
             | functiontype '=>' expression
-            | '\\' ')' idlist ')' '=>' expression
+            | '\\' '(' idlist ')' '=>' expression
             | '"(?:\\"|.)*?"'
             | ENUMVAL
             | '0x[A-Fa-f0-9]+|\d+(\.\d+)?'
@@ -165,10 +165,10 @@ field       : identifier ':' type terminator
                 $$.IsField = true;
             ;
 
-functiontype: 'fn' ')' paramlist ')' '->' type
-            | 'fn' ')' ')' '->' type
-            | 'fn' ')' paramlist ')'
-            | 'fn' ')' ')'
+functiontype: 'fn' '(' paramlist ')' '->' type
+            | 'fn' '(' ')' '->' type
+            | 'fn' '(' paramlist ')'
+            | 'fn' '(' ')'
             ;
 
 paramlist   : paramlist ',' parameter
@@ -217,13 +217,13 @@ statement   : declaration
             | 'return' expression ';'
             | 'return' ';'
             | 'goto' expression ';'
-            | 'if' ')' expression ')' statement 'else' statement
-            | 'if' ')' expression ')' statement
-            | 'while' ')' expression ')' statement
-            | 'loop' statement 'until' ')' expression ')' ';'
-            | 'restrict' ')' exprlist ')' statement
-            | 'for' ')' identifier 'in' expression ')' statement
-            | 'select' ')' expression ')' '{' options '}'
+            | 'if' '(' expression ')' statement 'else' statement
+            | 'if' '(' expression ')' statement
+            | 'while' '(' expression ')' statement
+            | 'loop' statement 'until' '(' expression ')' ';'
+            | 'restrict' '(' exprlist ')' statement
+            | 'for' '(' identifier 'in' expression ')' statement
+            | 'select' '(' expression ')' '{' options '}'
             | expression ';'
             | ';'
             ;

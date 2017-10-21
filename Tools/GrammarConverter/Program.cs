@@ -9,7 +9,7 @@ namespace GrammarConverter
 	{
 		private static readonly Dictionary<string, string> tokens = new Dictionary<string, string>()
 		{
-			{ "ROUND_O",  ")" },
+			{ "ROUND_O",  "(" },
 			{ "ROUND_C",  ")" },
 			{ "SQUARE_O", "[" },
 			{ "SQUARE_C", "]" },
