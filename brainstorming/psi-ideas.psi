@@ -188,7 +188,14 @@ Think About:
     - `for(i in range(5))`      -> [0,1,2,3,4]
     - `for(i in range(0,10))`   -> [0,1,2,3,4,5,6,7,8,9]
     - `for(i in range(0,10,2))` -> [0,2,4,6,8]
-	
+    - Alias importing
+      ```
+      import foo.bar; # Importiert das gesamte Modul
+      import foo.bar.member; # importiert einen einzelnen Member
+      import foo.bar as baz; # Benennt ein Modul lokal um
+      import foo.bar.member as bam; # Importiert einen umbenannten Member
+      ```
+  
 ```
 type nil  = singleton<nil>;
 type Point = record(x : int, y : int);

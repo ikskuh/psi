@@ -8,10 +8,17 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiCompiler", "PsiCompiler\PsiCompiler.csproj", "{C3F22A9A-EDFD-489C-A722-B100B05A9602}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{057E8ADA-B3F6-4C31-8E37-82107D516621}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\Escape Sequences.md = Documentation\Escape Sequences.md
+		Documentation\Grammar.md = Documentation\Grammar.md
+		Documentation\Operators.md = Documentation\Operators.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sources", "Sources", "{96BA2189-31EE-4432-8476-B2EED2A4A000}"
 	ProjectSection(SolutionItems) = preProject
 		Sources\CompilerTest.psi = Sources\CompilerTest.psi
+		Sources\Fibonacci.psi = Sources\Fibonacci.psi
+		Sources\Hello World.psi = Sources\Hello World.psi
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PsiCompiler.Test", "PsiCompiler.Test\PsiCompiler.Test.csproj", "{52595DDD-3D97-497C-8CC7-913E1416F13A}"

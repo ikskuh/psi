@@ -29,7 +29,7 @@ typedecl    : 'type' identifier '=' expression ';'
             ;
 
 vardecl     : storage identifier ':' type terminator
-            | storage identifier '='    expression terminator
+            | storage identifier '=' expression terminator
             | storage identifier ':' type '=' expression terminator
             ;
 
@@ -47,21 +47,21 @@ export      : /* optional */
             | 'export'
             ;
 
-expression  : expression '=' expression
-            | expression ':=' expression
-            | expression '--=' expression
-            | expression '+=' expression
-            | expression '-=' expression
-            | expression '**=' expression
-            | expression '*=' expression
-            | expression '%=' expression
-            | expression '/=' expression
-            | expression '&=' expression
-            | expression '|=' expression
-            | expression '^=' expression
+expression  : expression '='    expression
+            | expression ':='   expression
+            | expression '--='  expression
+            | expression '+='   expression
+            | expression '-='   expression
+            | expression '**='  expression
+            | expression '*='   expression
+            | expression '%='   expression
+            | expression '/='   expression
+            | expression '&='   expression
+            | expression '|='   expression
+            | expression '^='   expression
             | expression '>>>=' expression
-            | expression '<<=' expression
-            | expression '>>=' expression
+            | expression '<<='  expression
+            | expression '>>='  expression
             | expr_or
             ;
 
@@ -84,8 +84,8 @@ equality    : equality '==' equality
 
 comparison  : comparison '<=' comparison
             | comparison '>=' comparison
-            | comparison '<' comparison
-            | comparison '>' comparison
+            | comparison '<'  comparison
+            | comparison '>'  comparison
             | expr_arrows
             ;
 
@@ -94,8 +94,8 @@ expr_arrows : expr_arrows '->' expr_arrows
             | sum
             ;
 
-sum         : sum '+' sum
-            | sum '-' sum
+sum         : sum '+'  sum
+            | sum '-'  sum
             | sum '--' sum
             | term
             ;
@@ -111,14 +111,14 @@ expo        : expo '**' expo
             ;
 
 shifting    : shifting '>>>' shifting
-            | shifting '>>' shifting
-            | shifting '<<' shifting
+            | shifting '>>'  shifting
+            | shifting '<<'  shifting
             | unary
             ;
 
-unary       : '+' value
-            | '-' value
-            | '~' value
+unary       : '+'   value
+            | '-'   value
+            | '~'   value
             | 'new' value
             | value
             ;
