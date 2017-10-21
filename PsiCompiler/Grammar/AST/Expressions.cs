@@ -338,6 +338,24 @@ namespace PsiCompiler.Grammar
  
 	}
 
+	public sealed class ArrayTypeLiteral : Expression
+	{
+		public ArrayTypeLiteral(Expression objectType, int dimensions)
+		{
+			if (dimensions <= 0)
+				throw new ArgumentOutOfRangeException(nameof(dimensions));
+			this.Dimensions = dimensions;
+			this.ObjectType = objectType.NotNull();
+		}
+		
+		public Expression ObjectType { get; }
+		
+		public int Dimensions { get; }
+
+		public override string ToString() => string.Format("array<{0},{1}>", ObjectType, Dimensions);
+ 
+	}
+
     public sealed class RecordTypeLiteral : Expression
     {
         public RecordTypeLiteral(IEnumerable<Declaration> fields)

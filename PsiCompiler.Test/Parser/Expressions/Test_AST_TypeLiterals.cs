@@ -198,7 +198,7 @@ namespace PsiCompiler.Test
 			Assert.AreEqual("b", val.Items[1].Name);
 			Assert.AreSame(PsiParser.Undefined, val.Items[1].Type);
 			Assert.IsInstanceOf(typeof(NumberLiteral), val.Items[1].Value);
-			Assert.AreEqual("10", ((NumberLiteral)val.Items[1].Value).Value);
+			Assert.AreEqual("20", ((NumberLiteral)val.Items[1].Value).Value);
 		}
 		
 		[Test]
@@ -214,6 +214,38 @@ namespace PsiCompiler.Test
 
 			Assert.IsInstanceOf(typeof(VariableReference), val.ObjectType);
 			Assert.AreEqual("int", ((VariableReference)val.ObjectType).Variable);
+		}
+		
+		[Test]
+		public void SimpleArrayType()
+		{
+			var module = Load("const name = array<int>;");
+			var expression = module.Declarations[0].Value;
+
+			Assert.IsInstanceOf(typeof(ArrayTypeLiteral), expression);
+			var val = (ArrayTypeLiteral)expression;
+
+			Assert.NotNull(val.ObjectType);
+			Assert.AreEqual(1, val.Dimensions);
+
+			Assert.IsInstanceOf(typeof(VariableReference), val.ObjectType);
+			Assert.AreEqual("int", ((VariableReference)val.ObjectType).Variable);
+		}
+		
+		[Test]
+		public void MultidimArrayType()
+		{
+			var module = Load("const matrix = array<float,42>;");
+			var expression = module.Declarations[0].Value;
+
+			Assert.IsInstanceOf(typeof(ArrayTypeLiteral), expression);
+			var val = (ArrayTypeLiteral)expression;
+
+			Assert.NotNull(val.ObjectType);
+			Assert.AreEqual(42, val.Dimensions);
+
+			Assert.IsInstanceOf(typeof(VariableReference), val.ObjectType);
+			Assert.AreEqual("float", ((VariableReference)val.ObjectType).Variable);
 		}
 		
 		// TODO: Test for function type literals

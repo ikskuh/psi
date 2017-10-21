@@ -1,5 +1,5 @@
 
-type foo = ref<int>;
+type foo = array<int,10>;
 
 /*
 

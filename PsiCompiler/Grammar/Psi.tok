@@ -33,6 +33,7 @@ OPERATOR   := \boperator\b
 ENUM       := \benum\b
 RECORD     := \brecord\b
 REF        := \bref\b
+ARRAY      := \barray\b
 
 # Parameter Spec
 INOUT      := \binout\b

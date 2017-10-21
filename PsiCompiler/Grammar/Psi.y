@@ -5,7 +5,6 @@ TODO:
 	- All types with pointy brackets
 		- `array<T,n>` type
 		- `array<T>` type
-		- `ref<T>` type
  */
 
 %parsertype PsiParser
@@ -23,7 +22,7 @@ TODO:
 %token <String> IMPORT, EXPORT, MODULE, ASSERT, ERROR, CONST, VAR, TYPE, FN, NEW
 %token <String> OPERATOR, ENUM, RECORD, INOUT, IN, OUT, THIS, FOR, WHILE, LOOP, UNTIL
 %token <String> IF, ELSE, SELECT, WHEN, OTHERWISE, RESTRICT, BREAK, CONTINUE, NEXT, RETURN, GOTO
-%token <String> MAPSTO, COMMA, TERMINATOR, COLON, LAMBDA, REF
+%token <String> MAPSTO, COMMA, TERMINATOR, COLON, LAMBDA, REF, ARRAY
 
 // Operators
 %left <PsiOperator> PLUS, MINUS, MULT, DIV
@@ -399,6 +398,14 @@ value       : value DOT identifier
 			| RECORD ROUND_O fieldlist ROUND_C
 			{
 				$$ = new RecordTypeLiteral($3);
+			}
+			| ARRAY LESS type MORE
+			{
+				$$ = new ArrayTypeLiteral($3, 1);
+			}
+			| ARRAY LESS type COMMA NUMBER MORE
+			{
+				$$ = new ArrayTypeLiteral($3, int.Parse($5));
 			}
 			| value SQUARE_O exprlist SQUARE_C
 			{
