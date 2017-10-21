@@ -15,7 +15,7 @@ namespace PsiCompiler
 				
 		WritebackPlus, WritebackMinus, WritebackConcat,
 		WritebackMultiply, WritebackDivide, WritebackModulo, WritebackExponentiate,
-		WritebackInvert, WritebackAnd, WritebackOr, WritebackXor,
+		WritebackAnd, WritebackOr, WritebackXor,
 		WritebackArithmeticShiftRight, WritebackShiftLeft, WritebackShiftRight
 	}
 }

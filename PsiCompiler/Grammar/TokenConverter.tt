@@ -48,7 +48,6 @@
 		{ "WB_DIV",      "WritebackDivide",               "/="   },
 		{ "WB_MOD",      "WritebackModulo",               "%="   },
 		{ "WB_EXP",      "WritebackExponentiate",         "**="  },
-		{ "WB_INVERT",   "WritebackInvert",               "~="   },
 		{ "WB_AND",      "WritebackAnd",                  "&="   },
 		{ "WB_OR",       "WritebackOr",                   "|="   },
 		{ "WB_XOR",      "WritebackXor",                  "^="   },

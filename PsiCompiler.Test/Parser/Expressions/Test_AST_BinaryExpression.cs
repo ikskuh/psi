@@ -179,23 +179,6 @@ namespace PsiCompiler.Test
 		}
 		
 		[Test]
-		public void BinaryOperatorExpression_WritebackInvert()
-		{
-			var module = Load("const name = a ~= b;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(VariableReference), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(VariableReference), op.RightHandSide);
-			
-			Assert.AreEqual("a", ((VariableReference)op.LeftHandSide).Variable);
-			Assert.AreEqual("b", ((VariableReference)op.RightHandSide).Variable);
-		}
-		
-		[Test]
 		public void BinaryOperatorExpression_WritebackAnd()
 		{
 			var module = Load("const name = a &= b;");
@@ -838,26 +821,6 @@ namespace PsiCompiler.Test
 		}
 		
 		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_Or()
-		{
-			var module = Load("const name = a | b ~= c | d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.Or, lhs.Operator);
-			Assert.AreEqual(PsiOperator.Or, rhs.Operator);
-		}
-		
-		[Test]
 		public void BinaryOperatorExpression_WritebackAnd_Or()
 		{
 			var module = Load("const name = a | b &= c | d;");
@@ -1158,26 +1121,6 @@ namespace PsiCompiler.Test
 		}
 		
 		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_Xor()
-		{
-			var module = Load("const name = a ^ b ~= c ^ d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.Xor, lhs.Operator);
-			Assert.AreEqual(PsiOperator.Xor, rhs.Operator);
-		}
-		
-		[Test]
 		public void BinaryOperatorExpression_WritebackAnd_Xor()
 		{
 			var module = Load("const name = a ^ b &= c ^ d;");
@@ -1467,26 +1410,6 @@ namespace PsiCompiler.Test
 			var op = (BinaryOperation)expression;
 			
 			Assert.AreEqual(PsiOperator.WritebackExponentiate, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.And, lhs.Operator);
-			Assert.AreEqual(PsiOperator.And, rhs.Operator);
-		}
-		
-		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_And()
-		{
-			var module = Load("const name = a & b ~= c & d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
 			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
 			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
 
@@ -1987,46 +1910,6 @@ namespace PsiCompiler.Test
 			var op = (BinaryOperation)expression;
 			
 			Assert.AreEqual(PsiOperator.WritebackExponentiate, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.NotEquals, lhs.Operator);
-			Assert.AreEqual(PsiOperator.NotEquals, rhs.Operator);
-		}
-		
-		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_Equals()
-		{
-			var module = Load("const name = a == b ~= c == d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.Equals, lhs.Operator);
-			Assert.AreEqual(PsiOperator.Equals, rhs.Operator);
-		}
-		
-		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_NotEquals()
-		{
-			var module = Load("const name = a != b ~= c != d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
 			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
 			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
 
@@ -3038,86 +2921,6 @@ namespace PsiCompiler.Test
 		}
 		
 		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_LessOrEqual()
-		{
-			var module = Load("const name = a <= b ~= c <= d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.LessOrEqual, lhs.Operator);
-			Assert.AreEqual(PsiOperator.LessOrEqual, rhs.Operator);
-		}
-		
-		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_MoreOrEqual()
-		{
-			var module = Load("const name = a >= b ~= c >= d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.MoreOrEqual, lhs.Operator);
-			Assert.AreEqual(PsiOperator.MoreOrEqual, rhs.Operator);
-		}
-		
-		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_Less()
-		{
-			var module = Load("const name = a < b ~= c < d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.Less, lhs.Operator);
-			Assert.AreEqual(PsiOperator.Less, rhs.Operator);
-		}
-		
-		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_More()
-		{
-			var module = Load("const name = a > b ~= c > d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.More, lhs.Operator);
-			Assert.AreEqual(PsiOperator.More, rhs.Operator);
-		}
-		
-		[Test]
 		public void BinaryOperatorExpression_WritebackAnd_LessOrEqual()
 		{
 			var module = Load("const name = a <= b &= c <= d;");
@@ -3918,46 +3721,6 @@ namespace PsiCompiler.Test
 		}
 		
 		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_Forward()
-		{
-			var module = Load("const name = a -> b ~= c -> d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.Forward, lhs.Operator);
-			Assert.AreEqual(PsiOperator.Forward, rhs.Operator);
-		}
-		
-		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_Backward()
-		{
-			var module = Load("const name = a <- b ~= c <- d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.Backward, lhs.Operator);
-			Assert.AreEqual(PsiOperator.Backward, rhs.Operator);
-		}
-		
-		[Test]
 		public void BinaryOperatorExpression_WritebackAnd_Forward()
 		{
 			var module = Load("const name = a -> b &= c -> d;");
@@ -4747,66 +4510,6 @@ namespace PsiCompiler.Test
 			var op = (BinaryOperation)expression;
 			
 			Assert.AreEqual(PsiOperator.WritebackExponentiate, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.Concat, lhs.Operator);
-			Assert.AreEqual(PsiOperator.Concat, rhs.Operator);
-		}
-		
-		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_Plus()
-		{
-			var module = Load("const name = a + b ~= c + d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.Plus, lhs.Operator);
-			Assert.AreEqual(PsiOperator.Plus, rhs.Operator);
-		}
-		
-		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_Minus()
-		{
-			var module = Load("const name = a - b ~= c - d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.Minus, lhs.Operator);
-			Assert.AreEqual(PsiOperator.Minus, rhs.Operator);
-		}
-		
-		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_Concat()
-		{
-			var module = Load("const name = a -- b ~= c -- d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
 			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
 			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
 
@@ -5718,66 +5421,6 @@ namespace PsiCompiler.Test
 		}
 		
 		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_Multiply()
-		{
-			var module = Load("const name = a * b ~= c * d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.Multiply, lhs.Operator);
-			Assert.AreEqual(PsiOperator.Multiply, rhs.Operator);
-		}
-		
-		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_Divide()
-		{
-			var module = Load("const name = a / b ~= c / d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.Divide, lhs.Operator);
-			Assert.AreEqual(PsiOperator.Divide, rhs.Operator);
-		}
-		
-		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_Modulo()
-		{
-			var module = Load("const name = a % b ~= c % d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.Modulo, lhs.Operator);
-			Assert.AreEqual(PsiOperator.Modulo, rhs.Operator);
-		}
-		
-		[Test]
 		public void BinaryOperatorExpression_WritebackAnd_Multiply()
 		{
 			var module = Load("const name = a * b &= c * d;");
@@ -6267,26 +5910,6 @@ namespace PsiCompiler.Test
 			var op = (BinaryOperation)expression;
 			
 			Assert.AreEqual(PsiOperator.WritebackExponentiate, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.Exponentiate, lhs.Operator);
-			Assert.AreEqual(PsiOperator.Exponentiate, rhs.Operator);
-		}
-		
-		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_Exponentiate()
-		{
-			var module = Load("const name = a ** b ~= c ** d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
 			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
 			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
 
@@ -6987,66 +6610,6 @@ namespace PsiCompiler.Test
 			var op = (BinaryOperation)expression;
 			
 			Assert.AreEqual(PsiOperator.WritebackExponentiate, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.ShiftRight, lhs.Operator);
-			Assert.AreEqual(PsiOperator.ShiftRight, rhs.Operator);
-		}
-		
-		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_ArithmeticShiftRight()
-		{
-			var module = Load("const name = a >>> b ~= c >>> d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.ArithmeticShiftRight, lhs.Operator);
-			Assert.AreEqual(PsiOperator.ArithmeticShiftRight, rhs.Operator);
-		}
-		
-		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_ShiftLeft()
-		{
-			var module = Load("const name = a << b ~= c << d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
-			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
-
-			var lhs = (BinaryOperation)op.LeftHandSide;
-			var rhs = (BinaryOperation)op.RightHandSide;
-
-			Assert.AreEqual(PsiOperator.ShiftLeft, lhs.Operator);
-			Assert.AreEqual(PsiOperator.ShiftLeft, rhs.Operator);
-		}
-		
-		[Test]
-		public void BinaryOperatorExpression_WritebackInvert_ShiftRight()
-		{
-			var module = Load("const name = a >> b ~= c >> d;");
-			var expression = module.Declarations[0].Value;
-
-			Assert.IsInstanceOf(typeof(BinaryOperation), expression);
-			var op = (BinaryOperation)expression;
-			
-			Assert.AreEqual(PsiOperator.WritebackInvert, op.Operator);
 			Assert.IsInstanceOf(typeof(BinaryOperation), op.LeftHandSide);
 			Assert.IsInstanceOf(typeof(BinaryOperation), op.RightHandSide);
 

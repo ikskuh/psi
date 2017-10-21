@@ -68,7 +68,6 @@ sealed partial class PsiTokenizer : Tokenizer<PsiTokenType>
 		this.RegisterToken(PsiTokenType.WB_DIV, new Regex(@"\/\=", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.WB_AND, new Regex(@"\&\=", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.WB_OR, new Regex(@"\|\=", RegexOptions.Compiled));
-		this.RegisterToken(PsiTokenType.WB_INVERT, new Regex(@"\~\=", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.WB_XOR, new Regex(@"\^\=", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.WB_ASR, new Regex(@"\>\>\>\=", RegexOptions.Compiled));
 		this.RegisterToken(PsiTokenType.WB_SHL, new Regex(@"\<\<\=", RegexOptions.Compiled));

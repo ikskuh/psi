@@ -1,246 +1,245 @@
 # Grammar
 
 ```yacc
-program     : /* empty */         
-            | program assertion   
-            | program declaration 
-            | program module      
-            | program import      
+program     : /* empty */
+            | program assertion
+            | program declaration
+            | program module
+            | program import
             ;
 
-assertion   : ASSERT expression TERMINATOR
+assertion   : 'assert' expression ';'
             ;
 
-import      : IMPORT modname TERMINATOR
+import      : 'import' modname ';'
             ;
 
-module      : MODULE modname CURLY_O program CURLY_C
+module      : 'module' modname '{' program '}'
             ;
 
 modname     : identifier
-            | modname DOT identifier
+            | modname '.' identifier
             ;
 
 declaration : export typedecl
             | export vardecl
             ;
-            
-typedecl    : TYPE identifier IS expression TERMINATOR
+
+typedecl    : 'type' identifier '=' expression ';'
             ;
 
-vardecl     : storage identifier COLON type terminator
-            | storage identifier IS    expression terminator
-            | storage identifier COLON type IS expression terminator
+vardecl     : storage identifier ':' type terminator
+            | storage identifier '='    expression terminator
+            | storage identifier ':' type '=' expression terminator
             ;
-            
+
 type        : value
             ;
 
 terminator  : /* optional */
             | TERMINATOR;
 
-storage     : CONST          
-            | VAR            
+storage     : 'const'
+            | 'var'
             ;
 
-export      : /* optional */ 
-            | EXPORT         
+export      : /* optional */
+            | 'export'
             ;
 
-expression  : expression IS expression
-            | expression ASSIGN expression
-            | expression WB_CONCAT expression
-            | expression WB_PLUS expression
-            | expression WB_MINUS expression
-            | expression WB_EXP expression
-            | expression WB_MULT expression
-            | expression WB_MOD expression
-            | expression WB_DIV expression
-            | expression WB_AND expression
-            | expression WB_OR expression
-            | expression WB_INVERT expression
-            | expression WB_XOR expression
-            | expression WB_ASR expression
-            | expression WB_SHL expression
-            | expression WB_SHR expression
+expression  : expression '=' expression
+            | expression ':=' expression
+            | expression '--=' expression
+            | expression '+=' expression
+            | expression '-=' expression
+            | expression '**=' expression
+            | expression '*=' expression
+            | expression '%=' expression
+            | expression '/=' expression
+            | expression '&=' expression
+            | expression '|=' expression
+            | expression '^=' expression
+            | expression '>>>=' expression
+            | expression '<<=' expression
+            | expression '>>=' expression
             | expr_or
             ;
 
-expr_or     : expr_or OR expr_or
+expr_or     : expr_or '|' expr_or
             | expr_xor
             ;
 
-expr_xor    : expr_xor XOR expr_xor
+expr_xor    : expr_xor '^' expr_xor
             | expr_and
             ;
 
-expr_and    : expr_and AND expr_and
+expr_and    : expr_and '&' expr_and
             | equality
             ;
 
-equality    : equality EQUAL equality
-            | equality NEQUAL equality
+equality    : equality '==' equality
+            | equality '!=' equality
             | comparison
             ;
 
-comparison  : comparison LEQUAL comparison
-            | comparison GEQUAL comparison
-            | comparison LESS comparison
-            | comparison MORE comparison
+comparison  : comparison '<=' comparison
+            | comparison '>=' comparison
+            | comparison '<' comparison
+            | comparison '>' comparison
             | expr_arrows
             ;
 
-expr_arrows : expr_arrows FORWARD expr_arrows
-            | expr_arrows BACKWARD expr_arrows
+expr_arrows : expr_arrows '->' expr_arrows
+            | expr_arrows '<-' expr_arrows
             | sum
             ;
-            
-sum         : sum PLUS sum
-            | sum MINUS sum
-            | sum CONCAT sum
+
+sum         : sum '+' sum
+            | sum '-' sum
+            | sum '--' sum
             | term
             ;
-            
-term        : term MULT term
-            | term DIV term
-            | term MOD term
+
+term        : term '*' term
+            | term '/' term
+            | term '%' term
             | expo
             ;
-            
-expo        : expo EXP expo
+
+expo        : expo '**' expo
             | shifting
             ;
 
-shifting    : shifting ASR shifting
-            | shifting SHR shifting
-            | shifting SHL shifting
+shifting    : shifting '>>>' shifting
+            | shifting '>>' shifting
+            | shifting '<<' shifting
             | unary
             ;
-            
-unary       : PLUS value
-            | MINUS value
-            | INVERT value
-            | NEW value
+
+unary       : '+' value
+            | '-' value
+            | '~' value
+            | 'new' value
             | value
             ;
 
-value       : value DOT identifier
-            | value META identifier
-            | ENUM ROUND_O idlist ROUND_C
-            | ENUM LESS type MORE ROUND_O fieldlist ROUND_C
-            | REF LESS type MORE
-            | RECORD ROUND_O fieldlist ROUND_C
-            | ARRAY LESS type MORE
-            | ARRAY LESS type COMMA NUMBER MORE
-            | value SQUARE_O exprlist SQUARE_C
-            | SQUARE_O exprlist SQUARE_C
-            | value ROUND_O ROUND_C
-            | value ROUND_O arglist ROUND_C
-            | ROUND_O expression ROUND_C
+value       : value '.' identifier
+            | value '\'' identifier
+            | 'enum' ')' idlist ')'
+            | 'enum' '<' type '>' ')' fieldlist ')'
+            | 'ref' '<' type '>'
+            | 'record' ')' fieldlist ')'
+            | 'array' '<' type '>'
+            | 'array' '<' type ',' '0x[A-Fa-f0-9]+|\d+(\.\d+)?' '>'
+            | value '[' exprlist ']'
+            | '[' exprlist ']'
+            | value ')' ')'
+            | value ')' arglist ')'
+            | ')' expression ')'
             | identifier
             | functiontype
             | functiontype block
-            | functiontype MAPSTO expression
-            | LAMBDA ROUND_O idlist ROUND_C MAPSTO expression
-            | STRING
+            | functiontype '=>' expression
+            | '\\' ')' idlist ')' '=>' expression
+            | '"(?:\\"|.)*?"'
             | ENUMVAL
-            | NUMBER
+            | '0x[A-Fa-f0-9]+|\d+(\.\d+)?'
             ;
 
-idlist      : idlist COMMA identifier
+idlist      : idlist ',' identifier
             | identifier
             ;
 
-fieldlist   : fieldlist COMMA field
+fieldlist   : fieldlist ',' field
             | field
             ;
 
-field       : identifier COLON type terminator 
+field       : identifier ':' type terminator
                 $$ = new Declaration($1, $3, null);
                 $$.IsField = true;
-            | identifier IS    expression terminator 
+            | identifier '='    expression terminator
                 $$ = new Declaration($1, Undefined, $3);
                 $$.IsField = true;
-            | identifier COLON type IS expression terminator 
+            | identifier ':' type '=' expression terminator
                 $$ = new Declaration($1, $3, $5);
                 $$.IsField = true;
             ;
 
-functiontype: FN ROUND_O paramlist ROUND_C FORWARD type
-            | FN ROUND_O ROUND_C FORWARD type
-            | FN ROUND_O paramlist ROUND_C
-            | FN ROUND_O ROUND_C
+functiontype: 'fn' ')' paramlist ')' '->' type
+            | 'fn' ')' ')' '->' type
+            | 'fn' ')' paramlist ')'
+            | 'fn' ')' ')'
             ;
 
-paramlist   : paramlist COMMA parameter
+paramlist   : paramlist ',' parameter
             | parameter
             ;
 
-parameter   : prefix identifier COLON type IS expression
-            | prefix identifier IS expression
-            | prefix identifier COLON type
+parameter   : prefix identifier ':' type '=' expression
+            | prefix identifier '=' expression
+            | prefix identifier ':' type
             ;
 
 prefix      : /* empty */
-            | prefix IN
-            | prefix OUT
-            | prefix INOUT
-            | prefix THIS
+            | prefix 'in'
+            | prefix 'out'
+            | prefix 'inout'
+            | prefix 'this'
             ;
 
-arglist     : arglist COMMA argument
+arglist     : arglist ',' argument
             | argument
             ;
 
 argument    : expression
-            | identifier COLON expression
+            | identifier ':' expression
             ;
 
 exprlist    : expression
-            | exprlist COMMA expression
+            | exprlist ',' expression
             ;
 
-block       : CURLY_O stmtlist CURLY_C
-            | CURLY_O CURLY_C
+block       : '{' stmtlist '}'
+            | '{' '}'
             ;
 
 stmtlist    : /* empty */
             | stmtlist statement
             ;
 
-statement   : BREAK TERMINATOR
-            | FALLTROUGH TERMINATOR
-            | CONTINUE TERMINATOR
-            | ERROR expression TERMINATOR
-            | RETURN expression TERMINATOR
-            | RETURN TERMINATOR
-            | GOTO expression TERMINATOR
-            | IF ROUND_O expression ROUND_C statement ELSE statement
-            | IF ROUND_O expression ROUND_C statement
-            | WHILE ROUND_O expression ROUND_C statement
-            | LOOP statement UNTIL ROUND_O expression ROUND_C TERMINATOR
-            | RESTRICT ROUND_O exprlist ROUND_C statement
-            | FOR ROUND_O identifier IN expression ROUND_C statement
-            | SELECT ROUND_O expression ROUND_C CURLY_O options CURLY_C
-            | declaration
+statement   : declaration
             | assertion
             | block
-            | expression TERMINATOR
-            | TERMINATOR
+            | 'break' ';'
+            | FALLTROUGH ';'
+            | 'continue' ';'
+            | 'error' expression ';'
+            | 'return' expression ';'
+            | 'return' ';'
+            | 'goto' expression ';'
+            | 'if' ')' expression ')' statement 'else' statement
+            | 'if' ')' expression ')' statement
+            | 'while' ')' expression ')' statement
+            | 'loop' statement 'until' ')' expression ')' ';'
+            | 'restrict' ')' exprlist ')' statement
+            | 'for' ')' identifier 'in' expression ')' statement
+            | 'select' ')' expression ')' '{' options '}'
+            | expression ';'
+            | ';'
             ;
 
 options     : /* empty */
-            | options WHEN expression COLON stmtlist
-            | options OTHERWISE COLON stmtlist
+            | options 'when' expression ':' stmtlist
+            | options 'otherwise' ':' stmtlist
             ;
 
-identifier  : IDENT
-            | OPERATOR META opsym META
+identifier  : '[\w-[\d]]\w*'
+            | 'operator' '\'' opsym '\''
             ;
 
-opsym       : PLUS | MINUS | MULT | DIV | AND | OR | INVERT | XOR | CONCAT | DOT | META | EXP | MOD
-            | FORWARD | BACKWARD | LEQUAL | GEQUAL | EQUAL | NEQUAL | LESS | MORE | IS | ASSIGN
-            | ASR | SHL | SHR
-            | SQUARE_O SQUARE_C // array indexing operator symbol
+opsym       : '+' | '-' | '*' | '/' | '&' | '|' | '~' | '^' | '--' | '.' | '\'' | '**' | '%'
+            | '->' | '<-' | '<=' | '>=' | '==' | '!=' | '<' | '>' | '=' | ':='
+            | '>>>' | '<<' | '>>'
+            | '[' ']' // array indexing operator symbol
             ;
 ```

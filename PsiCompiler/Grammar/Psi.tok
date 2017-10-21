@@ -72,7 +72,6 @@ WB_MOD     := \%\=
 WB_DIV     := \/\=
 WB_AND     := \&\=
 WB_OR      := \|\=
-WB_INVERT  := \~\=
 WB_XOR     := \^\=
 WB_ASR     := \>\>\>\=
 WB_SHL     := \<\<\=

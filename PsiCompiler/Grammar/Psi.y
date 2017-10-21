@@ -24,7 +24,7 @@
 %left <PsiOperator> ASR, SHL, SHR
 
 %left <PsiOperator> WB_PLUS, WB_MINUS, WB_MULT, WB_DIV
-%left <PsiOperator> WB_AND, WB_OR, WB_INVERT, WB_XOR, WB_CONCAT, WB_EXP, WB_MOD
+%left <PsiOperator> WB_AND, WB_OR, WB_XOR, WB_CONCAT, WB_EXP, WB_MOD
 %left <PsiOperator> WB_ASR, WB_SHL, WB_SHR
 
 %token <String> NUMBER, STRING, ENUMVAL, IDENT
@@ -192,10 +192,6 @@ expression  : expression IS expression
 			| expression WB_OR expression
 			{
 				$$ = Apply($1, $3, PsiOperator.WritebackOr);
-			}
-			| expression WB_INVERT expression
-			{
-				$$ = Apply($1, $3, PsiOperator.WritebackInvert);
 			}
 			| expression WB_XOR expression
 			{
