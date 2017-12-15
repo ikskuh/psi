@@ -1,11 +1,23 @@
-// Ziel für Heute:
+/*****************************************************************************
+ * Compiler Test Program                                                     *
+ *****************************************************************************/
 
+// Tests out params
 const set = fn(out dst : int, src : int) { dst = src; };
 
+// Tests return values
+const limit = fn() -> int { return 38; }
+
+// Tests closures and flow control
 const main = fn()
 {
 	var i : int;
 	set(i, 42);
+	
+	while(i > limit())
+	{
+		i = i - 1;
+	}
 
 	const print = fn() 
 	{

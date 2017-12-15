@@ -1,0 +1,136 @@
+const set = fn(out dst : int, src : int) { dst = src; };
+
+const limit = fn() -> int { return 38; }
+
+const main = fn()
+{
+	var i : int;
+	set(i, 42);
+	
+	while(i > limit())
+	{
+		i = i - 1;
+	}
+
+	const print = fn() 
+	{
+		print("i = ");
+		print(i);
+		print("\n");
+	};
+
+	print();
+};
+
+Types t[]:
+[0] int
+[1] fn(out p0 : int, in p1 : int)
+[2] fn()
+[3] fn(in p1 : int);
+[4] char
+[5] fn(in p1 : array<char>);
+[6] fn(p1 : int, p2 : int) -> int
+[7] fn(p1 : int, p2 : int) -> bool
+[8] fn(out dst : int, src : int) -> int
+[9] bool
+[10] fn() -> int
+
+Functions f[]:
+[0] fn(out dst : int, src : int) { dst = src; }
+[1] fn() { print("i = "); print(i); print("\n"); }
+[2] fn() { var i : int; set(i, 42); while(i > 38) { i = i - 1; } const print = ...; print(); }
+[3] fn(out dst : int, src : int) -> int { <<builtin>> }; (* assign *)
+[4] fn(p1 : string) { <<builtin>> };                     (* print *)
+[5] fn(p1 : int) { <<builtin>> };                        (* print *)
+[6] fn(p1 : int, p2 : int) -> int { <<builtin>> };       (* sub *)
+[7] fn(p1 : int, p2 : int) -> bool { <<builtin>> };      (* more than *)
+[8] fn() -> int { return 38; }
+
+Global Variables g[]:
+[0] set    : t[1] = f[0](nil)
+[1] main   : t[2] = f[2](nil)
+[2] print  : t[3] = f[5](nil)
+[3] print  : t[5] = f[4](nil)
+[4] '-'    : t[6] = f[6](nil)
+[5] '>'    : t[7] = f[7](nil)
+[6] '='    : t[8] = f[3](nil)
+[7] 42     : int
+[8] "i = " : array<char>
+[9] "\n"   : array<char>
+[10] 38    : int
+[11] 1     : int
+[12] limit : t[10] = f[8](nil)
+
+Compiled Functions:
+f[0] "set": 'fn(out dst : int, src : int) { dst = src; }'
+	createframe CF[]
+	stackframe SF[dst : int, src : int]
+	0: call f[3] SF[0] *SF[1] /* dst = src */
+	1: exit                   /* return */
+
+f[1]: "print" 'fn() { print("i = "); print(i); print("\n"); };'
+	createframe CF[i : int, print : fn()]
+	stackframe SF[]
+	0: call g[3] *g[8]  /* print("i = ") */
+	1: call g[2] *CF[0] /* print(i) */
+	2: call g[3] *g[9]  /* print("\n") */
+	3: exit            /* return */
+
+f[2]: "main": 'fn() { var i : int; set(i, 42); while(i > limit()) { i = i - 1; } const print = ...; print(); }'
+	createframe CF[]
+	stackframe SF[i : int, print : fn(), tmp0 : bool, tmp1 : int]
+	0: call   g[0] SF[0] *g[7]        /* set(i,42) */
+	1: call   g[12] SF[3]            /* tmp1 = limit() */
+	2: call   g[5] SF[2] *SF[0] *SF[3] /* tmp0 = (i > tmp1) */
+	3: jmpifn 7 SF[2]                 /* while(tmp0) { */
+	4: call   g[4] SF[3] *SF[0] *g[11] /* tmp1 = i - 1 */
+	5: call   g[6] SF[0] *SF[3]       /* i = tmp1 */
+	6: jmp    3                       /* } */
+	7: newfun SF[1] f[1]              /* print = f[1](SF) */
+	8: call   SF[1]                   /* print() */
+	9: exit                           /* return */
+
+f[12]: "limit": 'fn() -> int { return 38; }'
+	createframe CF[]
+	stackframe SF[result : int]
+	0: call g[6] SF[0] *g[10] /* result = 38 */
+	1: exit                   /* return */
+
+commands:
+	call <what> <s0> <s1> <s2> ...
+		synopsis:
+			calls a function object
+		params:
+			<what> function object to call
+			<s0>   first stack slot
+			<s1>   second stack slot
+			<s2>   third stack slot
+			...    any more required stack slots
+		remarks:
+			* before <s...> means: make a copy
+	exit
+		synopsis:
+			returns from the function execution to caller
+	jmp <dst>:
+		synopsis:
+			Jumps to a sequence point in code
+		params:
+			<dst>  Sequence index
+	jmpif <dst> <x>
+		synopsis:
+			Jumps to a sequence point when <x> is true
+		params:
+			<dst>  Sequence index
+			<x>    Condition
+	jmpifn <dst> <x>
+		synopsis:
+			Jumps to a sequence point when <x> is false
+		params:
+			<dst>  Sequence index
+			<x>    Condition
+	newfun <dst> <f>
+		synposis:
+			Creates a new closure with the current stack frame as creation frame
+		params:
+			<dst>  storage slot where the function object should be stored
+			<f>    function prototype
