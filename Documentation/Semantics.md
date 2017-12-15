@@ -1,27 +1,27 @@
 
 Typen:
-	- Builtin-Typen
-		- Integer
-			: Ganzzahliger Datentyp, welcher keine Größenbeschränkung besitzt.
-			: Wird intern als "big integer" gehandhabt.
-		- Char
-			: Datentyp, welcher einen Unicode-Codepoint enthält und damit ein
-			: einzelnes Zeichen darstellt.
-			: Wird intern als 32 bit Zahl gehandhabt.
-		- Real
-			: Datentyp für reelle Zahlen. Wird intern als IEEE754(binary64)
-			: behandelt.
-		- Array
-			: Dynamisches Array, welches eine geordnete Menge an Elementen
-			: eines bestimmten Types enthält.
-	- Vordefinierte (notwendige) Typen
-		- Type
-			: Ein Typ, welcher eine Beschreibung für die in Psi verwendeten
-			: Datentypen bereitstellt.
-	- Benutzerdefinierte Typen (Vorlage)
-		- Record
-		- Enum
-		- Funktionstypen
+- Builtin-Typen
+	- Integer
+		: Ganzzahliger Datentyp, welcher keine Größenbeschränkung besitzt.
+		: Wird intern als "big integer" gehandhabt.
+	- Char
+		: Datentyp, welcher einen Unicode-Codepoint enthält und damit ein
+		: einzelnes Zeichen darstellt.
+		: Wird intern als 32 bit Zahl gehandhabt.
+	- Real
+		: Datentyp für reelle Zahlen. Wird intern als IEEE754(binary64)
+		: behandelt.
+	- Array
+		: Dynamisches Array, welches eine geordnete Menge an Elementen
+		: eines bestimmten Types enthält.
+- Vordefinierte (notwendige) Typen
+	- Type
+		: Ein Typ, welcher eine Beschreibung für die in Psi verwendeten
+		: Datentypen bereitstellt.
+- Benutzerdefinierte Typen (Vorlage)
+	- Record
+	- Enum
+	- Funktionstypen
 
 # Begriffe
 
