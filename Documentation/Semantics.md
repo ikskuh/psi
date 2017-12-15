@@ -74,10 +74,35 @@ Hierzu erhält der Wert eine einzigartige Speicheradresse (Pointer)
 Werte, die bei der Auswertung eines Ausdrucks entstehen und dafür als Zwischenergebnis gespeichert werden müssen,
 liegen im temporären Speicher. Dieser Speicher kann nicht referenziert werden.
 
-# Funktionsaufrufe
+# Funktionen
 
-Ein Funktionsaufruf legt ein Stackframe an, welches die Rücksprungadresse sowie die lokalen Variablen und Parameter enthält.
-Anschließend wird der Code in der Funktion ausgeführt und ein einzelner Wert zurückgegeben.
+Funktionen in Psi sind spezielle Werte, welche aufgerufen werden können. Eine Funktion wird in einer Variable mit
+einem Funktionstypen gespeichert.
+
+```psi
+// Definition einer Funktion, welche in einer Konstante gespeichert wird
+const funktion = fn(i : int) -> string
+{
+	// Liefert einen String mit i horizontalen Tabulatoren zurück.
+	return RepeatString("\t", i);
+};
+
+// Definition eines Funktionstypens
+type funktionstyp = fn(i : int) -> string;
+
+// Eine Funktionsvariable, welche eine Funktion enthält
+var funktionsvariable : funktionstyp = funktion;
+
+// Aufruf der Funktion über die Funktionsvariable
+var ergebnis = funktionsvariable(10);
+
+print(ergebnis);
+```
+
+## Funktionsaufrufe
+
+Ein Funktionsaufruf legt ein Stackframe an, welches die Rücksprungadresse sowie die lokalen Variablen und Parameter
+enthält. Anschließend wird der Code in der Funktion ausgeführt und ein einzelner Wert zurückgegeben.
 
 ## Parameterliste
 
@@ -109,7 +134,7 @@ example(1, 2);    // k = 4
 example(1, k: 3); // j = 6
 ```
 
-### Paramter-Attribute
+### Parameter-Attribute
 
 Parameter können verschiedene Attribute haben, welche das Verhalten verändern. Hierbei gibt es folgende Optionen:
 
@@ -178,3 +203,39 @@ Das heißt, dass anstelle einer Referenz auf das Argument zuerst eine Kopie auf 
 welche nach erfolgreichem Abschluss der Funktion zurück in das Argument geschrieben wird. Der Vorteil hiervon ist,
 dass das übergebene Argument nur einmal zu Abschluss der Funktion verändert wird und nicht wenn die Parametervariable
 in der Funktion verändert wird.
+
+## Closures und Captures
+In Psi ist jede Funktion ein Closure, welche ihren Erstellungskontext speichert. Das heißt, in einem Funktionswert
+wird zusätzlich zum Code der Funktion auch gespeichert, mit welchem Stackframe die Funktion erstellt wurde.
+
+Dies erlaubt den Zugriff auf lokale Variablen des Erstellungskontextes:
+
+```psi
+type counttype = fn() -> int;
+const makeCounter = fn() -> counttype
+{
+	var value = 0;
+	return fn() -> int
+	{
+		value += 1;
+		return value;
+	};
+};
+
+var counterA = makeCounter();
+var counterB = makeCounter();
+
+print(counterA()); // gibt 1 aus
+print(counterA()); // gibt 2 aus
+print(counterB()); // gibt 1 aus
+print(counterB()); // gibt 2 aus
+print(counterA()); // gibt 3 aus
+
+```
+
+Wichtig hierbei ist, dass ein Capture auf einen beliebig weit oben liegenden Erstellungskontext zugreifen kann,
+das heißt,Funktionen können sich auch auf den erstellenden Kontext der erstellenden Funktion zugreifen.
+
+Es können alle normalen lokalen Variablen eingefangen werden, nicht aber `out`- oder `inout`-Parameter, da diese eine
+Referenz auf einen außerhalb des Erstellungskontext liegenden Wertes darstellen und somit keine kontrollierbare
+Lebensdauer haben.
