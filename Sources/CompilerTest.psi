@@ -1,6 +1,18 @@
 // Ziel für Heute:
 
+const set = fn(out dst : int, src : int) { dst = src; };
+
 const main = fn()
 {
-	
+	var i : int;
+	set(i, 42);
+
+	const print = fn() 
+	{
+		print("i = ");
+		print(i);
+		print("\n");
+	};
+
+	print();
 };
