@@ -1,7 +1,11 @@
-import std;
-import std.io;
 
-const main = fn(args : array<string>) -> int
+
+const example1 = fn(inout i : int)
 {
-	print("Hello, World!");
+	i = 1;
+};
+
+const example2 = fn(lazy inout i : int)
+{
+	i = 1;
 };

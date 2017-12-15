@@ -44,16 +44,19 @@ abstrakte Definition liefern. Bei einem Funktionsaufruf wird ein Argument in ein
 wird.
 
 # Operatoren:
-	Zuweisung (`=`):
-		Bei de Ausführung der Operation `a = b` wird die Struktur des Objekts `b`
-		ohne Umformung in das Objekt `a` übertragen. Die beiden Objekte sind danach
-		als *gleich* anzusehen.
-	Meta-Operator (`'field`):
-		Der Meta-Operator greift auf statische Daten eines Objektes
-	Heap-Operator (`new`):
-		Bei der Ausführung des Heap-Operators `new a` wird ein neuer Wert des Typs
-		von `a` auf dem Heap alloziert und mit den Werten aus `a` initialisiert.
-		Zurückgegeben wird ein Wert des Typs `ref<a'type>`.
+
+## Zuweisung (`=`):
+Bei de Ausführung der Operation `a = b` wird die Struktur des Objekts `b`
+ohne Umformung in das Objekt `a` übertragen. Die beiden Objekte sind danach
+als *gleich* anzusehen.
+
+## Meta-Operator (`'field`):
+Der Meta-Operator greift auf statische Daten eines Objektes
+
+## Heap-Operator (`new`):
+Bei der Ausführung des Heap-Operators `new a` wird ein neuer Wert des Typs
+von `a` auf dem Heap alloziert und mit den Werten aus `a` initialisiert.
+Zurückgegeben wird ein Wert des Typs `ref<a'type>`.
 
 # Speicherorte für Werte
 
@@ -166,3 +169,12 @@ var num : int;
 fun(num);  // klassischer aufruf
 num.fun(); // erweiterter aufruf
 ```
+
+### `lazy`
+Ein `inout`- oder `out`-Parameter kann als `lazy` markiert werden. Hierbei verändert sich das Verhalten von einem
+einfachen Pointer-Verhalten zu einem "read-modify-write"-Verhalten.
+
+Das heißt, dass anstelle einer Referenz auf das Argument zuerst eine Kopie auf den Wert des Arguments übergeben wird,
+welche nach erfolgreichem Abschluss der Funktion zurück in das Argument geschrieben wird. Der Vorteil hiervon ist,
+dass das übergebene Argument nur einmal zu Abschluss der Funktion verändert wird und nicht wenn die Parametervariable
+in der Funktion verändert wird.

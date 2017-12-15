@@ -232,6 +232,7 @@ namespace PsiCompiler.Grammar
         Out = 2,
         InOut = In | Out, // Mask together
         This = 4,
+        Lazy = 8,
 
     }
 

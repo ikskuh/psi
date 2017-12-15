@@ -40,6 +40,7 @@ INOUT      := \binout\b
 IN         := \bin\b
 OUT        := \bout\b
 THIS       := \bthis\b
+LAZY       := \blazy\b
 
 # Control flow
 FOR        := \bfor\b

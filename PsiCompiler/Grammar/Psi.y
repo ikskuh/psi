@@ -13,7 +13,7 @@
 
 // Keywords
 %token <String> IMPORT, EXPORT, MODULE, ASSERT, ERROR, CONST, VAR, TYPE, FN, NEW
-%token <String> OPERATOR, ENUM, RECORD, INOUT, IN, OUT, THIS, FOR, WHILE, LOOP, UNTIL
+%token <String> OPERATOR, ENUM, RECORD, INOUT, IN, OUT, THIS, LAZY, FOR, WHILE, LOOP, UNTIL
 %token <String> IF, ELSE, SELECT, WHEN, OTHERWISE, RESTRICT, BREAK, CONTINUE, FALLTROUGH, RETURN, GOTO
 %token <String> MAPSTO, COMMA, TERMINATOR, COLON, LAMBDA, REF, ARRAY
 
@@ -568,6 +568,10 @@ prefix      : /* empty */
 			| prefix THIS
 			{
 				$$ = $1 | ParameterPrefix.This;
+			}
+			| prefix LAZY
+			{
+				$$ = $1 | ParameterPrefix.Lazy;
 			}
 			;
 
