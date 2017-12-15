@@ -2,30 +2,15 @@
 
 namespace Runtime
 {
-    public interface RValue
-    {
-        Type Type { get; }
-
-        Value GetValue();
-    }
-
-    public interface LValue : RValue
-    {
-        void SetValue(Value value);
-    }
-
-    public abstract class Value : RValue
+    public abstract class Value
     {
         protected Value(Type type)
         {
-            this.Type = type ?? throw new ArgumentNullException(nameof(type));
+        	if(type == null)
+        		throw new ArgumentNullException(nameof(type));
+            this.Type = type;
         }
 
-        // Haha, very funny... But convenient
-        public Value GetValue() { return this; }
-
         public Type Type { get; }
-
-        public abstract Value Clone();
     }
 }
