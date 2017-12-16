@@ -6,6 +6,8 @@ namespace Psi.Compiler
 {
 	using Type = Psi.Runtime.Type;
 	using Boolean = Psi.Runtime.Boolean;
+	using Psi.Compiler.Resolvation;
+	
 	public class Translator
 	{
 		private readonly Scope builtinScope;
@@ -28,7 +30,6 @@ namespace Psi.Compiler
 			// TODO: Validate "assert" here
 			// module.Assertions
 			
-			
 			var pgm = new Program();
 			
 			return pgm;
@@ -42,7 +43,7 @@ namespace Psi.Compiler
 			var @bool = Type.Boolean;
 			var @char = Type.Character;
 			var @type = Type.PsiType;
-			var @string = new ArrayType(Type.Character);
+			var @string = Type.String;
 
 			InitTypeSymbol(scope.Add(new SymbolName(TypeType.Instance, "void")), Type.Void);
 			InitTypeSymbol(scope.Add(new SymbolName(TypeType.Instance, "int")), Type.Integer);

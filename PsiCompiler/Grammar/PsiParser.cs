@@ -4,9 +4,9 @@
 
 // GPPG version 1.5.2
 // Machine:  denkplatte
-// DateTime: 12/16/2017 13:13:38
+// DateTime: 12/16/2017 19:23:04
 // UserName: felix
-// Input file <Psi.y - 12/16/2017 10:45:33>
+// Input file <Psi.y - 12/16/2017 14:57:48>
 
 // options: lines
 
@@ -1352,63 +1352,63 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
       case 111: // parameter -> prefix, identifier, COLON, type, IS, expression
 #line 539 "Psi.y"
    {
-				CurrentSemanticValue.Parameter = new Parameter((ParameterPrefix)ValueStack[ValueStack.Depth-6].ParameterPrefix, ValueStack[ValueStack.Depth-5].String, ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression);
+				CurrentSemanticValue.Parameter = new Parameter((Psi.Runtime.ParameterFlags)ValueStack[ValueStack.Depth-6].ParameterPrefix, ValueStack[ValueStack.Depth-5].String, ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression);
 			}
 #line default
         break;
       case 112: // parameter -> prefix, identifier, IS, expression
 #line 543 "Psi.y"
    {
-				CurrentSemanticValue.Parameter = new Parameter((ParameterPrefix)ValueStack[ValueStack.Depth-4].ParameterPrefix, ValueStack[ValueStack.Depth-3].String, Undefined, ValueStack[ValueStack.Depth-1].Expression);
+				CurrentSemanticValue.Parameter = new Parameter((Psi.Runtime.ParameterFlags)ValueStack[ValueStack.Depth-4].ParameterPrefix, ValueStack[ValueStack.Depth-3].String, Undefined, ValueStack[ValueStack.Depth-1].Expression);
 			}
 #line default
         break;
       case 113: // parameter -> prefix, identifier, COLON, type
 #line 547 "Psi.y"
    {
-				CurrentSemanticValue.Parameter = new Parameter((ParameterPrefix)ValueStack[ValueStack.Depth-4].ParameterPrefix, ValueStack[ValueStack.Depth-3].String, ValueStack[ValueStack.Depth-1].Expression, null);
+				CurrentSemanticValue.Parameter = new Parameter((Psi.Runtime.ParameterFlags)ValueStack[ValueStack.Depth-4].ParameterPrefix, ValueStack[ValueStack.Depth-3].String, ValueStack[ValueStack.Depth-1].Expression, null);
 			}
 #line default
         break;
       case 114: // prefix -> /* empty */
 #line 553 "Psi.y"
    {
-				CurrentSemanticValue.ParameterPrefix = ParameterPrefix.None;
+				CurrentSemanticValue.ParameterPrefix = Psi.Runtime.ParameterFlags.None;
 			}
 #line default
         break;
       case 115: // prefix -> prefix, IN
 #line 557 "Psi.y"
    {
-				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | ParameterPrefix.In;
+				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | Psi.Runtime.ParameterFlags.In;
 			}
 #line default
         break;
       case 116: // prefix -> prefix, OUT
 #line 561 "Psi.y"
    {
-				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | ParameterPrefix.Out;
+				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | Psi.Runtime.ParameterFlags.Out;
 			}
 #line default
         break;
       case 117: // prefix -> prefix, INOUT
 #line 565 "Psi.y"
    {
-				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | ParameterPrefix.InOut;
+				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | Psi.Runtime.ParameterFlags.InOut;
 			}
 #line default
         break;
       case 118: // prefix -> prefix, THIS
 #line 569 "Psi.y"
    {
-				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | ParameterPrefix.This;
+				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | Psi.Runtime.ParameterFlags.This;
 			}
 #line default
         break;
       case 119: // prefix -> prefix, LAZY
 #line 573 "Psi.y"
    {
-				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | ParameterPrefix.Lazy;
+				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | Psi.Runtime.ParameterFlags.Lazy;
 			}
 #line default
         break;

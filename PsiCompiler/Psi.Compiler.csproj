@@ -7,7 +7,7 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Psi.Compiler</RootNamespace>
     <AssemblyName>PsiCompiler</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -76,10 +76,15 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="PsiString.cs" />
-    <Compile Include="Intermediate\Scope.cs" />
-    <Compile Include="Intermediate\SymbolName.cs" />
-    <Compile Include="Intermediate\Symbol.cs" />
     <Compile Include="Intermediate\Translator.cs" />
+    <Compile Include="Resolvation\IResolvationResult.cs" />
+    <Compile Include="Resolvation\ResolvationContext.cs" />
+    <Compile Include="Resolvation\FunctionCall.cs" />
+    <Compile Include="Resolvation\SymbolReference.cs" />
+    <Compile Include="Resolvation\Literal.cs" />
+    <Compile Include="Resolvation\Scope.cs" />
+    <Compile Include="Resolvation\Symbol.cs" />
+    <Compile Include="Resolvation\SymbolName.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Grammar\Psi.tok" />
@@ -113,6 +118,7 @@
   <ItemGroup>
     <Folder Include="Backend\" />
     <Folder Include="Intermediate\" />
+    <Folder Include="Resolvation\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

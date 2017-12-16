@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <RootNamespace>Psi.Runtime</RootNamespace>
     <AssemblyName>Psi.Runtime</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -60,6 +60,10 @@
     <Compile Include="ValueReference.cs" />
     <Compile Include="ExecutionContext.cs" />
     <Compile Include="Values\IPrimitiveValue.cs" />
+    <Compile Include="Values\Real.cs" />
+    <Compile Include="Types\RealType.cs" />
+    <Compile Include="Types\IntegerType %28copy%29.cs" />
+    <Compile Include="Values\EnumItem.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Values\" />

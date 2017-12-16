@@ -1,4 +1,4 @@
-﻿namespace Psi.Compiler
+﻿namespace Psi.Compiler.Resolvation
 {
 	using Psi.Runtime;
 	

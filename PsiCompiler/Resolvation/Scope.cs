@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-namespace Psi.Compiler
+using System.Linq;
+
+namespace Psi.Compiler.Resolvation
 {
-	public class Scope : IReadOnlyDictionary<SymbolName, Symbol>
+	public class Scope : IReadOnlyCollection<Symbol>
 	{
 		private readonly Scope parent;
 		private readonly Dictionary<SymbolName,Symbol> symbols = new Dictionary<SymbolName, Symbol>();
@@ -41,38 +43,20 @@ namespace Psi.Compiler
 			}
 		}
 
-		public int Count
-		{
-			get
-			{
-				return symbols.Count;
-			}
-		}
-
-		public IEnumerable<SymbolName> Keys
-		{
-			get
-			{
-				return ((IReadOnlyDictionary<SymbolName, Symbol>)symbols).Keys;
-			}
-		}
-
-		public IEnumerable<Symbol> Values
-		{
-			get
-			{
-				return ((IReadOnlyDictionary<SymbolName, Symbol>)symbols).Values;
-			}
-		}
+		// Use the enumerator function for counting unique symbols with shadowing
+		public int Count => this.Count();
 
 		public bool ContainsKey(SymbolName key)
 		{
 			return symbols.ContainsKey(key);
 		}
 
-		public IEnumerator<KeyValuePair<SymbolName, Symbol>> GetEnumerator()
+		public IEnumerator<Symbol> GetEnumerator()
 		{
-			return ((IReadOnlyDictionary<SymbolName, Symbol>)symbols).GetEnumerator();
+			var result = (IEnumerable<Symbol>)this.symbols.Values;
+			if(this.parent != null)
+				result = result.Concat(this.parent.Where(sym => !this.symbols.ContainsKey(sym.Name)));
+			return result.GetEnumerator();
 		}
 
 		public bool TryGetValue(SymbolName key, out Symbol value)
@@ -85,9 +69,6 @@ namespace Psi.Compiler
 			return false;
 		}
 
-		IEnumerator IEnumerable.GetEnumerator()
-		{
-			return ((IReadOnlyDictionary<SymbolName, Symbol>)symbols).GetEnumerator();
-		}
+		IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 	}
 }

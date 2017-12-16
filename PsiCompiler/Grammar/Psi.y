@@ -537,41 +537,41 @@ paramlist   : paramlist COMMA parameter
 
 parameter   : prefix identifier COLON type IS expression
 			{
-				$$ = new Parameter((ParameterPrefix)$1, $2, $4, $6);
+				$$ = new Parameter((Psi.Runtime.ParameterFlags)$1, $2, $4, $6);
 			}
 			| prefix identifier IS expression
 			{
-				$$ = new Parameter((ParameterPrefix)$1, $2, Undefined, $4);
+				$$ = new Parameter((Psi.Runtime.ParameterFlags)$1, $2, Undefined, $4);
 			}
 			| prefix identifier COLON type
 			{
-				$$ = new Parameter((ParameterPrefix)$1, $2, $4, null);
+				$$ = new Parameter((Psi.Runtime.ParameterFlags)$1, $2, $4, null);
 			}
 			;
 
 prefix      : /* empty */
 			{
-				$$ = ParameterPrefix.None;
+				$$ = Psi.Runtime.ParameterFlags.None;
 			}
 			| prefix IN
 			{
-				$$ = $1 | ParameterPrefix.In;
+				$$ = $1 | Psi.Runtime.ParameterFlags.In;
 			}
 			| prefix OUT
 			{
-				$$ = $1 | ParameterPrefix.Out;
+				$$ = $1 | Psi.Runtime.ParameterFlags.Out;
 			}
 			| prefix INOUT
 			{
-				$$ = $1 | ParameterPrefix.InOut;
+				$$ = $1 | Psi.Runtime.ParameterFlags.InOut;
 			}
 			| prefix THIS
 			{
-				$$ = $1 | ParameterPrefix.This;
+				$$ = $1 | Psi.Runtime.ParameterFlags.This;
 			}
 			| prefix LAZY
 			{
-				$$ = $1 | ParameterPrefix.Lazy;
+				$$ = $1 | Psi.Runtime.ParameterFlags.Lazy;
 			}
 			;
 

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 namespace Psi.Compiler
 {
 	internal static class Extensions
@@ -36,6 +38,14 @@ namespace Psi.Compiler
 					throw new ArgumentNullException();
 			}
 			return value;
+		}
+		
+		public static int IndexOf<T>(this IReadOnlyList<T> list, T value)
+		{
+			for(int i = 0; i< list.Count; i++)
+				if(object.Equals(list[i], value))
+					return i;
+			return -1;
 		}
 	}
 }

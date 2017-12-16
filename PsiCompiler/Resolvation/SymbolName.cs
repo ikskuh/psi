@@ -1,4 +1,4 @@
-﻿namespace Psi.Compiler
+﻿namespace Psi.Compiler.Resolvation
 {
 	using System;
 	using Psi.Runtime;
@@ -17,7 +17,7 @@
 			this.id = id;
 		}
 		
-		public SymbolName(Type type, PsiOperator op) : this(type, "operator '" + Grammar.Converter.ToString(op) + "'")
+		public SymbolName(Type type, PsiOperator op) : this(type, op.ToSymbolName())
 		{
 			
 		}
@@ -39,5 +39,10 @@
 		public string ID => this.id;
 
 		public Type Type => this.type;
+	}
+	
+	public static class SymbolExtensions
+	{
+		public static string ToSymbolName(this PsiOperator op) => "operator '" + Grammar.Converter.ToString(op) + "'";
 	}
 }

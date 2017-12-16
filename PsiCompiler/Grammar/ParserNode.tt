@@ -24,7 +24,7 @@
 	list.Add("Argument", "Argument");
 	list.Add("List<Parameter>", "ParameterList");
 	list.Add("Parameter", "Parameter");
-	list.Add("ParameterPrefix?", "ParameterPrefix");
+	list.Add("Psi.Runtime.ParameterFlags?", "ParameterPrefix");
 	list.Add("FunctionTypeLiteral", "FunctionType");
 	list.Add("Statement", "Statement");
 	list.Add("List<Statement>", "StatementList");
@@ -37,7 +37,7 @@ using System;
 using System.Collections.Generic;
 using CompilerKit;
 
-namespace PsiCompiler.Grammar
+namespace Psi.Compiler.Grammar
 {
 	public struct ParserNode
 	{

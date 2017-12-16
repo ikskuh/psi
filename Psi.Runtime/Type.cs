@@ -11,8 +11,10 @@ namespace Psi.Runtime
 		public static Type Void => VoidType.Instance;
 		public static Type Boolean => BooleanType.Instance;
 		public static Type Integer => IntegerType.Instance;
+		public static Type Real => RealType.Instance;
 		public static Type Character => CharacterType.Instance;
 		public static Type PsiType => TypeType.Instance;
+		public static ArrayType String { get; } = new ArrayType(CharacterType.Instance);
 
 		public override bool Equals(object obj) => this.Equals(obj as Type);
 
