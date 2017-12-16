@@ -3,28 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Psi.Runtime;
+using Array = Psi.Runtime.Array;
+using Boolean = Psi.Runtime.Boolean;
 
 namespace Runtime
 {
-	/*
-    const set = fn(out dst : int, src : int) { dst = src; };
-
-    const main = fn()
-    {
-	    var i : int;
-	    set(i, 42);
-
-	    const print = fn() 
-	    {
-		    print("i = ");
-		    print(i);
-		    print("\n");
-	    };
-
-	    print();
-    };
-    */
-
 	class Program
 	{
 		void Run()
@@ -129,7 +113,7 @@ namespace Runtime
 			{
 				return new Boolean((args[0].Value as Integer) > (args[1].Value as Integer));
 			});
-			
+		
 			var literalMain = new Function(@main);
 		
 			var globals = new StorageContext(13);
@@ -157,95 +141,5 @@ namespace Runtime
 			var pgm = new Program();
 			pgm.Run();
 		}
-	}
-
-	public sealed class ExecutionContext
-	{
-		public ExecutionContext(StorageContext globals, StorageContext stackFrame, StorageContext creationFrame)
-		{
-			if(globals == null) throw new ArgumentNullException(nameof(globals));
-			if(stackFrame == null) throw new ArgumentNullException(nameof(stackFrame));
-			this.Globals = globals;
-			this.StackFrame = stackFrame;
-			this.CreationFrame = creationFrame;
-		}
-
-		public StorageContext Globals { get; }
-
-		public StorageContext StackFrame { get; }
-
-		public StorageContext CreationFrame { get; }
-		
-		public int? InstructionPointer { get; set; } = 0;
-	}
-
-
-	public abstract class ValueReference
-	{
-		protected ValueReference(bool isCopy)
-		{
-			this.IsCopy = isCopy;
-		}
-
-		public ValueStore Evaluate(ExecutionContext context)
-		{
-			var value = Extract(context);
-			if (IsCopy)
-				value = value.Clone();
-			return value;
-		}
-
-		protected abstract ValueStore Extract(ExecutionContext context);
-
-		public bool IsCopy { get; }
-	}
-
-	class GlobalReference : ValueReference
-	{
-		public GlobalReference(int index, bool isCopy) : base(isCopy)
-		{
-			this.Index = index;
-		}
-
-		protected override ValueStore Extract(ExecutionContext context) => context.Globals[Index];
-
-		public int Index { get; }
-
-		public override string ToString() => $"Global[{Index}]";
-	}
-
-	class StackFrameReference : ValueReference
-	{
-		public StackFrameReference(int index, bool isCopy) : base(isCopy)
-		{
-			this.Index = index;
-		}
-
-		protected override ValueStore Extract(ExecutionContext context) => context.StackFrame[Index];
-
-		public int Index { get; }
-
-		public override string ToString() => $"Global[{Index}]";
-	}
-
-	class CreationFrameReference : ValueReference
-	{
-		public CreationFrameReference(int index, bool isCopy) : base(isCopy)
-		{
-			this.Index = index;
-		}
-
-		protected override ValueStore Extract(ExecutionContext context) => context.CreationFrame[Index];
-
-		public int Index { get; }
-
-		public override string ToString() => $"Global[{Index}]";
-	}
-	
-	class NullReference : ValueReference
-	{
-		public NullReference() : base(false) { }
-		
-		protected override ValueStore Extract(ExecutionContext context) => ValueStore.Null;
 	}
 }

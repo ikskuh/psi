@@ -3,7 +3,7 @@ using CompilerKit;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace PsiCompiler.Grammar
+namespace Psi.Compiler.Grammar
 {
 	public abstract class Expression
 	{

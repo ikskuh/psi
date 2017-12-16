@@ -1,5 +1,5 @@
 ﻿using System;
-namespace PsiCompiler.Grammar
+namespace Psi.Compiler.Grammar
 {
     // Special statement: Can be stated outside of a block
 	public sealed class Assertion : Statement

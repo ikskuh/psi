@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace PsiCompiler.Grammar
+namespace Psi.Compiler.Grammar
 {
 	public sealed class Module
 	{		

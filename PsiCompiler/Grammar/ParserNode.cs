@@ -12,7 +12,7 @@ using System;
 using System.Collections.Generic;
 using CompilerKit;
 
-namespace PsiCompiler.Grammar
+namespace Psi.Compiler.Grammar
 {
 	public struct ParserNode
 	{

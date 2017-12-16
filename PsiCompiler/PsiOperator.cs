@@ -1,5 +1,5 @@
 ﻿using System;
-namespace PsiCompiler
+namespace Psi.Compiler
 {
 	public enum PsiOperator
 	{

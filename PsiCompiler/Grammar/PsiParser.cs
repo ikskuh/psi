@@ -4,9 +4,9 @@
 
 // GPPG version 1.5.2
 // Machine:  denkplatte
-// DateTime: 12/16/2017 00:43:52
+// DateTime: 12/16/2017 12:27:29
 // UserName: felix
-// Input file <Psi.y - 12/15/2017 01:53:24>
+// Input file <Psi.y - 12/16/2017 10:45:33>
 
 // options: lines
 
@@ -17,7 +17,7 @@ using System.Globalization;
 using System.Text;
 using QUT.Gppg;
 
-namespace PsiCompiler.Grammar
+namespace Psi.Compiler.Grammar
 {
 public enum PsiTokenType {error=2,EOF=3,CURLY_O=4,CURLY_C=5,ROUND_O=6,
     ROUND_C=7,SQUARE_O=8,SQUARE_C=9,IMPORT=10,EXPORT=11,MODULE=12,

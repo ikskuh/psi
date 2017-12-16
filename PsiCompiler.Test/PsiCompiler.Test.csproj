@@ -45,12 +45,6 @@
     <Compile Include="Parser\Expressions\Test_AST_FunctionCalls.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PsiCompiler\PsiCompiler.csproj">
-      <Project>{C3F22A9A-EDFD-489C-A722-B100B05A9602}</Project>
-      <Name>PsiCompiler</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="packages.config" />
     <None Include="Parser\Expressions\Test_AST_BinaryExpression.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -66,6 +60,16 @@
     <Folder Include="Parser\Expressions\" />
     <Folder Include="Parser\Statements\" />
     <Folder Include="Parser\Declarations\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\PsiCompiler\Psi.Compiler.csproj">
+      <Project>{C3F22A9A-EDFD-489C-A722-B100B05A9602}</Project>
+      <Name>Psi.Compiler</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Psi.Runtime\Psi.Runtime.csproj">
+      <Project>{2DE09E76-9796-420A-A350-C8B6C6CEC6EC}</Project>
+      <Name>Psi.Runtime</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

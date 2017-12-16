@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Runtime
+namespace Psi.Runtime
 {
 	public abstract class FunctionPrototype
 	{

@@ -1,8 +1,8 @@
 ﻿using System;
 using NUnit.Framework;
-using PsiCompiler.Grammar;
+using Psi.Compiler.Grammar;
 
-namespace PsiCompiler.Test
+namespace Psi.Compiler.Test
 {
 	[TestFixture]
 	public class Test_AST : Test_AST_Base

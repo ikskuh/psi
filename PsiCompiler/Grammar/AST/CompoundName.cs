@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace PsiCompiler
+namespace Psi.Compiler
 {
 	public sealed class CompoundName : IList<string>
 	{

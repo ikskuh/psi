@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Runtime
+namespace Psi.Runtime
 {
 	public sealed class StorageContext : IReadOnlyList<ValueStore>
 	{

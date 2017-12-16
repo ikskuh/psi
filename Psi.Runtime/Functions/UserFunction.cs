@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Collections.Generic;
-namespace Runtime
+namespace Psi.Runtime
 {
 	public sealed class UserFunction : FunctionPrototype
 	{

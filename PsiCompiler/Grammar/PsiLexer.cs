@@ -2,7 +2,7 @@
 using System.IO;
 using QUT.Gppg;
 
-namespace PsiCompiler.Grammar
+namespace Psi.Compiler.Grammar
 {
 	/*
 	 * Copied from GPPG documentation.

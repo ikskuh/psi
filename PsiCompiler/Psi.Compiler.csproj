@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProjectGuid>{C3F22A9A-EDFD-489C-A722-B100B05A9602}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>PsiCompiler</RootNamespace>
+    <RootNamespace>Psi.Compiler</RootNamespace>
     <AssemblyName>PsiCompiler</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
   </PropertyGroup>
@@ -44,9 +44,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.3.8.1\lib\net45\nunit.framework.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Grammar\AST\Statements.cs" />
@@ -79,6 +76,10 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="PsiString.cs" />
+    <Compile Include="Intermediate\Scope.cs" />
+    <Compile Include="Intermediate\SymbolName.cs" />
+    <Compile Include="Intermediate\Symbol.cs" />
+    <Compile Include="Intermediate\Translator.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Grammar\Psi.tok" />
@@ -91,7 +92,6 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ParserNode.cs</LastGenOutput>
     </None>
-    <None Include="packages.config" />
     <None Include="Grammar\TokenConverter.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>TokenConverter.cs</LastGenOutput>
@@ -105,6 +105,14 @@
       <Project>{8EC1C24B-1017-4AC1-BAD1-297EB992C2F5}</Project>
       <Name>CompilerKit</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Psi.Runtime\Psi.Runtime.csproj">
+      <Project>{2DE09E76-9796-420A-A350-C8B6C6CEC6EC}</Project>
+      <Name>Psi.Runtime</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Backend\" />
+    <Folder Include="Intermediate\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

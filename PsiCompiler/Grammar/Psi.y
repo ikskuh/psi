@@ -35,7 +35,7 @@
 // cheat mode activated :)
 %left UMINUS, UPLUS, UINVERT
 
-%namespace PsiCompiler.Grammar
+%namespace Psi.Compiler.Grammar
 
 %type <String> identifier opsym
 %type <Module> module program

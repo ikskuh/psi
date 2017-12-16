@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
-using PsiCompiler.Grammar;
+using Psi.Compiler.Grammar;
 
-namespace PsiCompiler.Test
+namespace Psi.Compiler.Test
 {
 	public abstract class Test_AST_Base
 	{

@@ -1,11 +1,11 @@
 ﻿﻿using System;
 using CompilerKit;
 
-namespace PsiCompiler.Grammar
+namespace Psi.Compiler.Grammar
 {
 	internal static class Converter
 	{
-		public static PsiOperator? ToOperator(Token<PsiTokenType> token)
+		public static PsiOperator? ToOperator(this Token<PsiTokenType> token)
 		{
 			switch(token.Type)
 			{
@@ -53,7 +53,7 @@ namespace PsiCompiler.Grammar
 			}
 		}
 		
-		public static string ToString(PsiOperator op)
+		public static string ToString(this PsiOperator op)
 		{
 			switch(op)
 			{

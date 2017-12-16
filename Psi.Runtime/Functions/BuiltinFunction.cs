@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-namespace Runtime
+namespace Psi.Runtime
 {
 	public delegate Value BuiltinFunctionImplementationDelegate(ValueStore[] args);
 

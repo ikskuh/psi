@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace PsiCompiler.Grammar
+namespace Psi.Compiler.Grammar
 {
     public abstract class Statement
     {

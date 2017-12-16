@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace PsiCompiler
+namespace Psi.Compiler
 {
 	public static class PsiString
 	{

@@ -3,7 +3,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using CompilerKit;
 
-namespace PsiCompiler.Grammar
+namespace Psi.Compiler.Grammar
 {
 		
 sealed partial class PsiTokenizer : Tokenizer<PsiTokenType>
