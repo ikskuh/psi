@@ -15,27 +15,44 @@ namespace Psi.Compiler
 			builtinScope = CreateBuiltins();
 		}
 
-		public Program Translate(params Psi.Compiler.Grammar.Module[] modules)
+		public Program Translate(Psi.Compiler.Grammar.Module module)
 		{
-			throw new NotImplementedException();
+			var root = builtinScope.CreateChild();
+			
+			// TODO: Implement "import" here
+			// module.Imports
+			
+			// TODO: Resolve submodules
+			// module.Submodules
+			
+			// TODO: Validate "assert" here
+			// module.Assertions
+			
+			
+			var pgm = new Program();
+			
+			return pgm;
 		}
 
 		static Scope CreateBuiltins()
 		{
 			var scope = new Scope();
+			
+			var @int = Type.Integer;
+			var @bool = Type.Boolean;
+			var @char = Type.Character;
+			var @type = Type.PsiType;
+			var @string = new ArrayType(Type.Character);
 
 			InitTypeSymbol(scope.Add(new SymbolName(TypeType.Instance, "void")), Type.Void);
 			InitTypeSymbol(scope.Add(new SymbolName(TypeType.Instance, "int")), Type.Integer);
 			InitTypeSymbol(scope.Add(new SymbolName(TypeType.Instance, "bool")), Type.Boolean);
 			InitTypeSymbol(scope.Add(new SymbolName(TypeType.Instance, "char")), Type.Character);
 			InitTypeSymbol(scope.Add(new SymbolName(TypeType.Instance, "type")), Type.PsiType);
-			InitTypeSymbol(scope.Add(new SymbolName(TypeType.Instance, "string")), new ArrayType(Type.Character));
+			InitTypeSymbol(scope.Add(new SymbolName(TypeType.Instance, "string")), @string);
 
 			// Initialize int API
 			{
-				var @int = Type.Integer;
-				var @bool = Type.Boolean;
-
 				var unaOpType = new FunctionType(@int, new Parameter("val", @int));
 				var binOpType = new FunctionType(@int, new Parameter("lhs", @int), new Parameter("rhs", @int));
 				var relOpType = new FunctionType(@bool, new Parameter("lhs", @int), new Parameter("rhs", @int));
@@ -140,8 +157,6 @@ namespace Psi.Compiler
 
 			// Initialize bool API
 			{
-				var @bool = Type.Boolean;
-
 				var unaOpType = new FunctionType(@bool, new Parameter("val", @bool));
 				var binOpType = new FunctionType(@bool, new Parameter("lhs", @bool), new Parameter("rhs", @bool));
 				var relOpType = binOpType;
@@ -186,8 +201,6 @@ namespace Psi.Compiler
 
 			// Initialize char API
 			{
-				var @char = Type.Character;
-				var @bool = Type.Boolean;
 
 				var unaOpType = new FunctionType(@char, new Parameter("val", @char));
 				var relOpType = new FunctionType(@bool, new Parameter("lhs", @char), new Parameter("rhs", @char));
@@ -226,11 +239,8 @@ namespace Psi.Compiler
 				}));
 			}
 			
-
 			// Initialize type API
 			{
-				var @type = Type.Integer;
-				var @bool = Type.Boolean;
 
 				var relOpType = new FunctionType(@bool, new Parameter("lhs", @type), new Parameter("rhs", @type));
 				var assOpType = new FunctionType(@type, new Parameter("dst", @type, ParameterFlags.Out), new Parameter("val", @type));
@@ -248,6 +258,32 @@ namespace Psi.Compiler
 				InitFunSymbol(scope, PsiOperator.CopyAssign, new BuiltinFunction(assOpType, (args) =>
 				{
 					args[0].Value = args[1].Value;
+					return null;
+				}));
+			}
+			
+			// Initialize basic I/O functions
+			{
+				InitFunSymbol(scope, "println", new BuiltinFunction(new FunctionType(), (args) => 
+				{
+					Console.WriteLine();
+					return null;
+				}));
+				InitFunSymbol(scope, "print", new BuiltinFunction(new FunctionType(new Parameter("val", @int)), (args) => 
+				{
+					Console.Write("{0}", (args[0].Value as Integer).Value);
+					return null;
+				}));
+				InitFunSymbol(scope, "print", new BuiltinFunction(new FunctionType(new Parameter("val", @char)), (args) => 
+				{
+					Console.Write("{0}", char.ConvertFromUtf32((args[0].Value as Character).Value));
+					return null;
+				}));
+				InitFunSymbol(scope, "print", new BuiltinFunction(new FunctionType(new Parameter("val", @string)), (args) => 
+				{
+					var value = args[0].Value as Runtime.Array;
+					var text = string.Join<string>("", value.Select(v => char.ConvertFromUtf32((v as Character).Value)));
+					Console.Write("{0}", text);
 					return null;
 				}));
 			}
