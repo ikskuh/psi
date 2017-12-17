@@ -62,7 +62,7 @@
     <Compile Include="Values\IPrimitiveValue.cs" />
     <Compile Include="Values\Real.cs" />
     <Compile Include="Types\RealType.cs" />
-    <Compile Include="Types\IntegerType %28copy%29.cs" />
+    <Compile Include="Types\EnumType.cs" />
     <Compile Include="Values\EnumItem.cs" />
   </ItemGroup>
   <ItemGroup>

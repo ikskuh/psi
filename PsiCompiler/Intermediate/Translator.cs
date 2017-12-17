@@ -1,6 +1,8 @@
 ﻿using System;
 using Psi.Runtime;
+using Psi.Compiler.Resolvation;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Psi.Compiler
 {
@@ -29,6 +31,35 @@ namespace Psi.Compiler
 			
 			// TODO: Validate "assert" here
 			// module.Assertions
+			
+			var modscope = root.CreateChild();
+			
+			var ctx = new ResolvationContext(modscope);
+			
+			var decls = new Queue<Grammar.Declaration>(module.Declarations);
+			
+			var 
+			
+			while(decls.Count > 0)
+			{
+				var decl = decls.Dequeue();
+				if(decl.Type == null)
+				{
+					var type = decl.Type.Resolve(ctx).SingleOrDefault();
+					if(type == null)
+					{
+						decls.Enqueue(decl);
+						continue;
+					}
+					if(type.IsEvaluatable == false)
+					{
+						decls.Enqueue(decl);
+						continue;
+					}
+					 type.Evaluate(null);
+				}
+				
+			}
 			
 			var pgm = new Program();
 			

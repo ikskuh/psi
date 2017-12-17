@@ -414,6 +414,26 @@ namespace Psi.Compiler.Grammar
 			this.Parameters = parameters.ToArray();
 			this.ReturnType = returnType;
 		}
+		
+		public override IEnumerable<IResolvationResult> Resolve(ResolvationContext ctx)
+		{
+			var paramlists = Permutate(this.Parameters.Select(p => p.Resolve(ctx).ToArray()).ToArray()).ToList();
+			var results = this.ReturnType.Resolve(ctx).Where(s => s.Type is TypeType).ToArray();
+			if(results.Length == 0 || paramlists.Count == 0)
+				yield break;
+			if(results.Length != 1)
+				throw new InvalidOperationException("Non-distinct return type!");
+			if(paramlists.Count != 1)
+				throw new InvalidOperationException("Non-distinct parameter list!");
+			
+			if(results[0].IsEvaluatable == false)
+				throw new InvalidOperationException("Non-static return type!");
+			
+			var eval = new ExecutionContext(null, null, null);
+			yield return new Literal(new TypeValue(new FunctionType(
+				((TypeValue)results[0].Evaluate(eval)).Value,
+				paramlists[0])));
+		}
 
 		public IReadOnlyList<Parameter> Parameters { get; }
 
@@ -430,6 +450,16 @@ namespace Psi.Compiler.Grammar
 			this.Name = name.NotNull();
 			this.Type = type;
 			this.Value = value;
+		}
+		
+		public IEnumerable<Psi.Runtime.Parameter> Resolve(ResolvationContext ctx)
+		{
+			var types = this.Type.Resolve(ctx).Where(p => p.Type is TypeType).ToArray();
+			if(this.Value != null)
+				throw new NotSupportedException("Default arguments are not supported yet!");
+			var eval = new ExecutionContext(null, null, null);
+			foreach(var p in types)
+				yield return new Psi.Runtime.Parameter(this.Name, ((TypeValue) types[0].Evaluate(eval)).Value);
 		}
 
 		public string Name { get; }
@@ -449,6 +479,11 @@ namespace Psi.Compiler.Grammar
 		{
 			this.Type = type;
 			this.Body = body;
+		}
+		
+		public override IEnumerable<IResolvationResult> Resolve(ResolvationContext ctx)
+		{
+			throw new NotImplementedException();
 		}
 
 		public FunctionTypeLiteral Type { get; }

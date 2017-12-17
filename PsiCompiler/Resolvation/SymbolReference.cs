@@ -20,5 +20,9 @@ namespace Psi.Compiler.Resolvation
 				throw new NotImplementedException();
 			}
 		}
+
+		public bool IsEvaluatable => this.Symbol.HasKnownValue;
+
+		public Value Evaluate(ExecutionContext ctx) => this.Symbol.KnownValue;
 	}
 }

@@ -14,5 +14,9 @@ namespace Psi.Compiler.Resolvation
 		public Value Value { get; }
 		
 		public Runtime.Type Type => this.Value.Type;
+
+		public bool IsEvaluatable => true;
+
+		public Value Evaluate(ExecutionContext ctx) => this.Value;
 	}
 }

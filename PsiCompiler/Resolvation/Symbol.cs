@@ -3,7 +3,7 @@
 	using Psi.Runtime;
 	
 	public sealed class Symbol
-	{	
+	{
 		public Symbol(SymbolName name, Scope scope)
 		{
 			this.Name = name;
@@ -21,5 +21,7 @@
 		public Psi.Runtime.Type Type => this.Name.Type;
 		
 		public Value KnownValue { get; set; }
+		
+		public bool HasKnownValue => (this.KnownValue != null);
 	}
 }

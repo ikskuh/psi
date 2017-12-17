@@ -26,6 +26,7 @@ namespace Psi.Runtime
 				globals,
 				stack,
 				this.CreationContext);
+			
 			this.Prototype.Execute(context);
 		}
 
@@ -34,6 +35,5 @@ namespace Psi.Runtime
 		public StorageContext CreationContext { get; }
 
 		public FunctionPrototype Prototype { get; }
-
 	}
 }

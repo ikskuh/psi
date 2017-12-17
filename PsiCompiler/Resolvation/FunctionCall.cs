@@ -20,5 +20,12 @@ namespace Psi.Compiler.Resolvation
 		public IReadOnlyList<IResolvationResult> Arguments { get; }
 		
 		public Runtime.Type Type => ((FunctionType)this.Function.Type).ReturnType;
+
+		public bool IsEvaluatable => this.Function.IsEvaluatable && this.Arguments.All(a => a.IsEvaluatable);
+
+		public Value Evaluate(ExecutionContext ctx)
+		{
+			throw new NotSupportedException();
+		}
 	}
 }
