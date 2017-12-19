@@ -10,5 +10,7 @@ namespace Psi.Runtime
 		public override bool Equals(Type other) => other is RealType;
 
 		public override int GetHashCode() => (0x08 << 24);
+		
+		public override string ToString() => "real";
 	}
 }

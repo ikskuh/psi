@@ -10,5 +10,7 @@ namespace Psi.Runtime
 		public override bool Equals(Type other) => other is TypeType;
 
 		public override int GetHashCode() => (0x07 << 24);
+		
+		public override string ToString() => "type";
 	}
 }

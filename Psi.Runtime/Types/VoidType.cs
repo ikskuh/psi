@@ -10,5 +10,7 @@ namespace Psi.Runtime
 		public override bool Equals(Type other) => other is VoidType;
 
 		public override int GetHashCode() => (0x06 << 24);
+		
+		public override string ToString() => "void";
 	}
 }

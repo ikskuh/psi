@@ -727,6 +727,7 @@ options     : /* empty */
 			;
 
 identifier  : IDENT
+			| TYPE
 			| OPERATOR META opsym META
 			;
 

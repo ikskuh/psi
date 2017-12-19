@@ -28,5 +28,7 @@ namespace Psi.Runtime
 		public Type ElementType { get; }
 
 		public int Dimensions { get; }
+		
+		public override string ToString() => $"array<{ElementType},{Dimensions}>";
 	}
 }

@@ -37,6 +37,9 @@ namespace Psi.Runtime
 		public IReadOnlyList<Parameter> Parameters { get; }
 
 		public Type ReturnType { get; }
+		
+		
+		public override string ToString() => $"fn({string.Join(", ", Parameters)}) -> {ReturnType}";
 	}
 
 	public sealed class Parameter : IEquatable<Parameter>

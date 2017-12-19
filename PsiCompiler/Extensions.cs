@@ -66,12 +66,15 @@ namespace Psi.Compiler
 				yield return items.Select((x, i) => x[counters[i]]).ToArray();
 
 				counters[index]++;
-				if (counters[index] >= items[index].Length)
+				while (counters[index] >= items[index].Length)
 				{
+					if(counters[last] >= items[last].Length)
+						yield break;
 					counters[index] = 0;
 					index++;
 					if (index >= counters.Length)
 						index = 0;
+					counters[index]++;
 				}
 			}
 		}

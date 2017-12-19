@@ -10,5 +10,7 @@ namespace Psi.Runtime
 		public override bool Equals(Type other) => other is CharacterType;
 
 		public override int GetHashCode() => (0x03 << 24);
+		
+		public override string ToString() => "char";
 	}
 }

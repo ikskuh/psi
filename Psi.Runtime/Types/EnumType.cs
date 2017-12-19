@@ -25,5 +25,7 @@ namespace Psi.Runtime
 		}
 
 		public override int GetHashCode() => (0x02 << 24) | (0xFFFFFF & this.items.Select(i => i.GetHashCode()).Aggregate(0, (a, b) => a ^ b));
+		
+		public override string ToString() => $"enum({string.Join(", ", Items)})";
 	}
 }

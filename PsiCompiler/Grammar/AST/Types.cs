@@ -80,11 +80,12 @@ namespace Psi.Compiler.Grammar
 			if (paramlists.Count != 1)
 				throw new InvalidOperationException("Non-distinct parameter list!");
 
-			var eval = new ExecutionContext(null, null, null);
-			return new[]{ new FunctionType(
-				results[0],
-				paramlists[0])
-				};
+			return new[]
+			{
+				new FunctionType(
+					results[0],
+					paramlists[0])
+			};
 		}
 
 		public IReadOnlyList<Parameter> Parameters { get; }
@@ -109,7 +110,6 @@ namespace Psi.Compiler.Grammar
 			var types = this.Type.Resolve(ctx).ToArray();
 			if (this.Value != null)
 				throw new NotSupportedException("Default arguments are not supported yet!");
-			var eval = new ExecutionContext(null, null, null);
 			foreach (var type in types)
 				yield return new Psi.Runtime.Parameter(this.Name, type);
 		}
@@ -184,6 +184,12 @@ namespace Psi.Compiler.Grammar
 				throw new ArgumentOutOfRangeException(nameof(dimensions));
 			this.Dimensions = dimensions;
 			this.ObjectType = objectType.NotNull();
+		}
+
+		public override IEnumerable<Type> Resolve(ResolvationContext ctx)
+		{
+			foreach(var elem in this.ObjectType.Resolve(ctx))
+				yield return new ArrayType(elem, this.Dimensions);
 		}
 
 		public AstType ObjectType { get; }

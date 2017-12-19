@@ -2,7 +2,7 @@
  * Compiler Test Program                                                     *
  *****************************************************************************/
 
-
+// tests dependencies
 type bam = bar;
 
 type baz = bam;
@@ -10,6 +10,13 @@ type baz = bam;
 type foo = int;
 
 type bar = foo;
+
+// tests different types
+type genders = enum(none,male,female,ah64);
+
+type mainFunc = fn(argc : int, argv : array<string>) -> int;
+
+type someType = type;
 
 /*
 // Tests out params
