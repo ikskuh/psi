@@ -69,8 +69,8 @@ namespace Psi.Compiler.Test
 			Assert.NotNull(decl.Type);
 			Assert.IsNull(decl.Value);
 
-			Assert.IsInstanceOf(typeof(VariableReference), decl.Type);
-			Assert.AreEqual("string", ((VariableReference)decl.Type).Variable);
+			Assert.IsInstanceOf(typeof(NamedTypeLiteral), decl.Type);
+			Assert.AreEqual("string", ((NamedTypeLiteral)decl.Type).Name.ToString());
 		}
 
 		[Test]
@@ -86,8 +86,8 @@ namespace Psi.Compiler.Test
 			Assert.NotNull(decl.Type);
 			Assert.IsNull(decl.Value);
 
-			Assert.IsInstanceOf(typeof(VariableReference), decl.Type);
-			Assert.AreEqual("string", ((VariableReference)decl.Type).Variable);
+			Assert.IsInstanceOf(typeof(NamedTypeLiteral), decl.Type);
+			Assert.AreEqual("string", ((NamedTypeLiteral)decl.Type).Name.ToString());
 		}
 
 		[Test]
@@ -106,8 +106,8 @@ namespace Psi.Compiler.Test
 			Assert.IsInstanceOf(typeof(NumberLiteral), decl.Value);
 			Assert.AreEqual("10", ((NumberLiteral)decl.Value).Value);
 
-			Assert.IsInstanceOf(typeof(VariableReference), decl.Type);
-			Assert.AreEqual("string", ((VariableReference)decl.Type).Variable);
+			Assert.IsInstanceOf(typeof(NamedTypeLiteral), decl.Type);
+			Assert.AreEqual("string", ((NamedTypeLiteral)decl.Type).Name.ToString());
 		}
 
 		[Test]
@@ -126,8 +126,8 @@ namespace Psi.Compiler.Test
 			Assert.IsInstanceOf(typeof(NumberLiteral), decl.Value);
 			Assert.AreEqual("10", ((NumberLiteral)decl.Value).Value);
 
-			Assert.IsInstanceOf(typeof(VariableReference), decl.Type);
-			Assert.AreEqual("string", ((VariableReference)decl.Type).Variable);
+			Assert.IsInstanceOf(typeof(NamedTypeLiteral), decl.Type);
+			Assert.AreEqual("string", ((NamedTypeLiteral)decl.Type).Name.ToString());
 		}
 
 		[Test]
@@ -177,8 +177,8 @@ namespace Psi.Compiler.Test
 			Assert.NotNull(decl.Type);
 			Assert.IsNull(decl.Value);
 
-			Assert.IsInstanceOf(typeof(VariableReference), decl.Type);
-			Assert.AreEqual("string", ((VariableReference)decl.Type).Variable);
+			Assert.IsInstanceOf(typeof(NamedTypeLiteral), decl.Type);
+			Assert.AreEqual("string", ((NamedTypeLiteral)decl.Type).Name.ToString());
 		}
 
 		[Test]
@@ -194,8 +194,8 @@ namespace Psi.Compiler.Test
 			Assert.NotNull(decl.Type);
 			Assert.IsNull(decl.Value);
 
-			Assert.IsInstanceOf(typeof(VariableReference), decl.Type);
-			Assert.AreEqual("string", ((VariableReference)decl.Type).Variable);
+			Assert.IsInstanceOf(typeof(NamedTypeLiteral), decl.Type);
+			Assert.AreEqual("string", ((NamedTypeLiteral)decl.Type).Name.ToString());
 		}
 
 		[Test]
@@ -214,8 +214,8 @@ namespace Psi.Compiler.Test
 			Assert.IsInstanceOf(typeof(NumberLiteral), decl.Value);
 			Assert.AreEqual("10", ((NumberLiteral)decl.Value).Value);
 
-			Assert.IsInstanceOf(typeof(VariableReference), decl.Type);
-			Assert.AreEqual("string", ((VariableReference)decl.Type).Variable);
+			Assert.IsInstanceOf(typeof(NamedTypeLiteral), decl.Type);
+			Assert.AreEqual("string", ((NamedTypeLiteral)decl.Type).Name.ToString());
 		}
 
 		[Test]
@@ -234,8 +234,8 @@ namespace Psi.Compiler.Test
 			Assert.IsInstanceOf(typeof(NumberLiteral), decl.Value);
 			Assert.AreEqual("10", ((NumberLiteral)decl.Value).Value);
 
-			Assert.IsInstanceOf(typeof(VariableReference), decl.Type);
-			Assert.AreEqual("string", ((VariableReference)decl.Type).Variable);
+			Assert.IsInstanceOf(typeof(NamedTypeLiteral), decl.Type);
+			Assert.AreEqual("string", ((NamedTypeLiteral)decl.Type).Name.ToString());
 		}
 
 

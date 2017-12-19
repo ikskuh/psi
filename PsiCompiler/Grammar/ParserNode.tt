@@ -12,10 +12,12 @@
 	
 	list.Add("Token<PsiTokenType>", "Token");
 	list.Add("Expression", "Expression");
+	list.Add("AstType", "AstType");
 	list.Add("Module", "Module");
 	list.Add("Assertion", "Assertion");
 	list.Add("CompoundName", "Name");
 	list.Add("Declaration", "Declaration");
+	list.Add("TypeDeclaration", "TypeDeclaration");
 	list.Add("bool?", "Boolean");
 	list.Add("PsiOperator?", "Operator");
 	list.Add("string", "String");

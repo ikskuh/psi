@@ -22,6 +22,12 @@ namespace Psi.Compiler.Grammar
 			this.Declarations.Add(value);
 			return this;
 		}
+		
+		public Module Add(TypeDeclaration value)
+		{
+			this.TypeDeclarations.Add(value);
+			return this;
+		}
 
 		public Module Add(CompoundName value)
 		{
@@ -34,6 +40,8 @@ namespace Psi.Compiler.Grammar
 		public IList<Assertion> Assertions { get; } = new List<Assertion>();
 		
 		public IList<Declaration> Declarations { get; } = new List<Declaration>();
+		
+		public IList<TypeDeclaration> TypeDeclarations { get; } = new List<TypeDeclaration>();
 		
 		public IList<Module> Submodules { get; } = new List<Module>();
 		

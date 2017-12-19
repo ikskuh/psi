@@ -41,9 +41,11 @@
 %type <Module> module program
 %type <Name> modname import
 %type <Assertion> assertion
-%type <Expression> type expression expr_or expr_xor expr_and equality comparison expr_arrows sum term expo shifting unary value
+%type <AstType> type
+%type <Expression> expression expr_or expr_xor expr_and equality comparison expr_arrows sum term expo shifting unary value
 %type <ExpressionList> exprlist
-%type <Declaration> declaration typedecl vardecl field
+%type <Declaration> declaration vardecl field
+%type <TypeDeclaration> typedecl
 %type <Boolean> export storage
 %type <ArgumentList> arglist
 %type <Argument> argument
@@ -62,6 +64,7 @@
 program     : /* empty */         { $$ = new Module(); }
             | program assertion   { $$ = $1.Add($2); }
             | program declaration { $$ = $1.Add($2); }
+            | program typedecl    { $$ = $1.Add($2); }
             | program module      { $$ = $1.Add($2); }
             | program import      { $$ = $1.Add($2); }
             ;
@@ -96,22 +99,17 @@ modname     : identifier
         	}
             ;
 
-declaration : export typedecl
-			{
-            	$$ = $2;
-            	$$.IsExported = (bool)$1;
-            }
-            | export vardecl
+declaration : export vardecl
 			{
             	$$ = $2;
             	$$.IsExported = (bool)$1;
             }
             ;
             
-typedecl    : TYPE identifier IS expression TERMINATOR
+typedecl    : export TYPE identifier IS type TERMINATOR
 			{
-            	$$ = new Declaration($2, TypeDeclaration, $4);
-            	$$.IsConst = true;
+            	$$ = new TypeDeclaration($3, $5);
+            	$$.IsExported = $1 ?? false;
             }
             ;
 
@@ -132,10 +130,38 @@ vardecl     : storage identifier COLON type terminator
             }
             ;
             
-type        : value
+type        : ENUM ROUND_O idlist ROUND_C
+			{
+				$$ = new EnumTypeLiteral($3);
+			}
+			| ENUM LESS type MORE ROUND_O fieldlist ROUND_C
+			{
+				$$ = new TypedEnumTypeLiteral($3, $6);
+			}
+			| REF LESS type MORE
+			{
+				$$ = new ReferenceTypeLiteral($3);
+			}
+			| RECORD ROUND_O fieldlist ROUND_C
+			{
+				$$ = new RecordTypeLiteral($3);
+			}
+			| ARRAY LESS type MORE
+			{
+				$$ = new ArrayTypeLiteral($3, 1);
+			}
+			| ARRAY LESS type COMMA NUMBER MORE
+			{
+				$$ = new ArrayTypeLiteral($3, int.Parse($5));
+			}
+			| functiontype
 			{
 				$$ = $1;
 			}
+            | modname
+			{
+            	$$ = new NamedTypeLiteral($1);
+            }
 			;
 
 terminator  : /* optional */
@@ -389,30 +415,6 @@ value       : value DOT identifier
 			{
 				$$ = ApplyMeta($1, $3);
 			}
-			| ENUM ROUND_O idlist ROUND_C
-			{
-				$$ = new EnumTypeLiteral($3);
-			}
-			| ENUM LESS type MORE ROUND_O fieldlist ROUND_C
-			{
-				$$ = new TypedEnumTypeLiteral($3, $6);
-			}
-			| REF LESS type MORE
-			{
-				$$ = new ReferenceTypeLiteral($3);
-			}
-			| RECORD ROUND_O fieldlist ROUND_C
-			{
-				$$ = new RecordTypeLiteral($3);
-			}
-			| ARRAY LESS type MORE
-			{
-				$$ = new ArrayTypeLiteral($3, 1);
-			}
-			| ARRAY LESS type COMMA NUMBER MORE
-			{
-				$$ = new ArrayTypeLiteral($3, int.Parse($5));
-			}
 			| value SQUARE_O exprlist SQUARE_C
 			{
 				$$ = new ArrayIndexingExpression($1, $3);
@@ -437,10 +439,6 @@ value       : value DOT identifier
 			{
             	$$ = new VariableReference($1);
             }
-			| functiontype
-			{
-				$$ = $1;
-			}
 			| functiontype block
 			{
 				$$ = new FunctionLiteral($1, $2);
@@ -634,6 +632,10 @@ statement   : declaration
 			{
 				$$ = $1;
 			}
+			| typedecl
+			{
+				$$ = $1;
+			}
 			| assertion
 			{
 				$$ = $1;
@@ -774,9 +776,9 @@ public Module Result => this.CurrentSemanticValue.Module;
 
 public static Expression TypeDeclaration { get; } = new VariableReference("<type>");
 
-public static Expression Undefined { get; } = new VariableReference("<?>");
+public static AstType Undefined { get; } = new LiteralType(null);
 
-public static Expression Void { get; } = new VariableReference("<void>");
+public static AstType Void { get; } = new LiteralType(Psi.Runtime.Type.Void);
 
 private static Expression Apply(Expression lhs, Expression rhs, PsiOperator op)
 {

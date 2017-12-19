@@ -8,10 +8,12 @@ namespace Psi.Compiler.Grammar
 	{
 		private Token<PsiTokenType> _Token;
 		private Expression _Expression;
+		private AstType _AstType;
 		private Module _Module;
 		private Assertion _Assertion;
 		private CompoundName _Name;
 		private Declaration _Declaration;
+		private TypeDeclaration _TypeDeclaration;
 		private bool? _Boolean;
 		private PsiOperator? _Operator;
 		private string _String;
@@ -33,10 +35,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = value.NotNull();
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -59,10 +63,40 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = value.NotNull();
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+			this._String = null;
+			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
+			this._Statement = null;
+			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
+		}
+		
+		public ParserNode(AstType value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._AstType = value.NotNull();
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -85,10 +119,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = value.NotNull();
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -111,10 +147,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = value.NotNull();
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -137,10 +175,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = value.NotNull();
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -163,10 +203,40 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = value.NotNull();
+			this._TypeDeclaration = null;
+			this._Boolean = null;
+			this._Operator = null;
+			this._String = null;
+			this._ExpressionList = null;
+			this._ArgumentList = null;
+			this._Argument = null;
+			this._ParameterList = null;
+			this._Parameter = null;
+			this._ParameterPrefix = null;
+			this._FunctionType = null;
+			this._Statement = null;
+			this._StatementList = null;
+			this._StringList = null;
+			this._FieldList = null;
+			this._SelectOption = null;
+			this._SelectOptions = null;
+		}
+		
+		public ParserNode(TypeDeclaration value)
+		{
+			this._Token = null;
+			this._Expression = null;
+			this._AstType = null;
+			this._Module = null;
+			this._Assertion = null;
+			this._Name = null;
+			this._Declaration = null;
+			this._TypeDeclaration = value.NotNull();
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -189,10 +259,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = value.NotNull();
 			this._Operator = null;
 			this._String = null;
@@ -215,10 +287,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = value.NotNull();
 			this._String = null;
@@ -241,10 +315,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = value.NotNull();
@@ -267,10 +343,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -293,10 +371,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -319,10 +399,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -345,10 +427,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -371,10 +455,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -397,10 +483,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -423,10 +511,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -449,10 +539,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -475,10 +567,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -501,10 +595,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -527,10 +623,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -553,10 +651,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -579,10 +679,12 @@ namespace Psi.Compiler.Grammar
 		{
 			this._Token = null;
 			this._Expression = null;
+			this._AstType = null;
 			this._Module = null;
 			this._Assertion = null;
 			this._Name = null;
 			this._Declaration = null;
+			this._TypeDeclaration = null;
 			this._Boolean = null;
 			this._Operator = null;
 			this._String = null;
@@ -613,10 +715,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = value;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -648,10 +752,49 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = value;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+				this._String = null;
+				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
+				this._Statement = null;
+				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
+			}
+		}
+		
+		public AstType AstType
+		{
+			get
+			{
+				if(this._AstType == null)
+					throw new InvalidOperationException("ParserNode is not a AstType");
+				return this._AstType;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._AstType = value;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -683,10 +826,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = value;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -718,10 +863,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = value;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -753,10 +900,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = value;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -788,10 +937,49 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = value;
+				this._TypeDeclaration = null;
+				this._Boolean = null;
+				this._Operator = null;
+				this._String = null;
+				this._ExpressionList = null;
+				this._ArgumentList = null;
+				this._Argument = null;
+				this._ParameterList = null;
+				this._Parameter = null;
+				this._ParameterPrefix = null;
+				this._FunctionType = null;
+				this._Statement = null;
+				this._StatementList = null;
+				this._StringList = null;
+				this._FieldList = null;
+				this._SelectOption = null;
+				this._SelectOptions = null;
+			}
+		}
+		
+		public TypeDeclaration TypeDeclaration
+		{
+			get
+			{
+				if(this._TypeDeclaration == null)
+					throw new InvalidOperationException("ParserNode is not a TypeDeclaration");
+				return this._TypeDeclaration;
+			}
+			set
+			{
+				this._Token = null;
+				this._Expression = null;
+				this._AstType = null;
+				this._Module = null;
+				this._Assertion = null;
+				this._Name = null;
+				this._Declaration = null;
+				this._TypeDeclaration = value;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -823,10 +1011,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = value;
 				this._Operator = null;
 				this._String = null;
@@ -858,10 +1048,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = value;
 				this._String = null;
@@ -893,10 +1085,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = value;
@@ -928,10 +1122,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -963,10 +1159,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -998,10 +1196,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -1033,10 +1233,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -1068,10 +1270,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -1103,10 +1307,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -1138,10 +1344,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -1173,10 +1381,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -1208,10 +1418,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -1243,10 +1455,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -1278,10 +1492,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -1313,10 +1529,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -1348,10 +1566,12 @@ namespace Psi.Compiler.Grammar
 			{
 				this._Token = null;
 				this._Expression = null;
+				this._AstType = null;
 				this._Module = null;
 				this._Assertion = null;
 				this._Name = null;
 				this._Declaration = null;
+				this._TypeDeclaration = null;
 				this._Boolean = null;
 				this._Operator = null;
 				this._String = null;
@@ -1375,6 +1595,8 @@ namespace Psi.Compiler.Grammar
 		
 		public static implicit operator ParserNode(Expression value) => new ParserNode(value);
 		
+		public static implicit operator ParserNode(AstType value) => new ParserNode(value);
+		
 		public static implicit operator ParserNode(Module value) => new ParserNode(value);
 		
 		public static implicit operator ParserNode(Assertion value) => new ParserNode(value);
@@ -1382,6 +1604,8 @@ namespace Psi.Compiler.Grammar
 		public static implicit operator ParserNode(CompoundName value) => new ParserNode(value);
 		
 		public static implicit operator ParserNode(Declaration value) => new ParserNode(value);
+		
+		public static implicit operator ParserNode(TypeDeclaration value) => new ParserNode(value);
 		
 		public static implicit operator ParserNode(bool? value) => new ParserNode(value);
 		
@@ -1421,6 +1645,8 @@ namespace Psi.Compiler.Grammar
 				return "Node(Token): " + _Token.ToString();
 			if(this._Expression != null)
 				return "Node(Expression): " + _Expression.ToString();
+			if(this._AstType != null)
+				return "Node(AstType): " + _AstType.ToString();
 			if(this._Module != null)
 				return "Node(Module): " + _Module.ToString();
 			if(this._Assertion != null)
@@ -1429,6 +1655,8 @@ namespace Psi.Compiler.Grammar
 				return "Node(Name): " + _Name.ToString();
 			if(this._Declaration != null)
 				return "Node(Declaration): " + _Declaration.ToString();
+			if(this._TypeDeclaration != null)
+				return "Node(TypeDeclaration): " + _TypeDeclaration.ToString();
 			if(this._Boolean != null)
 				return "Node(Boolean): " + _Boolean.ToString();
 			if(this._Operator != null)

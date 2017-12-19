@@ -2,9 +2,9 @@
 {
 	using Psi.Runtime;
 	
-	public sealed class Symbol
+	public sealed class Symbol : INamedObject<SymbolName>
 	{
-		public Symbol(SymbolName name, Scope scope)
+		public Symbol(SymbolName name, Scope<SymbolName,Symbol> scope)
 		{
 			this.Name = name;
 			this.Scope = scope;
@@ -12,7 +12,7 @@
 		
 		public SymbolName Name { get; }
 		
-		public Scope Scope { get; }
+		public Scope<SymbolName,Symbol> Scope { get; }
 		
 		public bool IsConst { get; set; }
 		

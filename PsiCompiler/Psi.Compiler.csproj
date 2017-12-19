@@ -85,6 +85,8 @@
     <Compile Include="Resolvation\Scope.cs" />
     <Compile Include="Resolvation\Symbol.cs" />
     <Compile Include="Resolvation\SymbolName.cs" />
+    <Compile Include="Grammar\AST\Types.cs" />
+    <Compile Include="Resolvation\TypeSymbol.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Grammar\Psi.tok" />

@@ -22,6 +22,10 @@ namespace Psi.Compiler
 			{
 				this.Print(sub, indent + "\t");
 			}
+			foreach (var decl in module.TypeDeclarations)
+			{
+				this.Print(decl, indent + "\t");
+			}
 			foreach (var decl in module.Declarations)
 			{
 				this.Print(decl, indent + "\t");
@@ -61,10 +65,29 @@ namespace Psi.Compiler
 			}
 			writer.WriteLine();
 		}
+		
+		
+		private void Print(TypeDeclaration decl, string indent)
+		{
+			writer.Write(
+				"{0}{1}type {2}", 
+				indent, 
+				decl.IsExported ? "export " : "",
+				decl.Name);
+			writer.Write(" = ");
+			this.Print(decl.Type);
+			writer.Write(";");
+			writer.WriteLine();
+		}
 
 		private void Print(Expression exp)
 		{
 			writer.Write("{0}", exp);
+		}
+		
+		private void Print(AstType t)
+		{
+			writer.Write("{0}", t);
 		}
 	}
 }

@@ -18,8 +18,8 @@ namespace Psi.Compiler.Test
 		[Test]
 		public void SingleEnumTypeLiteral()
 		{
-			var module = Load("const name = enum(a);");
-			var expression = module.Declarations[0].Value;
+			var module = Load("type name = enum(a);");
+			var expression = module.TypeDeclarations[0].Type;
 
 			Assert.IsInstanceOf(typeof(EnumTypeLiteral), expression);
 			var val = (EnumTypeLiteral)expression;
@@ -32,8 +32,8 @@ namespace Psi.Compiler.Test
 		[Test]
 		public void MultipleEnumTypeLiteral()
 		{
-			var module = Load("const name = enum(a,b,c);");
-			var expression = module.Declarations[0].Value;
+			var module = Load("type name = enum(a,b,c);");
+			var expression = module.TypeDeclarations[0].Type;
 
 			Assert.IsInstanceOf(typeof(EnumTypeLiteral), expression);
 			var val = (EnumTypeLiteral)expression;
@@ -48,15 +48,15 @@ namespace Psi.Compiler.Test
 		[Test]
 		public void EmptyRecordTypeLiteral()
 		{
-			var module = Load("const name = record();");
+			var module = Load("type name = record();");
 			Assert.IsNull(module);
 		}
 		
 		[Test]
 		public void SingleRecordTypeLiteral()
 		{
-			var module = Load("const name = record(a : int);");
-			var expression = module.Declarations[0].Value;
+			var module = Load("type name = record(a : int);");
+			var expression = module.TypeDeclarations[0].Type;
 
 			Assert.IsInstanceOf(typeof(RecordTypeLiteral), expression);
 			var val = (RecordTypeLiteral)expression;
@@ -74,8 +74,8 @@ namespace Psi.Compiler.Test
 
 			Assert.AreEqual(field.Name, "a");
 			
-			Assert.IsInstanceOf(typeof(VariableReference), field.Type);
-			Assert.AreEqual("int", ((VariableReference)field.Type).Variable);
+			Assert.IsInstanceOf(typeof(NamedTypeLiteral), field.Type);
+			Assert.AreEqual("int", ((NamedTypeLiteral)field.Type).Name.ToString());
 			
 			Assert.IsNull(field.Value);
 		}
@@ -83,8 +83,8 @@ namespace Psi.Compiler.Test
 		[Test]
 		public void MultipleRecordTypeLiteral()
 		{
-			var module = Load("const name = record(a : int, b : string);");
-			var expression = module.Declarations[0].Value;
+			var module = Load("type name = record(a : int, b : string);");
+			var expression = module.TypeDeclarations[0].Type;
 
 			Assert.IsInstanceOf(typeof(RecordTypeLiteral), expression);
 			var val = (RecordTypeLiteral)expression;
@@ -99,8 +99,8 @@ namespace Psi.Compiler.Test
 		[Test]
 		public void DefaultValueRecordTypeLiteral()
 		{
-			var module = Load("const name = record(a = 10);");
-			var expression = module.Declarations[0].Value;
+			var module = Load("type name = record(a = 10);");
+			var expression = module.TypeDeclarations[0].Type;
 
 			Assert.IsInstanceOf(typeof(RecordTypeLiteral), expression);
 			var val = (RecordTypeLiteral)expression;
@@ -120,8 +120,8 @@ namespace Psi.Compiler.Test
 		[Test]
 		public void TypedDefaultValueRecordTypeLiteral()
 		{
-			var module = Load("const name = record(a : int = 10);");
-			var expression = module.Declarations[0].Value;
+			var module = Load("type name = record(a : int = 10);");
+			var expression = module.TypeDeclarations[0].Type;
 
 			Assert.IsInstanceOf(typeof(RecordTypeLiteral), expression);
 			var val = (RecordTypeLiteral)expression;
@@ -135,8 +135,8 @@ namespace Psi.Compiler.Test
 
 			Assert.AreEqual(field.Name, "a");
 			
-			Assert.IsInstanceOf(typeof(VariableReference), field.Type);
-			Assert.AreEqual("int", ((VariableReference)field.Type).Variable);
+			Assert.IsInstanceOf(typeof(NamedTypeLiteral), field.Type);
+			Assert.AreEqual("int", ((NamedTypeLiteral)field.Type).Name.ToString());
 			
 			Assert.IsInstanceOf(typeof(NumberLiteral), field.Value);
 		}
@@ -146,15 +146,15 @@ namespace Psi.Compiler.Test
 		[Test]
 		public void EmptyTypedEnumTypeLiteral()
 		{
-			var module = Load("const name = enum<float>();");
+			var module = Load("type name = enum<float>();");
 			Assert.IsNull(module);
 		}
 		
 		[Test]
 		public void SingleTypedEnumTypeLiteral()
 		{
-			var module = Load("const name = enum<float>(a = 10);");
-			var expression = module.Declarations[0].Value;
+			var module = Load("type name = enum<float>(a = 10);");
+			var expression = module.TypeDeclarations[0].Type;
 
 			Assert.IsInstanceOf(typeof(TypedEnumTypeLiteral), expression);
 			var val = (TypedEnumTypeLiteral)expression;
@@ -181,8 +181,8 @@ namespace Psi.Compiler.Test
 		[Test]
 		public void MultipleTypedEnumTypeLiteral()
 		{
-			var module = Load("const name = enum<float>(a = 10, b = 20);");
-			var expression = module.Declarations[0].Value;
+			var module = Load("type name = enum<float>(a = 10, b = 20);");
+			var expression = module.TypeDeclarations[0].Type;
 
 			Assert.IsInstanceOf(typeof(TypedEnumTypeLiteral), expression);
 			var val = (TypedEnumTypeLiteral)expression;
@@ -204,23 +204,23 @@ namespace Psi.Compiler.Test
 		[Test]
 		public void ReferenceType()
 		{
-			var module = Load("const name = ref<int>;");
-			var expression = module.Declarations[0].Value;
+			var module = Load("type name = ref<int>;");
+			var expression = module.TypeDeclarations[0].Type;
 
 			Assert.IsInstanceOf(typeof(ReferenceTypeLiteral), expression);
 			var val = (ReferenceTypeLiteral)expression;
 
 			Assert.NotNull(val.ObjectType);
 
-			Assert.IsInstanceOf(typeof(VariableReference), val.ObjectType);
-			Assert.AreEqual("int", ((VariableReference)val.ObjectType).Variable);
+			Assert.IsInstanceOf(typeof(NamedTypeLiteral), val.ObjectType);
+			Assert.AreEqual("int", ((NamedTypeLiteral)val.ObjectType).Name.ToString());
 		}
 		
 		[Test]
 		public void SimpleArrayType()
 		{
-			var module = Load("const name = array<int>;");
-			var expression = module.Declarations[0].Value;
+			var module = Load("type name = array<int>;");
+			var expression = module.TypeDeclarations[0].Type;
 
 			Assert.IsInstanceOf(typeof(ArrayTypeLiteral), expression);
 			var val = (ArrayTypeLiteral)expression;
@@ -228,15 +228,15 @@ namespace Psi.Compiler.Test
 			Assert.NotNull(val.ObjectType);
 			Assert.AreEqual(1, val.Dimensions);
 
-			Assert.IsInstanceOf(typeof(VariableReference), val.ObjectType);
-			Assert.AreEqual("int", ((VariableReference)val.ObjectType).Variable);
+			Assert.IsInstanceOf(typeof(NamedTypeLiteral), val.ObjectType);
+			Assert.AreEqual("int", ((NamedTypeLiteral)val.ObjectType).Name.ToString());
 		}
 		
 		[Test]
 		public void MultidimArrayType()
 		{
-			var module = Load("const matrix = array<float,42>;");
-			var expression = module.Declarations[0].Value;
+			var module = Load("type matrix = array<float,42>;");
+			var expression = module.TypeDeclarations[0].Type;
 
 			Assert.IsInstanceOf(typeof(ArrayTypeLiteral), expression);
 			var val = (ArrayTypeLiteral)expression;
@@ -244,8 +244,8 @@ namespace Psi.Compiler.Test
 			Assert.NotNull(val.ObjectType);
 			Assert.AreEqual(42, val.Dimensions);
 
-			Assert.IsInstanceOf(typeof(VariableReference), val.ObjectType);
-			Assert.AreEqual("float", ((VariableReference)val.ObjectType).Variable);
+			Assert.IsInstanceOf(typeof(NamedTypeLiteral), val.ObjectType);
+			Assert.AreEqual("float", ((NamedTypeLiteral)val.ObjectType).Name.ToString());
 		}
 		
 		// TODO: Test for function type literals

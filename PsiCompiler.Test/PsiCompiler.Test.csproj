@@ -27,7 +27,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="nunit.framework">
-      <HintPath>..\packages\NUnit.3.8.1\lib\net45\nunit.framework.dll</HintPath>
+      <HintPath>..\packages\NUnit.3.9.0\lib\net45\nunit.framework.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -45,7 +45,6 @@
     <Compile Include="Parser\Expressions\Test_AST_FunctionCalls.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="Parser\Expressions\Test_AST_BinaryExpression.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Test_AST_BinaryExpression.cs</LastGenOutput>
@@ -54,6 +53,7 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Test_AST_UnaryExpression.cs</LastGenOutput>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Parser\" />

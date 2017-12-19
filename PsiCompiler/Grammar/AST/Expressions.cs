@@ -15,33 +15,6 @@ namespace Psi.Compiler.Grammar
 		// Call, Literal, Reference
 
 		public virtual IEnumerable<IResolvationResult> Resolve(ResolvationContext ctx) { throw new NotImplementedException(); }
-		
-
-		/// <summary>
-		/// Permutates a list of options per item into an enumeration of all possible permutations
-		/// </summary>
-		/// <returns>The permutate.</returns>
-		/// <param name="items">Items.</param>
-		/// <typeparam name="T">The 1st type parameter.</typeparam>
-		protected static IEnumerable<T[]> Permutate<T>(T[][] items)
-		{
-			var counters = new int[items.Length];
-			var index = 0;
-			var last = counters.Length - 1;
-			while (counters[last] < items[last].Length)
-			{
-				yield return items.Select((x, i) => x[counters[i]]).ToArray();
-
-				counters[index]++;
-				if (counters[index] >= items[index].Length)
-				{
-					counters[index] = 0;
-					index++;
-					if (index >= counters.Length)
-						index = 0;
-				}
-			}
-		}
 	}
 
 	public sealed class NumberLiteral : Expression
@@ -117,7 +90,7 @@ namespace Psi.Compiler.Grammar
 		public override IEnumerable<IResolvationResult> Resolve(ResolvationContext ctx)
 		{
 			// Return all possible typed enumeration items
-			foreach (var sym in ctx.Scope.Where(s => s.Type is TypeType).Where(s => s.KnownValue != null))
+			foreach (var sym in ctx.Variables.Where(s => s.Type is TypeType).Where(s => s.KnownValue != null))
 			{
 				var type = (sym.KnownValue as TypeValue)?.Value as EnumType;
 				if (type == null)
@@ -141,7 +114,7 @@ namespace Psi.Compiler.Grammar
 
 		public override IEnumerable<IResolvationResult> Resolve(ResolvationContext ctx)
 		{
-			foreach (var sym in ctx.Scope.Where(sym => sym.Name.ID == this.Variable))
+			foreach (var sym in ctx.Variables.Where(sym => sym.Name.ID == this.Variable))
 				yield return new SymbolReference(sym);
 		}
 
@@ -195,7 +168,7 @@ namespace Psi.Compiler.Grammar
 			var op = this.Operator.ToSymbolName();
 			foreach (var operand in operands)
 			{
-				foreach (var fun in ctx.Scope
+				foreach (var fun in ctx.Variables
 					.Where(f => f.Name.ID == op)
 					.Where(f => f.Type is FunctionType)
 					.Select(f => Tuple.Create(f, f.Type as FunctionType))
@@ -240,7 +213,7 @@ namespace Psi.Compiler.Grammar
 			{
 				foreach (var rhs in rhss)
 				{
-					foreach (var fun in ctx.Scope
+					foreach (var fun in ctx.Variables
 						.Where(f => f.Name.ID == op)
 						.Where(f => f.Type is FunctionType)
 						.Select(f => Tuple.Create(f, f.Type as FunctionType))
@@ -301,8 +274,8 @@ namespace Psi.Compiler.Grammar
 		{
 			var funs = this.Value.Resolve(ctx).ToArray();
 
-			var positionals = Permutate(this.PositionalArguments.Select((p, i) => p.Value.Resolve(ctx).Select(x => Tuple.Create(i, x)).ToArray()).ToArray()).ToList();
-			var named = Permutate(this.NamedArguments.Select(p => p.Value.Resolve(ctx).Select(x => Tuple.Create(p.Name, x)).ToArray()).ToArray()).ToList();
+			var positionals = Extensions.Permutate(this.PositionalArguments.Select((p, i) => p.Value.Resolve(ctx).Select(x => Tuple.Create(i, x)).ToArray()).ToArray()).ToList();
+			var named = Extensions.Permutate(this.NamedArguments.Select(p => p.Value.Resolve(ctx).Select(x => Tuple.Create(p.Name, x)).ToArray()).ToArray()).ToList();
 
 			if (positionals.Count == 0 || named.Count == 0)
 				yield break;
@@ -407,72 +380,6 @@ namespace Psi.Compiler.Grammar
 		public override string ToString() => string.Format("{0}: {1}", this.Name, this.Value);
 	}
 
-	public sealed class FunctionTypeLiteral : Expression
-	{
-		public FunctionTypeLiteral(IEnumerable<Parameter> parameters, Expression returnType)
-		{
-			this.Parameters = parameters.ToArray();
-			this.ReturnType = returnType;
-		}
-		
-		public override IEnumerable<IResolvationResult> Resolve(ResolvationContext ctx)
-		{
-			var paramlists = Permutate(this.Parameters.Select(p => p.Resolve(ctx).ToArray()).ToArray()).ToList();
-			var results = this.ReturnType.Resolve(ctx).Where(s => s.Type is TypeType).ToArray();
-			if(results.Length == 0 || paramlists.Count == 0)
-				yield break;
-			if(results.Length != 1)
-				throw new InvalidOperationException("Non-distinct return type!");
-			if(paramlists.Count != 1)
-				throw new InvalidOperationException("Non-distinct parameter list!");
-			
-			if(results[0].IsEvaluatable == false)
-				throw new InvalidOperationException("Non-static return type!");
-			
-			var eval = new ExecutionContext(null, null, null);
-			yield return new Literal(new TypeValue(new FunctionType(
-				((TypeValue)results[0].Evaluate(eval)).Value,
-				paramlists[0])));
-		}
-
-		public IReadOnlyList<Parameter> Parameters { get; }
-
-		public Expression ReturnType { get; }
-
-		public override string ToString() => string.Format("fn({0}) -> {1}", string.Join(", ", Parameters), ReturnType);
-	}
-
-	public sealed class Parameter
-	{
-		public Parameter(Psi.Runtime.ParameterFlags prefix, string name, Expression type, Expression value)
-		{
-			this.Prefix = prefix;
-			this.Name = name.NotNull();
-			this.Type = type;
-			this.Value = value;
-		}
-		
-		public IEnumerable<Psi.Runtime.Parameter> Resolve(ResolvationContext ctx)
-		{
-			var types = this.Type.Resolve(ctx).Where(p => p.Type is TypeType).ToArray();
-			if(this.Value != null)
-				throw new NotSupportedException("Default arguments are not supported yet!");
-			var eval = new ExecutionContext(null, null, null);
-			foreach(var p in types)
-				yield return new Psi.Runtime.Parameter(this.Name, ((TypeValue) types[0].Evaluate(eval)).Value);
-		}
-
-		public string Name { get; }
-
-		public Expression Type { get; }
-
-		public Expression Value { get; }
-
-		public Psi.Runtime.ParameterFlags Prefix { get; }
-
-		public override string ToString() => string.Format("{0} {1} : {2} = {3}", Prefix, Name, Type, Value);
-	}
-
 	public sealed class FunctionLiteral : Expression
 	{
 		public FunctionLiteral(FunctionTypeLiteral type, Statement body)
@@ -499,7 +406,7 @@ namespace Psi.Compiler.Grammar
 		{
 			this.Type = new FunctionTypeLiteral(
 				parameters.Select(p => new Parameter(Psi.Runtime.ParameterFlags.None, p, PsiParser.Undefined, null)),
-				PsiParser.Void);
+				new LiteralType(Psi.Runtime.Type.Void));
 			this.Body = body;
 		}
 
@@ -537,84 +444,5 @@ namespace Psi.Compiler.Grammar
 		public IReadOnlyList<Expression> Values { get; }
 
 		public override string ToString() => string.Format("[ {0} ]", string.Join(", ", Values));
-	}
-
-	public sealed class EnumTypeLiteral : Expression
-	{
-		public EnumTypeLiteral(IEnumerable<string> items)
-		{
-			this.Items = items.ToArray();
-			if(this.Items.Distinct().Count() != this.Items.Count)
-				throw new InvalidOperationException("Enums allow no duplicates!");
-		}
-
-		public override IEnumerable<IResolvationResult> Resolve(ResolvationContext ctx)
-		{
-			yield return new Literal(new TypeValue(new EnumType(this.Items.ToArray())));
-		}
-
-		public IReadOnlyList<string> Items { get; }
-
-		public override string ToString() => string.Format("enum({0})", string.Join(", ", Items));
-	}
-
-	public sealed class TypedEnumTypeLiteral : Expression
-	{
-		public TypedEnumTypeLiteral(Expression type, IEnumerable<Declaration> items)
-		{
-			this.Type = type.NotNull();
-			this.Items = items.NotNull().ToArray();
-			if (this.Items.Any(i => !i.IsField || i.IsConst || i.IsExported || i.Type != PsiParser.Undefined))
-				throw new InvalidOperationException();
-		}
-
-		public Expression Type { get; }
-
-		public IReadOnlyList<Declaration> Items { get; }
-
-		public override string ToString() => string.Format("enum<{0}>({1})", Type, string.Join(", ", Items));
-	}
-
-	public sealed class ReferenceTypeLiteral : Expression
-	{
-		public ReferenceTypeLiteral(Expression objectType)
-		{
-			this.ObjectType = objectType.NotNull();
-		}
-
-		public Expression ObjectType { get; }
-
-		public override string ToString() => string.Format("ref<{0}>", ObjectType);
-
-	}
-
-	public sealed class ArrayTypeLiteral : Expression
-	{
-		public ArrayTypeLiteral(Expression objectType, int dimensions)
-		{
-			if (dimensions <= 0)
-				throw new ArgumentOutOfRangeException(nameof(dimensions));
-			this.Dimensions = dimensions;
-			this.ObjectType = objectType.NotNull();
-		}
-
-		public Expression ObjectType { get; }
-
-		public int Dimensions { get; }
-
-		public override string ToString() => string.Format("array<{0},{1}>", ObjectType, Dimensions);
-
-	}
-
-	public sealed class RecordTypeLiteral : Expression
-	{
-		public RecordTypeLiteral(IEnumerable<Declaration> fields)
-		{
-			this.Fields = fields.ToArray();
-		}
-
-		public IReadOnlyList<Declaration> Fields { get; }
-
-		public override string ToString() => string.Format("record({0})", string.Join(", ", Fields));
 	}
 }
