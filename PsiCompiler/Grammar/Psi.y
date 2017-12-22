@@ -535,41 +535,41 @@ paramlist   : paramlist COMMA parameter
 
 parameter   : prefix identifier COLON type IS expression
 			{
-				$$ = new Parameter((Psi.Runtime.ParameterFlags)$1, $2, $4, $6);
+				$$ = new Parameter((ParameterFlags)$1, $2, $4, $6);
 			}
 			| prefix identifier IS expression
 			{
-				$$ = new Parameter((Psi.Runtime.ParameterFlags)$1, $2, Undefined, $4);
+				$$ = new Parameter((ParameterFlags)$1, $2, Undefined, $4);
 			}
 			| prefix identifier COLON type
 			{
-				$$ = new Parameter((Psi.Runtime.ParameterFlags)$1, $2, $4, null);
+				$$ = new Parameter((ParameterFlags)$1, $2, $4, null);
 			}
 			;
 
 prefix      : /* empty */
 			{
-				$$ = Psi.Runtime.ParameterFlags.None;
+				$$ = ParameterFlags.None;
 			}
 			| prefix IN
 			{
-				$$ = $1 | Psi.Runtime.ParameterFlags.In;
+				$$ = $1 | ParameterFlags.In;
 			}
 			| prefix OUT
 			{
-				$$ = $1 | Psi.Runtime.ParameterFlags.Out;
+				$$ = $1 | ParameterFlags.Out;
 			}
 			| prefix INOUT
 			{
-				$$ = $1 | Psi.Runtime.ParameterFlags.InOut;
+				$$ = $1 | ParameterFlags.InOut;
 			}
 			| prefix THIS
 			{
-				$$ = $1 | Psi.Runtime.ParameterFlags.This;
+				$$ = $1 | ParameterFlags.This;
 			}
 			| prefix LAZY
 			{
-				$$ = $1 | Psi.Runtime.ParameterFlags.Lazy;
+				$$ = $1 | ParameterFlags.Lazy;
 			}
 			;
 
@@ -779,7 +779,7 @@ public static Expression TypeDeclaration { get; } = new VariableReference("<type
 
 public static AstType Undefined { get; } = new LiteralType(null);
 
-public static AstType Void { get; } = new LiteralType(Psi.Runtime.Type.Void);
+public static AstType Void { get; } = new LiteralType(PsiType.Void);
 
 private static Expression Apply(Expression lhs, Expression rhs, PsiOperator op)
 {

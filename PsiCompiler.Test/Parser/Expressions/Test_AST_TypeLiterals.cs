@@ -225,11 +225,11 @@ namespace Psi.Compiler.Test
 			Assert.IsInstanceOf(typeof(ArrayTypeLiteral), expression);
 			var val = (ArrayTypeLiteral)expression;
 
-			Assert.NotNull(val.ObjectType);
+			Assert.NotNull(val.ElementType);
 			Assert.AreEqual(1, val.Dimensions);
 
-			Assert.IsInstanceOf(typeof(NamedTypeLiteral), val.ObjectType);
-			Assert.AreEqual("int", ((NamedTypeLiteral)val.ObjectType).Name.ToString());
+			Assert.IsInstanceOf(typeof(NamedTypeLiteral), val.ElementType);
+			Assert.AreEqual("int", ((NamedTypeLiteral)val.ElementType).Name.ToString());
 		}
 		
 		[Test]
@@ -241,11 +241,11 @@ namespace Psi.Compiler.Test
 			Assert.IsInstanceOf(typeof(ArrayTypeLiteral), expression);
 			var val = (ArrayTypeLiteral)expression;
 
-			Assert.NotNull(val.ObjectType);
+			Assert.NotNull(val.ElementType);
 			Assert.AreEqual(42, val.Dimensions);
 
-			Assert.IsInstanceOf(typeof(NamedTypeLiteral), val.ObjectType);
-			Assert.AreEqual("float", ((NamedTypeLiteral)val.ObjectType).Name.ToString());
+			Assert.IsInstanceOf(typeof(NamedTypeLiteral), val.ElementType);
+			Assert.AreEqual("float", ((NamedTypeLiteral)val.ElementType).Name.ToString());
 		}
 		
 		// TODO: Test for function type literals

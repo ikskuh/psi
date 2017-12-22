@@ -2,7 +2,6 @@
 using CompilerKit;
 using System.Collections.Generic;
 using System.Linq;
-using Psi.Runtime;
 using System.Globalization;
 using System.Text;
 
@@ -227,8 +226,8 @@ namespace Psi.Compiler.Grammar
 		public LambdaLiteral(IEnumerable<string> parameters, Statement body)
 		{
 			this.Type = new FunctionTypeLiteral(
-				parameters.Select(p => new Parameter(Psi.Runtime.ParameterFlags.None, p, PsiParser.Undefined, null)),
-				new LiteralType(Psi.Runtime.Type.Void));
+				parameters.Select(p => new Parameter(ParameterFlags.None, p, PsiParser.Undefined, null)),
+				new LiteralType(PsiType.Void));
 			this.Body = body;
 		}
 

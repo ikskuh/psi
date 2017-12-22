@@ -4,9 +4,9 @@
 
 // GPPG version 1.5.2
 // Machine:  denkplatte
-// DateTime: 12/22/2017 12:18:21 PM
+// DateTime: 12/22/2017 9:49:16 PM
 // UserName: felix
-// Input file <Psi.y - 12/19/2017 8:06:53 AM>
+// Input file <Psi.y - 12/22/2017 6:14:24 PM>
 
 // options: lines
 
@@ -1354,63 +1354,63 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
       case 111: // parameter -> prefix, identifier, COLON, type, IS, expression
 #line 537 "Psi.y"
    {
-				CurrentSemanticValue.Parameter = new Parameter((Psi.Runtime.ParameterFlags)ValueStack[ValueStack.Depth-6].ParameterPrefix, ValueStack[ValueStack.Depth-5].String, ValueStack[ValueStack.Depth-3].AstType, ValueStack[ValueStack.Depth-1].Expression);
+				CurrentSemanticValue.Parameter = new Parameter((ParameterFlags)ValueStack[ValueStack.Depth-6].ParameterPrefix, ValueStack[ValueStack.Depth-5].String, ValueStack[ValueStack.Depth-3].AstType, ValueStack[ValueStack.Depth-1].Expression);
 			}
 #line default
         break;
       case 112: // parameter -> prefix, identifier, IS, expression
 #line 541 "Psi.y"
    {
-				CurrentSemanticValue.Parameter = new Parameter((Psi.Runtime.ParameterFlags)ValueStack[ValueStack.Depth-4].ParameterPrefix, ValueStack[ValueStack.Depth-3].String, Undefined, ValueStack[ValueStack.Depth-1].Expression);
+				CurrentSemanticValue.Parameter = new Parameter((ParameterFlags)ValueStack[ValueStack.Depth-4].ParameterPrefix, ValueStack[ValueStack.Depth-3].String, Undefined, ValueStack[ValueStack.Depth-1].Expression);
 			}
 #line default
         break;
       case 113: // parameter -> prefix, identifier, COLON, type
 #line 545 "Psi.y"
    {
-				CurrentSemanticValue.Parameter = new Parameter((Psi.Runtime.ParameterFlags)ValueStack[ValueStack.Depth-4].ParameterPrefix, ValueStack[ValueStack.Depth-3].String, ValueStack[ValueStack.Depth-1].AstType, null);
+				CurrentSemanticValue.Parameter = new Parameter((ParameterFlags)ValueStack[ValueStack.Depth-4].ParameterPrefix, ValueStack[ValueStack.Depth-3].String, ValueStack[ValueStack.Depth-1].AstType, null);
 			}
 #line default
         break;
       case 114: // prefix -> /* empty */
 #line 551 "Psi.y"
    {
-				CurrentSemanticValue.ParameterPrefix = Psi.Runtime.ParameterFlags.None;
+				CurrentSemanticValue.ParameterPrefix = ParameterFlags.None;
 			}
 #line default
         break;
       case 115: // prefix -> prefix, IN
 #line 555 "Psi.y"
    {
-				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | Psi.Runtime.ParameterFlags.In;
+				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | ParameterFlags.In;
 			}
 #line default
         break;
       case 116: // prefix -> prefix, OUT
 #line 559 "Psi.y"
    {
-				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | Psi.Runtime.ParameterFlags.Out;
+				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | ParameterFlags.Out;
 			}
 #line default
         break;
       case 117: // prefix -> prefix, INOUT
 #line 563 "Psi.y"
    {
-				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | Psi.Runtime.ParameterFlags.InOut;
+				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | ParameterFlags.InOut;
 			}
 #line default
         break;
       case 118: // prefix -> prefix, THIS
 #line 567 "Psi.y"
    {
-				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | Psi.Runtime.ParameterFlags.This;
+				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | ParameterFlags.This;
 			}
 #line default
         break;
       case 119: // prefix -> prefix, LAZY
 #line 571 "Psi.y"
    {
-				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | Psi.Runtime.ParameterFlags.Lazy;
+				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | ParameterFlags.Lazy;
 			}
 #line default
         break;
@@ -1678,7 +1678,7 @@ public static Expression TypeDeclaration { get; } = new VariableReference("<type
 
 public static AstType Undefined { get; } = new LiteralType(null);
 
-public static AstType Void { get; } = new LiteralType(Psi.Runtime.Type.Void);
+public static AstType Void { get; } = new LiteralType(PsiType.Void);
 
 private static Expression Apply(Expression lhs, Expression rhs, PsiOperator op)
 {

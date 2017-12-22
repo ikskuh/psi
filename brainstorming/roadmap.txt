@@ -1,0 +1,6 @@
+Version 1: Minimal-Spezifikation, getrenntes Typ/Werte-System, teilweise statische Ausführung
+Version 2: Vereinigtes Typ-Werte-System
+Version 3: Komplette statische Ausführungsschicht
+Version 4: Standalone Executables
+Version 5: Angespasste Sprache für Native Code (Compile to C)
+Version 6: Angepasste Sprache für Embedded (Malloc-Free)

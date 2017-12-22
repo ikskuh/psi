@@ -22,7 +22,7 @@ namespace Psi.Compiler.Grammar
 		private Argument _Argument;
 		private List<Parameter> _ParameterList;
 		private Parameter _Parameter;
-		private Psi.Runtime.ParameterFlags? _ParameterPrefix;
+		private ParameterFlags? _ParameterPrefix;
 		private FunctionTypeLiteral _FunctionType;
 		private Statement _Statement;
 		private List<Statement> _StatementList;
@@ -479,7 +479,7 @@ namespace Psi.Compiler.Grammar
 			this._SelectOptions = null;
 		}
 		
-		public ParserNode(Psi.Runtime.ParameterFlags? value)
+		public ParserNode(ParameterFlags? value)
 		{
 			this._Token = null;
 			this._Expression = null;
@@ -1295,7 +1295,7 @@ namespace Psi.Compiler.Grammar
 			}
 		}
 		
-		public Psi.Runtime.ParameterFlags? ParameterPrefix
+		public ParameterFlags? ParameterPrefix
 		{
 			get
 			{
@@ -1623,7 +1623,7 @@ namespace Psi.Compiler.Grammar
 		
 		public static implicit operator ParserNode(Parameter value) => new ParserNode(value);
 		
-		public static implicit operator ParserNode(Psi.Runtime.ParameterFlags? value) => new ParserNode(value);
+		public static implicit operator ParserNode(ParameterFlags? value) => new ParserNode(value);
 		
 		public static implicit operator ParserNode(FunctionTypeLiteral value) => new ParserNode(value);
 		

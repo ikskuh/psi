@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Psi.Compiler
 {
@@ -14,6 +15,8 @@ namespace Psi.Compiler
 		}
 
 		public override string ToString() => string.Join(".", this.components);
+
+		public string Identifier => this.Last();
 
 		#region IList<string>
 

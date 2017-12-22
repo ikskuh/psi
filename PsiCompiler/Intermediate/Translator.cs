@@ -1,40 +1,89 @@
 ﻿using System;
-using Psi.Runtime;
 using System.Linq;
 using System.Collections.Generic;
+using Psi.Compiler.Grammar;
 
 namespace Psi.Compiler
 {
-	using Type = Psi.Runtime.Type;
-	using Boolean = Psi.Runtime.Boolean;
-	
 	public class Translator
 	{		
+		private readonly Scope builtins;
+	
 		public Translator()
 		{
-			
+			this.builtins = CreateBuiltins();
 		}
 
-		public Program Translate(Psi.Compiler.Grammar.Module module)
-		{
+		public object Translate(Psi.Compiler.Grammar.Module module)
+		{			
+			var types = new List<PsiType>();
+			foreach(var decl in module.TypeDeclarations)
+			{
+				var type = decl.Type.CreateIntermediate();
+				type.IsExported = decl.IsExported;
+				type.Name = decl.Name;
+				types.Add(type);
+			}
 			
+			var scope = new Scope(this.builtins);
+			
+			foreach(var type in types)
+				scope.Types.Add(type.Name, type);
+			
+			int completed;
+			int temp = 0;
+			int rounds = 0;
+			do
+			{
+				foreach(var type in types)
+				{
+					if(type.IsComplete)
+						continue;
+					type.Update(scope);
+					if(type.IsComplete)
+						Console.WriteLine("Resolved type {0} = {1}", type.Name, type);
+				}
+				completed = temp;
+				temp = types.Count(t => t.IsComplete);
+				
+				Console.WriteLine("Round {0:2D}: {1} → {2}", ++rounds, completed, temp);
+			} while(temp > completed);
+			
+			if(completed != types.Count)
+			{
+				Console.WriteLine("Incomplete types:");
+				foreach(var type in types.Where(t => !t.IsComplete))
+					Console.WriteLine("{0}", type.Name);
+				throw new InvalidOperationException("Could not resolve all types!");
+			}
+			
+			for(int i = 0; i < types.Count; i++)
+			{
+				types[i] = types[i].Compact();
+			}
+			
+			Console.WriteLine("Done resolving types!");
 			
 			throw new NotImplementedException();
 		}
 
-/*
-		static ResolvationContext CreateBuiltins()
+		static Scope CreateBuiltins()
 		{
-			var vars = new VariableScope();
-			var types = new TypeScope();
+			var scope = new Scope();
+			// var vars = scope.Variabels;
+			var types = scope.Types;
 			
-			var @void = Type.Void;
-			var @int = Type.Integer;
-			var @bool = Type.Boolean;
-			var @char = Type.Character;
-			var @type = Type.PsiType;
-			var @string = Type.String;
-			var @real = Type.Real;
+			var std = new IntermediateModule("std");
+			
+			scope.Modules.Add("std", std);
+			
+			var @void = PsiType.Void;
+			var @int = PsiType.Integer;
+			var @bool = PsiType.Boolean;
+			var @char = PsiType.Character;
+			var @type = PsiType.Type;
+			var @string = PsiType.String;
+			var @real = PsiType.Real;
 
 			types.Add("void", @void);
 			types.Add("int", @int);
@@ -42,7 +91,16 @@ namespace Psi.Compiler
 			types.Add("bool", @bool);
 			types.Add("char", @char);
 			types.Add("string", @string);
-			types.Add("type", @type);
+			
+			std.Types.Add("void", @void);
+			std.Types.Add("int", @int);
+			std.Types.Add("real", @real);
+			std.Types.Add("bool", @bool);
+			std.Types.Add("char", @char);
+			std.Types.Add("string", @string);
+			std.Types.Add("type", @type);
+
+			/*
 
 			// Initialize int API
 			{
@@ -280,10 +338,12 @@ namespace Psi.Compiler
 					return null;
 				}));
 			}
-	
-			return new ResolvationContext(vars, types);
+			
+			*/
+			return scope;
 		}
 
+		/*
 		static Symbol InitFunSymbol(VariableScope scope, PsiOperator id, FunctionPrototype proto)
 		{
 			var sym = scope.Add(new SymbolName(proto.Type, id));

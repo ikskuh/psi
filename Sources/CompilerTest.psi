@@ -7,18 +7,28 @@ type bam = bar;
 
 type baz = bam;
 
-type foo = int;
+type foo = std.int;
 
 type bar = foo;
 
 // tests different types
 type genders = enum(none,male,female,ah64);
 
+type someType = std.type;
+
+type person = record(name : string, age : int);
+
+type someone = ref<person>;
+
+type family = array<foo>;
+
 type mainFunc = fn(argc : int, argv : array<string>) -> int;
 
-type someType = type;
+type matrix = array<real,2>;
 
-var foo : int = 10;
+type bunchOfPeople = array<ref<person> >;
+
+// var foo : int = 10;
 
 /*
 // Tests out params

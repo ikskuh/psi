@@ -1,25 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Psi.Runtime;
 
 namespace Psi.Compiler.Grammar
 {
-	using Type = Psi.Runtime.Type;
 
 	public abstract class AstType
 	{
-		
+		public virtual PsiType CreateIntermediate()
+		{
+			throw new NotSupportedException();
+		}
 	}
 
 	public sealed class LiteralType : AstType
 	{
-		public LiteralType(Type type)
+		public LiteralType(PsiType type)
 		{
 			this.Type = type;
 		}
+		
+		public override PsiType CreateIntermediate() => this.Type;
 
-		public Type Type { get; }
+		public PsiType Type { get; }
 		
 		public override string ToString() => this.Type.ToString();
 	}
@@ -31,6 +34,8 @@ namespace Psi.Compiler.Grammar
 			if (name == null) throw new ArgumentNullException(nameof(name));
 			this.Name = name;
 		}
+		
+		public override PsiType CreateIntermediate() => new NamedType(this);
 	
 		public CompoundName Name { get; }
 		
@@ -44,6 +49,8 @@ namespace Psi.Compiler.Grammar
 			this.Parameters = parameters.ToArray();
 			this.ReturnType = returnType;
 		}
+		
+		public override PsiType CreateIntermediate() => new FunctionType(this);
 
 		public IReadOnlyList<Parameter> Parameters { get; }
 
@@ -54,7 +61,7 @@ namespace Psi.Compiler.Grammar
 
 	public sealed class Parameter
 	{
-		public Parameter(Psi.Runtime.ParameterFlags prefix, string name, AstType type, Expression value)
+		public Parameter(ParameterFlags prefix, string name, AstType type, Expression value)
 		{
 			this.Prefix = prefix;
 			this.Name = name.NotNull();
@@ -68,11 +75,22 @@ namespace Psi.Compiler.Grammar
 
 		public Expression Value { get; }
 
-		public Psi.Runtime.ParameterFlags Prefix { get; }
+		public ParameterFlags Prefix { get; }
 
 		public override string ToString() => string.Format("{0} {1} : {2} = {3}", Prefix, Name, Type, Value);
 	}
 
+
+	[Flags]
+	public enum ParameterFlags
+	{
+		None = 0,
+		In = 1,
+		Out = 2,
+		InOut = In | Out,
+		This = 4,
+		Lazy = 8
+	}
 
 
 	public sealed class EnumTypeLiteral : AstType
@@ -82,6 +100,11 @@ namespace Psi.Compiler.Grammar
 			this.Items = items.ToArray();
 			if (this.Items.Distinct().Count() != this.Items.Count)
 				throw new InvalidOperationException("Enums allow no duplicates!");
+		}
+		
+		public override PsiType CreateIntermediate()
+		{
+			return new EnumType(this.Items.ToArray());
 		}
 
 		public IReadOnlyList<string> Items { get; }
@@ -112,6 +135,8 @@ namespace Psi.Compiler.Grammar
 		{
 			this.ObjectType = objectType.NotNull();
 		}
+		
+		public override PsiType CreateIntermediate() => new ReferenceType(this);
 
 		public AstType ObjectType { get; }
 
@@ -126,14 +151,16 @@ namespace Psi.Compiler.Grammar
 			if (dimensions <= 0)
 				throw new ArgumentOutOfRangeException(nameof(dimensions));
 			this.Dimensions = dimensions;
-			this.ObjectType = objectType.NotNull();
+			this.ElementType = objectType.NotNull();
 		}
+		
+		public override PsiType CreateIntermediate() => new ArrayType(this);
 
-		public AstType ObjectType { get; }
+		public AstType ElementType { get; }
 
 		public int Dimensions { get; }
 
-		public override string ToString() => string.Format("array<{0},{1}>", ObjectType, Dimensions);
+		public override string ToString() => string.Format("array<{0},{1}>", ElementType, Dimensions);
 
 	}
 
@@ -143,6 +170,8 @@ namespace Psi.Compiler.Grammar
 		{
 			this.Fields = fields.ToArray();
 		}
+		
+		public override PsiType CreateIntermediate() => new RecordType(this);
 
 		public IReadOnlyList<Declaration> Fields { get; }
 
