@@ -18,6 +18,8 @@ type mainFunc = fn(argc : int, argv : array<string>) -> int;
 
 type someType = type;
 
+var foo : int = 10;
+
 /*
 // Tests out params
 const set = fn(out dst : int, src : int) { dst = src; };

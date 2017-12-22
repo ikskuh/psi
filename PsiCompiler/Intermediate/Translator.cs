@@ -91,10 +91,15 @@ namespace Psi.Compiler
 						syms.Add(decl, sym = vars.Add(new SymbolName(type, decl.Name)));
 						sym.IsConst = decl.IsConst;
 						sym.IsExported = decl.IsExported;
+						
+						Console.WriteLine("Resolved {0} : {1}", sym.Name, sym.Type);
 					}
 					if(sym == null) throw new InvalidOperationException("!");
 					
-					;
+					if(decl.Value == null)
+						continue;
+					
+					throw new NotSupportedException();
 				}
 			}
 			
