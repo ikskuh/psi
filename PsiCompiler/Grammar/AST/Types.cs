@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Psi.Compiler.Resolvation;
 using Psi.Runtime;
 
 namespace Psi.Compiler.Grammar
@@ -10,10 +9,7 @@ namespace Psi.Compiler.Grammar
 
 	public abstract class AstType
 	{
-		public virtual IEnumerable<Type> Resolve(ResolvationContext ctx)
-		{
-			throw new NotImplementedException(this.GetType().Name + " requires an implementation!" );
-		}
+		
 	}
 
 	public sealed class LiteralType : AstType
@@ -21,11 +17,6 @@ namespace Psi.Compiler.Grammar
 		public LiteralType(Type type)
 		{
 			this.Type = type;
-		}
-
-		public override IEnumerable<Type> Resolve(ResolvationContext ctx)
-		{
-			yield return this.Type;
 		}
 
 		public Type Type { get; }
@@ -40,21 +31,6 @@ namespace Psi.Compiler.Grammar
 			if (name == null) throw new ArgumentNullException(nameof(name));
 			this.Name = name;
 		}
-		
-		public override IEnumerable<Type> Resolve(ResolvationContext ctx)
-		{
-			for(int i = 0; i < this.Name.Count - 1; i++)
-			{
-				if(ctx.Modules.ContainsKey(this.Name[i]) == false)
-					return new Type[0];
-				ctx = ctx.Modules[this.Name[i]];
-			}
-			var name = this.Name.Last();
-			if(ctx.Types.ContainsKey(name))
-				return new [] { ctx.Types[name].Type };
-			else
-				return new Type[0];
-		}
 	
 		public CompoundName Name { get; }
 		
@@ -67,25 +43,6 @@ namespace Psi.Compiler.Grammar
 		{
 			this.Parameters = parameters.ToArray();
 			this.ReturnType = returnType;
-		}
-
-		public override IEnumerable<Type> Resolve(ResolvationContext ctx)
-		{
-			var paramlists = this.Parameters.Select(p => p.Resolve(ctx).ToArray()).ToArray().Permutate().ToList();
-			var results = this.ReturnType.Resolve(ctx).ToArray();
-			if (results.Length == 0 || paramlists.Count == 0)
-				return new Type[0];
-			if (results.Length != 1)
-				throw new InvalidOperationException("Non-distinct return type!");
-			if (paramlists.Count != 1)
-				throw new InvalidOperationException("Non-distinct parameter list!");
-
-			return new[]
-			{
-				new FunctionType(
-					results[0],
-					paramlists[0])
-			};
 		}
 
 		public IReadOnlyList<Parameter> Parameters { get; }
@@ -103,15 +60,6 @@ namespace Psi.Compiler.Grammar
 			this.Name = name.NotNull();
 			this.Type = type;
 			this.Value = value;
-		}
-
-		public IEnumerable<Psi.Runtime.Parameter> Resolve(ResolvationContext ctx)
-		{
-			var types = this.Type.Resolve(ctx).ToArray();
-			if (this.Value != null)
-				throw new NotSupportedException("Default arguments are not supported yet!");
-			foreach (var type in types)
-				yield return new Psi.Runtime.Parameter(this.Name, type);
 		}
 
 		public string Name { get; }
@@ -134,11 +82,6 @@ namespace Psi.Compiler.Grammar
 			this.Items = items.ToArray();
 			if (this.Items.Distinct().Count() != this.Items.Count)
 				throw new InvalidOperationException("Enums allow no duplicates!");
-		}
-
-		public override IEnumerable<Type> Resolve(ResolvationContext ctx)
-		{
-			yield return new EnumType(this.Items.ToArray());
 		}
 
 		public IReadOnlyList<string> Items { get; }
@@ -184,12 +127,6 @@ namespace Psi.Compiler.Grammar
 				throw new ArgumentOutOfRangeException(nameof(dimensions));
 			this.Dimensions = dimensions;
 			this.ObjectType = objectType.NotNull();
-		}
-
-		public override IEnumerable<Type> Resolve(ResolvationContext ctx)
-		{
-			foreach(var elem in this.ObjectType.Resolve(ctx))
-				yield return new ArrayType(elem, this.Dimensions);
 		}
 
 		public AstType ObjectType { get; }

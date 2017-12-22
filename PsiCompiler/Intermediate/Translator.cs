@@ -1,6 +1,5 @@
 ﻿using System;
 using Psi.Runtime;
-using Psi.Compiler.Resolvation;
 using System.Linq;
 using System.Collections.Generic;
 
@@ -8,106 +7,22 @@ namespace Psi.Compiler
 {
 	using Type = Psi.Runtime.Type;
 	using Boolean = Psi.Runtime.Boolean;
-	using Psi.Compiler.Resolvation;
 	
 	public class Translator
-	{
-		private readonly ResolvationContext builtin;
-		
+	{		
 		public Translator()
 		{
-			builtin = CreateBuiltins();
+			
 		}
 
 		public Program Translate(Psi.Compiler.Grammar.Module module)
 		{
-			var root = builtin.DeriveChild();
 			
-			// TODO: Implement "import" here
-			// module.Imports
 			
-			// TODO: Resolve submodules
-			// module.Submodules
-			
-			// TODO: Validate "assert" here
-			// module.Assertions
-			
-			var ctx = root.DeriveChild();
-			var vars = ctx.Variables;
-			var types = ctx.Types;
-			
-			{
-				var decls = new Queue<Grammar.TypeDeclaration>(module.TypeDeclarations);
-				
-				var syms = new Dictionary<Grammar.TypeDeclaration, TypeSymbol>();
-				
-				Grammar.TypeDeclaration marker = null;
-				while(decls.Count > 0)
-				{
-					var decl = decls.Dequeue();
-					if(marker == decl)
-					{
-						Console.WriteLine("Unresolved type symbols:");
-						foreach(var d in decls.Append(decl))
-							Console.WriteLine("{0}", d.Name);
-					
-						throw new InvalidOperationException("Could not compile!");
-					}
-					
-					var type = decl.Type.Resolve(ctx).SingleOrDefault();
-					if(type == null)
-					{
-						if(marker == null)
-							marker = decl;
-						decls.Enqueue(decl);
-						continue;
-					}
-					
-					Console.WriteLine("Resolved {0} to {1}", decl.Name, type);
-					
-					var sym = types.Add(decl.Name, type);
-					sym.IsExported = decl.IsExported;
-					
-					marker = null;
-				}
-			}
-			{
-				var decls = new Queue<Grammar.Declaration>(module.Declarations);
-				
-				var syms = new Dictionary<Grammar.Declaration, Symbol>();
-				
-				while(decls.Count > 0)
-				{
-					Symbol sym;
-					var decl = decls.Dequeue();
-					if(syms.TryGetValue(decl, out sym) == false)
-					{
-						var type = decl.Type.Resolve(ctx).SingleOrDefault();
-						if(type == null)
-						{
-							decls.Enqueue(decl);
-							continue;
-						}
-						syms.Add(decl, sym = vars.Add(new SymbolName(type, decl.Name)));
-						sym.IsConst = decl.IsConst;
-						sym.IsExported = decl.IsExported;
-						
-						Console.WriteLine("Resolved {0} : {1}", sym.Name, sym.Type);
-					}
-					if(sym == null) throw new InvalidOperationException("!");
-					
-					if(decl.Value == null)
-						continue;
-					
-					throw new NotSupportedException();
-				}
-			}
-			
-			var pgm = new Program();
-			
-			return pgm;
+			throw new NotImplementedException();
 		}
 
+/*
 		static ResolvationContext CreateBuiltins()
 		{
 			var vars = new VariableScope();
@@ -393,5 +308,6 @@ namespace Psi.Compiler
 				  .Repeat(bas, exp)
 				  .Aggregate(1, (a, b) => a * b);
 		}
+		*/
 	}
 }
