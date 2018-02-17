@@ -20,7 +20,7 @@ namespace CompilerKit
 		
 		public CodeError ToError(string message)
 		{
-			if(string.IsNullOrWhiteSpace(message))
+			if(string.IsNullOrEmpty(message))
 				throw new ArgumentOutOfRangeException(nameof(message));
 			return new CodeError(this.Location, message);
 		}
