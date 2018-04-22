@@ -15,5 +15,9 @@ namespace Psi.Compiler
 		public bool IsExported { get; set; }
 		
 		public bool IsConst { get; set; }
+		
+		public Scope Scope { get; set; }
+		
+		public bool IsComplete => (this.Value == null || this.Value.IsComplete) && (this.Type != null);
 	}
 }

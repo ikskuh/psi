@@ -84,6 +84,7 @@
     <Compile Include="Intermediate\Symbol.cs" />
     <Compile Include="Intermediate\IntermediateModule.cs" />
     <Compile Include="Intermediate\BuiltinTypes.cs" />
+    <Compile Include="Intermediate\SymbolName.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Grammar\Psi.tok" />

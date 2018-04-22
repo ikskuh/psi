@@ -20,11 +20,14 @@ namespace Psi.Compiler
 		{
 			this.Modules = new ScopedDictionary<string,IntermediateModule>(parent?.Modules);
 			this.Types = new ScopedDictionary<string,PsiType>(parent?.Types);
+			this.Symbols = new ScopedDictionary<SymbolName,Symbol>(parent?.Symbols);
 		}
 	
 		public IDictionary<string, IntermediateModule> Modules { get; }
 		
 		public IDictionary<string, PsiType> Types { get; }
+		
+		public IDictionary<SymbolName, Symbol> Symbols { get; }
 		
 		public Scope Parent { get; }
 	}

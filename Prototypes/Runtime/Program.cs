@@ -140,6 +140,7 @@ namespace Runtime
 		{
 			var pgm = new Program();
 			pgm.Run();
+            Console.ReadLine();
 		}
 	}
 }

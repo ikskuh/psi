@@ -19,7 +19,7 @@ namespace Psi.Compiler
 				
 				var t = new Translator();
 				
-				t.Translate(module);
+				Translator.Translate(t, module);
 			}
 			else
 			{

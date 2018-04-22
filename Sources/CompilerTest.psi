@@ -28,7 +28,18 @@ type matrix = array<real,2>;
 
 type bunchOfPeople = array<ref<person> >;
 
-// var foo : int = 10;
+var foo : int = 10;
+
+var bar : int = foo;
+
+var v0 : person;
+var v1 : record(x : string, y : int) = v0;
+
+type recursive = record
+	(
+		age : int,
+		next : recursive
+	);
 
 /*
 // Tests out params

@@ -9,7 +9,10 @@ namespace Psi.Compiler.Grammar
 {
 	public abstract class Expression
 	{
-	
+		public virtual IntermediateExpression CreateIntermediate()
+		{
+			throw new NotImplementedException(this.GetType().Name + " is not supported yet.");
+		}
 	}
 
 	public sealed class NumberLiteral : Expression
@@ -17,6 +20,17 @@ namespace Psi.Compiler.Grammar
 		public NumberLiteral(string value)
 		{
 			this.Value = value.NotNull();
+		}
+		
+		public override IntermediateExpression CreateIntermediate()
+		{
+			if(this.Value.Contains("."))
+				return new Literal(new [] { PsiType.Real }, this.Value);
+				
+			if(this.Value.StartsWith("0x", StringComparison.Ordinal))
+				return new Literal(new [] { PsiType.Integer }, this.Value);
+			
+			return new Literal(new [] { PsiType.Integer, PsiType.Real }, this.Value);
 		}
 
 		public string Value { get; }
@@ -64,6 +78,8 @@ namespace Psi.Compiler.Grammar
 		{
 			this.Variable = value.NotNull();
 		}
+		
+		public override IntermediateExpression CreateIntermediate() => new SymbolReference(this.Variable);
 
 		public string Variable { get; }
 
@@ -159,8 +175,8 @@ namespace Psi.Compiler.Grammar
 
 			this.PositionalArguments = positionals.Cast<PositionalArgument>().ToArray();
 			this.NamedArguments = named.Cast<NamedArgument>().ToArray();
-			
-			if(NamedArguments.Select(n => n.Name).Distinct().Count() != NamedArguments.Count)
+
+			if (NamedArguments.Select(n => n.Name).Distinct().Count() != NamedArguments.Count)
 				throw new InvalidOperationException("Named arguments must be unique!");
 		}
 
@@ -168,7 +184,7 @@ namespace Psi.Compiler.Grammar
 
 		public IReadOnlyList<PositionalArgument> PositionalArguments { get; }
 		public IReadOnlyList<NamedArgument> NamedArguments { get; }
-		
+
 		public IEnumerable<Argument> Arguments => this.PositionalArguments.Cast<Argument>().Concat(this.NamedArguments);
 
 		public override string ToString() => string.Format("{0}({1})", Value, string.Join(", ", Arguments));

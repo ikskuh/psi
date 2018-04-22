@@ -10,6 +10,10 @@ namespace Psi.Compiler
 			this.Name = "void";
 			this.IsComplete = true;
 		}
+		
+		public override bool TypeEquals(PsiType other) => other is VoidType;
+
+		public override int GetHashCode() => 0;
 	}
 
 	public sealed class IntegerType : PsiType
@@ -21,6 +25,10 @@ namespace Psi.Compiler
 			this.Name = "int";
 			this.IsComplete = true;
 		}
+		
+		public override bool TypeEquals(PsiType other) => other is IntegerType;
+
+		public override int GetHashCode() => 5;
 	}
 
 	public sealed class RealType : PsiType
@@ -32,6 +40,10 @@ namespace Psi.Compiler
 			this.Name = "real";
 			this.IsComplete = true;
 		}
+		
+		public override bool TypeEquals(PsiType other) => other is RealType;
+
+		public override int GetHashCode() => 4;
 	}
 
 	public sealed class CharacterType : PsiType
@@ -43,6 +55,10 @@ namespace Psi.Compiler
 			this.Name = "char";
 			this.IsComplete = true;
 		}
+		
+		public override bool TypeEquals(PsiType other) => other is CharacterType;
+
+		public override int GetHashCode() => 3;
 	}
 
 	public sealed class BooleanType : PsiType
@@ -54,6 +70,10 @@ namespace Psi.Compiler
 			this.Name = "bool";
 			this.IsComplete = true;
 		}
+		
+		public override bool TypeEquals(PsiType other) => other is BooleanType;
+
+		public override int GetHashCode() => 2;
 	}
 
 	public sealed class PsiTypeType : PsiType
@@ -65,7 +85,25 @@ namespace Psi.Compiler
 			this.Name = "type";
 			this.IsComplete = true;
 		}
+		
+		public override bool TypeEquals(PsiType other) => other is PsiTypeType;
+
+		public override int GetHashCode() => 1;
 	}
 
 
+	public sealed class ByteType : PsiType
+	{
+		public static ByteType Instance { get; } = new ByteType();
+
+		private ByteType()
+		{
+			this.Name = "byte";
+			this.IsComplete = true;
+		}
+		
+		public override bool TypeEquals(PsiType other) => other is ByteType;
+
+		public override int GetHashCode() => 6;
+	}
 }

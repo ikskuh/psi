@@ -6,65 +6,126 @@ using Psi.Compiler.Grammar;
 namespace Psi.Compiler
 {
 	public class Translator
-	{		
+	{
 		private readonly Scope builtins;
-	
+
 		public Translator()
 		{
 			this.builtins = CreateBuiltins();
 		}
 
-		public object Translate(Psi.Compiler.Grammar.Module module)
-		{			
+		public static void Translate(Translator instance, Psi.Compiler.Grammar.Module module)
+		{
+			var scope = new Scope(instance.builtins);
+
 			var types = new List<PsiType>();
-			foreach(var decl in module.TypeDeclarations)
+			foreach (var decl in module.TypeDeclarations)
 			{
 				var type = decl.Type.CreateIntermediate();
 				type.IsExported = decl.IsExported;
 				type.Name = decl.Name;
+				type.Scope = scope;
 				types.Add(type);
-			}
-			
-			var scope = new Scope(this.builtins);
-			
-			foreach(var type in types)
 				scope.Types.Add(type.Name, type);
-			
+			}
+
+			var symbols = new List<Symbol>();
+			foreach (var decl in module.Declarations)
+			{
+				var sym = new Symbol
+				{
+					IsConst = decl.IsConst,
+					IsExported = decl.IsExported,
+					Name = decl.Name,
+					Scope = scope,
+					Type = decl.Type?.CreateIntermediate(),
+					Value = decl.Value?.CreateIntermediate(),
+				};
+				if(sym.Type != null) sym.Type.Scope = scope;
+				if(sym.Value != null) sym.Value.Scope = scope;
+				
+				if(sym.Type == null && sym.Value == null)
+					throw new NotSupportedException("Undefined symbol!");
+				
+				if (sym.Type != null)
+					types.Add(sym.Type);
+				symbols.Add(sym);
+			}
+
 			int completed;
 			int temp = 0;
-			int rounds = 0;
 			do
 			{
-				foreach(var type in types)
+				foreach (var type in types)
 				{
-					if(type.IsComplete)
+					if (type.IsComplete)
 						continue;
 					type.Update(scope);
-					if(type.IsComplete)
-						Console.WriteLine("Resolved type {0} = {1}", type.Name, type);
 				}
 				completed = temp;
 				temp = types.Count(t => t.IsComplete);
-				
-				Console.WriteLine("Round {0:2D}: {1} → {2}", ++rounds, completed, temp);
-			} while(temp > completed);
-			
-			if(completed != types.Count)
+			} while (temp > completed);
+
+			if (completed != types.Count)
 			{
 				Console.WriteLine("Incomplete types:");
-				foreach(var type in types.Where(t => !t.IsComplete))
+				foreach (var type in types.Where(t => !t.IsComplete))
 					Console.WriteLine("{0}", type.Name);
 				throw new InvalidOperationException("Could not resolve all types!");
 			}
-			
-			for(int i = 0; i < types.Count; i++)
+
+			foreach (var sym in symbols.Where(s => (s.Type != null) && (s.Value == null)).ToList())
 			{
-				types[i] = types[i].Compact();
+				scope.Symbols.Add(new SymbolName(sym.Type, sym.Name), sym);
 			}
 			
-			Console.WriteLine("Done resolving types!");
+			symbols.RemoveAll(s => (s.Value == null));
+
+			temp = 0;
+			do
+			{
+				foreach (var sym in symbols)
+				{
+					if (sym.Type != null && sym.Type.IsComplete == false)
+						throw new InvalidOperationException("!");
+					if(sym.Value.IsComplete)
+						continue;
+						
+					var ctx = new ExpressionContext();
+					if(sym.Type != null)
+						ctx.TypeHints = new [] { sym.Type };
+					
+					sym.Value.Update(ctx);
+					
+					if(sym.Value.IsComplete == false)
+						continue;
+					
+					if(sym.Type != null)
+					{
+						if(sym.Type != sym.Value.Type)
+							throw new InvalidOperationException("!!");
+					}
+					else
+					{
+						sym.Type = sym.Value.Type;
+					}
+					scope.Symbols.Add(new SymbolName(sym.Type, sym.Name), sym);
+				}
+				completed = temp;
+				temp = symbols.Count(t => t.Value.IsComplete);
+			} while (temp > completed);
 			
-			throw new NotImplementedException();
+			if(symbols.Any(s => (s.Type == null)))
+				throw new InvalidOperationException("Not all symbols have types!");
+			if(symbols.Any(s => (s.Value != null) && (s.Value.IsComplete == false)))
+			{
+				Console.WriteLine("Incomplete symbols:");
+				foreach (var type in symbols.Where(t => !t.IsComplete))
+					Console.WriteLine("{0}", type.Name);
+				throw new InvalidOperationException("Not all symbol values were resolved!");
+			}
+
+			Console.WriteLine("Done.");
 		}
 
 		static Scope CreateBuiltins()
@@ -72,11 +133,11 @@ namespace Psi.Compiler
 			var scope = new Scope();
 			// var vars = scope.Variabels;
 			var types = scope.Types;
-			
+
 			var std = new IntermediateModule("std");
-			
+
 			scope.Modules.Add("std", std);
-			
+
 			var @void = PsiType.Void;
 			var @int = PsiType.Integer;
 			var @bool = PsiType.Boolean;
@@ -84,6 +145,8 @@ namespace Psi.Compiler
 			var @type = PsiType.Type;
 			var @string = PsiType.String;
 			var @real = PsiType.Real;
+			var @byte = PsiType.Byte;
+			var @binary = PsiType.Binary;
 
 			types.Add("void", @void);
 			types.Add("int", @int);
@@ -91,7 +154,9 @@ namespace Psi.Compiler
 			types.Add("bool", @bool);
 			types.Add("char", @char);
 			types.Add("string", @string);
-			
+			types.Add("byte", @byte);
+			types.Add("binary", @binary);
+
 			std.Types.Add("void", @void);
 			std.Types.Add("int", @int);
 			std.Types.Add("real", @real);
@@ -99,6 +164,8 @@ namespace Psi.Compiler
 			std.Types.Add("char", @char);
 			std.Types.Add("string", @string);
 			std.Types.Add("type", @type);
+			std.Types.Add("byte", @byte);
+			std.Types.Add("binary", @binary);
 
 			/*
 
