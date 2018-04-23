@@ -61,7 +61,7 @@
 
 %%
 
-program     : /* empty */         { $$ = new Module(); }
+program     : /* empty */         { $$ = new Module() { Name = new CompoundName("GLOBAL") }; }
             | program assertion   { $$ = $1.Add($2); }
             | program declaration { $$ = $1.Add($2); }
             | program typedecl    { $$ = $1.Add($2); }
@@ -777,9 +777,9 @@ public Module Result => this.CurrentSemanticValue.Module;
 
 public static Expression TypeDeclaration { get; } = new VariableReference("<type>");
 
-public static AstType Undefined { get; } = new LiteralType(null);
+public static AstType Undefined { get; } = LiteralType.Unknown;
 
-public static AstType Void { get; } = new LiteralType(PsiType.Void);
+public static AstType Void { get; } = LiteralType.Void;
 
 private static Expression Apply(Expression lhs, Expression rhs, PsiOperator op)
 {

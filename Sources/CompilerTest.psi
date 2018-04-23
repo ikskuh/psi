@@ -2,6 +2,22 @@
  * Compiler Test Program                                                     *
  ****************************************************************************/
 
+module submodule
+{
+	module inception
+	{
+	}
+}
+
+module submodule.inception
+{
+	
+}
+
+type gender = enum(none,male,female,ah64);
+
+/*
+
 // tests dependencies
 type bam = bar;
 
@@ -40,6 +56,8 @@ type recursive = record
 		age : int,
 		next : recursive
 	);
+
+*/
 
 /*
 // Tests out params

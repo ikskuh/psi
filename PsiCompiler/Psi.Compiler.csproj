@@ -47,6 +47,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Grammar\AST\Statements.cs" />
+    <Compile Include="Intermediate\ASTConverter.cs" />
+    <Compile Include="Intermediate\Expression.cs" />
+    <Compile Include="Intermediate\IntermediateType.cs" />
+    <Compile Include="Intermediate\Module.cs" />
+    <Compile Include="Intermediate\RecordMember.cs" />
+    <Compile Include="Intermediate\Symbol.cs" />
+    <Compile Include="Intermediate\SymbolCollection.cs" />
+    <Compile Include="Intermediate\SymbolName.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Grammar\ParserNode.cs">
@@ -76,15 +84,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="PsiString.cs" />
-    <Compile Include="Intermediate\Translator.cs" />
     <Compile Include="Grammar\AST\Types.cs" />
-    <Compile Include="Intermediate\IntermediateExpression.cs" />
-    <Compile Include="Intermediate\PsiType.cs" />
-    <Compile Include="Intermediate\Scope.cs" />
-    <Compile Include="Intermediate\Symbol.cs" />
-    <Compile Include="Intermediate\IntermediateModule.cs" />
-    <Compile Include="Intermediate\BuiltinTypes.cs" />
-    <Compile Include="Intermediate\SymbolName.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Grammar\Psi.tok" />
@@ -113,7 +113,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Backend\" />
-    <Folder Include="Intermediate\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

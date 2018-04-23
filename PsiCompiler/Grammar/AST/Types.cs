@@ -7,14 +7,14 @@ namespace Psi.Compiler.Grammar
 
 	public abstract class AstType
 	{
-		public virtual PsiType CreateIntermediate()
-		{
-			throw new NotSupportedException();
-		}
 	}
 
 	public sealed class LiteralType : AstType
 	{
+        public static readonly LiteralType Void = new LiteralType();
+        public static readonly LiteralType Unknown = new LiteralType();
+        
+        /*
 		public LiteralType(PsiType type)
 		{
 			this.Type = type;
@@ -25,7 +25,8 @@ namespace Psi.Compiler.Grammar
 		public PsiType Type { get; }
 		
 		public override string ToString() => this.Type.ToString();
-	}
+        */
+    }
 
 	public sealed class NamedTypeLiteral : AstType
 	{
@@ -35,8 +36,6 @@ namespace Psi.Compiler.Grammar
 			this.Name = name;
 		}
 		
-		public override PsiType CreateIntermediate() => new NamedType(this);
-	
 		public CompoundName Name { get; }
 		
 		public override string ToString() => this.Name.ToString();
@@ -50,8 +49,6 @@ namespace Psi.Compiler.Grammar
 			this.ReturnType = returnType;
 		}
 		
-		public override PsiType CreateIntermediate() => new FunctionType(this);
-
 		public IReadOnlyList<Parameter> Parameters { get; }
 
 		public AstType ReturnType { get; }
@@ -92,7 +89,6 @@ namespace Psi.Compiler.Grammar
 		Lazy = 8
 	}
 
-
 	public sealed class EnumTypeLiteral : AstType
 	{
 		public EnumTypeLiteral(IEnumerable<string> items)
@@ -102,11 +98,6 @@ namespace Psi.Compiler.Grammar
 				throw new InvalidOperationException("Enums allow no duplicates!");
 		}
 		
-		public override PsiType CreateIntermediate()
-		{
-			return new EnumType(this.Items.ToArray());
-		}
-
 		public IReadOnlyList<string> Items { get; }
 
 		public override string ToString() => string.Format("enum({0})", string.Join(", ", Items));
@@ -136,8 +127,6 @@ namespace Psi.Compiler.Grammar
 			this.ObjectType = objectType.NotNull();
 		}
 		
-		public override PsiType CreateIntermediate() => new ReferenceType(this);
-
 		public AstType ObjectType { get; }
 
 		public override string ToString() => string.Format("ref<{0}>", ObjectType);
@@ -154,8 +143,6 @@ namespace Psi.Compiler.Grammar
 			this.ElementType = objectType.NotNull();
 		}
 		
-		public override PsiType CreateIntermediate() => new ArrayType(this);
-
 		public AstType ElementType { get; }
 
 		public int Dimensions { get; }
@@ -171,8 +158,6 @@ namespace Psi.Compiler.Grammar
 			this.Fields = fields.ToArray();
 		}
 		
-		public override PsiType CreateIntermediate() => new RecordType(this);
-
 		public IReadOnlyList<Declaration> Fields { get; }
 
 		public override string ToString() => string.Format("record({0})", string.Join(", ", Fields));

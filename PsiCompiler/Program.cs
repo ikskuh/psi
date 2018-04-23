@@ -4,7 +4,8 @@ using System.IO;
 namespace Psi.Compiler
 {
 	using Psi.Compiler.Grammar;
-	using System.Diagnostics;
+    using Psi.Compiler.Intermediate;
+    using System.Diagnostics;
 
 	class MainClass
 	{
@@ -16,10 +17,12 @@ namespace Psi.Compiler
 			{
 				var printer = new ModulePrinter(Console.Out);
 				printer.Print(module);
-				
-				var t = new Translator();
-				
-				Translator.Translate(t, module);
+
+                var astConverter = new ASTConverter();
+                astConverter.AddModule(module);
+                astConverter.Convert();
+
+                var output = astConverter.GetModule(module);
 			}
 			else
 			{
@@ -30,7 +33,7 @@ namespace Psi.Compiler
 				Console.ReadLine();
 		}
 
-		private static Module Load(string fileName)
+		private static Grammar.Module Load(string fileName)
 		{
 			using (var lexer = new PsiLexer(fileName))
 			{

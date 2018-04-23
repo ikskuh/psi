@@ -9,10 +9,6 @@ namespace Psi.Compiler.Grammar
 {
 	public abstract class Expression
 	{
-		public virtual IntermediateExpression CreateIntermediate()
-		{
-			throw new NotImplementedException(this.GetType().Name + " is not supported yet.");
-		}
 	}
 
 	public sealed class NumberLiteral : Expression
@@ -22,17 +18,6 @@ namespace Psi.Compiler.Grammar
 			this.Value = value.NotNull();
 		}
 		
-		public override IntermediateExpression CreateIntermediate()
-		{
-			if(this.Value.Contains("."))
-				return new Literal(new [] { PsiType.Real }, this.Value);
-				
-			if(this.Value.StartsWith("0x", StringComparison.Ordinal))
-				return new Literal(new [] { PsiType.Integer }, this.Value);
-			
-			return new Literal(new [] { PsiType.Integer, PsiType.Real }, this.Value);
-		}
-
 		public string Value { get; }
 
 		public override string ToString() => Value;
@@ -79,8 +64,6 @@ namespace Psi.Compiler.Grammar
 			this.Variable = value.NotNull();
 		}
 		
-		public override IntermediateExpression CreateIntermediate() => new SymbolReference(this.Variable);
-
 		public string Variable { get; }
 
 		public override string ToString() => Variable;
@@ -238,21 +221,21 @@ namespace Psi.Compiler.Grammar
 	}
 
 	public sealed class LambdaLiteral : Expression
-	{
-		public LambdaLiteral(IEnumerable<string> parameters, Statement body)
-		{
-			this.Type = new FunctionTypeLiteral(
-				parameters.Select(p => new Parameter(ParameterFlags.None, p, PsiParser.Undefined, null)),
-				new LiteralType(PsiType.Void));
-			this.Body = body;
-		}
+    {
+        public LambdaLiteral(IEnumerable<string> parameters, Statement body)
+        {
+            this.Type = new FunctionTypeLiteral(
+                parameters.Select(p => new Parameter(ParameterFlags.None, p, PsiParser.Undefined, null)),
+                LiteralType.Unknown);
+            this.Body = body;
+        }
 
-		public FunctionTypeLiteral Type { get; }
+        public FunctionTypeLiteral Type { get; }
 
-		public Statement Body { get; }
+        public Statement Body { get; }
 
-		public override string ToString() => string.Format("{0} => {1}", Type, Body);
-	}
+        public override string ToString() => string.Format("{0} => {1}", Type, Body);
+    }
 
 	public sealed class ArrayLiteral : Expression
 	{

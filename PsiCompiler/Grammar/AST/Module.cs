@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Psi.Compiler.Grammar
 {
 	public sealed class Module
-	{		
+	{
 		public Module Add(Module value)
 		{
 			this.Submodules.Add(value);

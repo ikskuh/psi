@@ -3,10 +3,10 @@
 // (see accompanying GPPGcopyright.rtf)
 
 // GPPG version 1.5.2
-// Machine:  denkplatte
-// DateTime: 2/10/2018 1:09:11 AM
-// UserName: felix
-// Input file <Psi.y - 12/22/2017 6:14:24 PM>
+// Machine:  DENKPLATTE-W7
+// DateTime: 23.04.2018 19:55:29
+// UserName: Felix
+// Input file <Psi.y - 23.04.2018 10:50:59>
 
 // options: lines
 
@@ -608,7 +608,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
     {
       case 2: // program -> /* empty */
 #line 64 "Psi.y"
-                                  { CurrentSemanticValue.Module = new Module(); }
+                                  { CurrentSemanticValue.Module = new Module() { Name = new CompoundName("GLOBAL") }; }
 #line default
         break;
       case 3: // program -> program, assertion
@@ -1676,9 +1676,9 @@ public Module Result => this.CurrentSemanticValue.Module;
 
 public static Expression TypeDeclaration { get; } = new VariableReference("<type>");
 
-public static AstType Undefined { get; } = new LiteralType(null);
+public static AstType Undefined { get; } = LiteralType.Unknown;
 
-public static AstType Void { get; } = new LiteralType(PsiType.Void);
+public static AstType Void { get; } = LiteralType.Void;
 
 private static Expression Apply(Expression lhs, Expression rhs, PsiOperator op)
 {
