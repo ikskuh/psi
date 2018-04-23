@@ -52,6 +52,7 @@
     <Compile Include="Intermediate\IntermediateType.cs" />
     <Compile Include="Intermediate\Module.cs" />
     <Compile Include="Intermediate\RecordMember.cs" />
+    <Compile Include="Intermediate\Scope.cs" />
     <Compile Include="Intermediate\Symbol.cs" />
     <Compile Include="Intermediate\SymbolCollection.cs" />
     <Compile Include="Intermediate\SymbolName.cs" />

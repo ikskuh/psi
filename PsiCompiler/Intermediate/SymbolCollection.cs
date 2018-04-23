@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Psi.Compiler.Intermediate
 {
-    public class SymbolCollection : IReadOnlyDictionary<SymbolName, Symbol>
+    public class SymbolCollection : IReadOnlyDictionary<SymbolName, Symbol>, IScope
     {
         private readonly Dictionary<SymbolName, Symbol> symbols = new Dictionary<SymbolName, Symbol>();
 
@@ -47,5 +47,9 @@ namespace Psi.Compiler.Intermediate
         {
             return ((IReadOnlyDictionary<SymbolName, Symbol>)symbols).GetEnumerator();
         }
+
+        public bool HasSymbol(SymbolName name) => this.symbols.ContainsKey(name);
+
+        IEnumerator<Symbol> IEnumerable<Symbol>.GetEnumerator() => this.symbols.Values.GetEnumerator();
     }
 }

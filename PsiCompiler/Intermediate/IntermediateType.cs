@@ -20,6 +20,11 @@ namespace Psi.Compiler.Intermediate
         /// The type that represents a Psi type.
         /// </summary>
         public static readonly BuiltinType MetaType = new BuiltinType();
+
+        /// <summary>
+        /// The type that represents a module.
+        /// </summary>
+        public static readonly BuiltinType ModuleType = new BuiltinType();
     }
 
     public sealed class BuiltinType : IntermediateType
@@ -43,6 +48,6 @@ namespace Psi.Compiler.Intermediate
 
     public sealed class RecordType : IntermediateType
     {
-        public IList<RecordMember> Members { get; set; } = new List<RecordMember>();
+        public IList<RecordMember> Members { get; set; }
     }
 }

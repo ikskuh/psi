@@ -11,30 +11,31 @@ namespace Psi.Compiler.Intermediate
     {
         private readonly List<TranslationUnit> units = new List<TranslationUnit>();
 
-        public ASTConverter()
-        {
+        public IScope GlobalScope { get; }
 
+        public ASTConverter(IScope globalScope)
+        {
+            this.GlobalScope = globalScope ?? throw new ArgumentNullException(nameof(globalScope));
         }
 
         #region Module Management
 
-        public void AddModule(Grammar.Module module) => this.AddModule(module, "");
+        public void AddModule(Grammar.Module module) => this.AddModule(module, null);
 
-        private void AddModule(Grammar.Module module, string @namespace)
+        private Module AddModule(Grammar.Module module, Module parent)
         {
+            // TODO: Fix parent/child relation of modules with complex compound name
+
+            if (module.Name.Count > 1)
+                throw new NotSupportedException("Compound module names not supported yet.");
+
             if (module == null)
                 throw new ArgumentNullException(nameof(module));
-            if (@namespace == null)
-                throw new ArgumentNullException(nameof(@namespace));
 
             if (units.Any(u => u.Source == module))
                 throw new InvalidOperationException("Cannot add the same module twice!");
 
-            var name = string.Join(
-                ".",
-                @namespace
-                    .Split(new[] { '.' }, StringSplitOptions.RemoveEmptyEntries)
-                    .Concat(module.Name));
+            var name = (parent != null ? parent.Name + "." : "") + module.Name;
 
             Module output;
             if (units.Any(m => m.Module.Name == name))
@@ -45,16 +46,31 @@ namespace Psi.Compiler.Intermediate
             else
             {
                 // module not known, use new output
-                output = new Module(name);
+                output = new Module(parent, name);
             }
             var tu = new TranslationUnit(module, output)
             {
                 IsComplete = false
             };
+
+            // Initialize the base scope of the translation unit
+            tu.Scope.Push(this.GlobalScope);
+            tu.Scope.Push(tu.Imports);
+            tu.Scope.Push(tu.Module.Symbols);
+
             this.units.Add(tu);
 
             foreach (var sm in module.Submodules)
-                this.AddModule(sm, name);
+            {
+                output.Symbols.Add(new Symbol(IntermediateType.ModuleType, sm.Name.Identifier)
+                {
+                    Initializer = new Literal<Module>(this.AddModule(sm, output)),
+                    IsConst = true,
+                    IsExported = true
+                });
+            }
+
+            return output;
         }
 
         /// <summary>
@@ -96,41 +112,95 @@ namespace Psi.Compiler.Intermediate
             var dst = unit.Module;
             foreach (var decl in unit.Source.TypeDeclarations)
             {
-                IntermediateType type;
-                if (decl.Type is LiteralType lt)
-                {
-                    if (lt == LiteralType.Void)
-                        type = IntermediateType.VoidType;
-                    else if (lt == LiteralType.Unknown)
-                        type = IntermediateType.UnknownType;
-                    else
-                        throw new NotSupportedException("Unknown literal type!");
-                }
-                else if(decl.Type is NamedTypeLiteral ntl)
-                {
-                    throw new NotSupportedException();
-                }
-                else if (decl.Type is EnumTypeLiteral etl)
-                {
-                    type = new EnumType(etl.Items);
-                }
-                else if (decl.Type is RecordTypeLiteral rtl)
-                {
-                    throw new NotSupportedException();
-                }
-                else
-                {
-                    throw new NotSupportedException($"{decl.Type.GetType().Name} is not supported yet!");
-                }
+                IntermediateType type = ConvertType(unit, unit.Scope, decl.Type);
+                if (type == IntermediateType.UnknownType)
+                    throw new InvalidOperationException("Unknown type not allows in declaration");
+                if (type == IntermediateType.VoidType)
+                    throw new InvalidOperationException("Void type may not be aliased!");
                 unit.Module.Symbols.Add(new Symbol(IntermediateType.MetaType, decl.Name)
                 {
                     IsConst = true,
                     IsExported = decl.IsExported,
-                    Initializer = new TypeLiteral(type),
+                    Initializer = new Literal<IntermediateType>(type),
                 });
             }
         }
 
+        private static IntermediateType ConvertType(TranslationUnit unit, IScope scope, AstType asttype)
+        {
+            if (asttype is LiteralType lt)
+            {
+                if (lt == LiteralType.Void)
+                    return IntermediateType.VoidType;
+                else if (lt == LiteralType.Unknown)
+                    return IntermediateType.UnknownType;
+                else
+                    throw new NotSupportedException("Unknown literal type!");
+            }
+            else if (asttype is NamedTypeLiteral ntl)
+            {
+                IScope srcScope = scope;
+                for (int i = 0; i < ntl.Name.Count - 1; i++)
+                {
+                    var nom = srcScope[new SymbolName(IntermediateType.ModuleType, ntl.Name[i])];
+                    srcScope = (nom.Initializer as Literal<Module>).Value.Symbols;
+                }
+                var tsym = srcScope[new SymbolName(IntermediateType.MetaType, ntl.Name.Identifier)];
+
+                // TODO: Implement alias-types here or just use the direct type?
+                return (tsym.Initializer as Literal<IntermediateType>).Value;
+            }
+            else if (asttype is EnumTypeLiteral etl)
+            {
+                return new EnumType(etl.Items);
+            }
+            else if (asttype is RecordTypeLiteral rtl)
+            {
+                var type = new RecordType();
+                unit.AddTask(() =>
+                {
+                    var members = new List<RecordMember>();
+                    var map = new Dictionary<RecordMember, Declaration>();
+                    foreach (var m in rtl.Fields)
+                    {
+                        var ftype = ConvertType(unit, scope, m.Type);
+                        if (ftype == null)
+                            return false;
+                        var member = new RecordMember(type, m.Name)
+                        {
+                            Type = ftype,
+                        };
+                        map[member] = m;
+                        members.Add(member);
+                    }
+                    if (type.Members != null)
+                        throw new InvalidOperationException("record type was somehow already translated?!");
+                    type.Members = members;
+                    foreach(var member in type.Members)
+                    {
+                        var m = map[member];
+                        if (m.Value == null)
+                            continue;
+                        unit.AddTask(() =>
+                        {
+                            member.Initializer = ConvertExpression(unit, scope, m.Value);
+                            return (member.Initializer != null);
+                        });
+                    }
+                    return true;
+                });
+                return type;
+            }
+            else
+            {
+                throw new NotSupportedException($"{asttype.GetType().Name} is not supported yet!");
+            }
+        }
+
+        private static Expression ConvertExpression(TranslationUnit unit, IScope scope, Grammar.Expression value)
+        {
+            throw new NotImplementedException();
+        }
 
         private class TranslationUnit
         {
@@ -142,6 +212,14 @@ namespace Psi.Compiler.Intermediate
                 this.Module = output ?? throw new ArgumentNullException(nameof(output));
             }
             
+            public bool AddTask(CompilationTask task)
+            {
+                var success = task();
+                if (!success)
+                    this.Tasks.Enqueue(task);
+                return success;
+            }
+
             public Grammar.Module Source { get; }
 
             public Module Module { get; }
@@ -149,6 +227,20 @@ namespace Psi.Compiler.Intermediate
             public bool IsComplete { get; set; }
 
             public Queue<CompilationTask> Tasks { get; } = new Queue<CompilationTask>();
+
+            /// <summary>
+            /// The basic scope for this translation unit.
+            /// Contains at least the following options (bottom to top)
+            /// 1. global scope (all libraries and stuff)
+            /// 2. import scope (TranslateUnit.Imports)
+            /// 3. the target module
+            /// </summary>
+            public StackableScope Scope { get; } = new StackableScope();
+
+            /// <summary>
+            /// The second stage of the units scope. Contains all import statements in order.
+            /// </summary>
+            public StackableScope Imports { get; } = new StackableScope();
 
             public override string ToString() => $"Unit({Module.Name})";
         }

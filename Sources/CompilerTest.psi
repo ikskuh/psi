@@ -9,12 +9,25 @@ module submodule
 	}
 }
 
-module submodule.inception
-{
-	
-}
+// TODO: Implement support for complex compound names
+// module submodule.inception { }
+
+type fwdred = gender;
 
 type gender = enum(none,male,female,ah64);
+
+type builtin = std.int;
+
+type backref = gender;
+
+type person = record
+(
+	age : std.int
+);
+
+// TODO: Test import by using:
+// import std;
+// type builtin2 = int;
 
 /*
 

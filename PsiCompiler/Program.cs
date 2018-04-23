@@ -11,14 +11,25 @@ namespace Psi.Compiler
 	{
 		public static void Main(string[] args)
 		{
+            var std = CreateStd();
 			var module = Load("../../../Sources/CompilerTest.psi");
 
 			if (module != null)
 			{
 				var printer = new ModulePrinter(Console.Out);
 				printer.Print(module);
+                
+                var globalScope = new SimpleScope
+                {
+                    new Symbol(IntermediateType.ModuleType, "std")
+                    {
+                        Initializer = new Literal<Intermediate.Module>(std),
+                        IsConst = true,
+                        IsExported = false
+                    }
+                };
 
-                var astConverter = new ASTConverter();
+                var astConverter = new ASTConverter(globalScope);
                 astConverter.AddModule(module);
                 astConverter.Convert();
 
@@ -48,5 +59,16 @@ namespace Psi.Compiler
 			}
 		}
 
+        private static Intermediate.Module CreateStd()
+        {
+            var std = new Intermediate.Module(null, "std");
+            std.Symbols.Add(new Symbol(IntermediateType.MetaType, "int")
+            {
+                Initializer = new Literal<IntermediateType>(new BuiltinType()),
+                IsConst = true,
+                IsExported = true,
+            });
+            return std;
+        }
 	}
 }

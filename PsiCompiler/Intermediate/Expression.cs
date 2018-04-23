@@ -7,13 +7,15 @@ namespace Psi.Compiler.Intermediate
 
     }
 
-    public sealed class TypeLiteral : Expression
+    public sealed class Literal<T> : Expression
     {
-        public  TypeLiteral(IntermediateType type)
+        public Literal(T value)
         {
-            this.Type = type ?? throw new ArgumentNullException(nameof(type));
+            if (value == null)
+                throw new ArgumentNullException(nameof(value));
+            this.Value = value;
         }
 
-        public IntermediateType Type { get; }
+        public T Value { get; }
     }
 }
