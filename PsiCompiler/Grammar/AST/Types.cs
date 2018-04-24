@@ -4,7 +4,6 @@ using System.Linq;
 
 namespace Psi.Compiler.Grammar
 {
-
 	public abstract class AstType
 	{
 	}

@@ -1,10 +1,11 @@
 ﻿
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
 namespace Psi.Compiler.Intermediate
 {
-    public abstract class Type
+    public abstract class Type : IEquatable<Type>
     {
         /// <summary>
         /// A type that marks a non-value
@@ -25,6 +26,25 @@ namespace Psi.Compiler.Intermediate
         /// The type that represents a module.
         /// </summary>
         public static readonly BuiltinType ModuleType = new BuiltinType("module");
+
+        public override bool Equals(object obj) => Equals(obj as Type);
+
+        public bool Equals(Type other)
+        {
+            if (other == null)
+                return false;
+            if (other.GetType() != this.GetType()) // Types have strong equality!
+                return false;
+            return this.TypeEquals(other);
+        }
+
+        /// <summary>
+        /// Compares the two types for equality.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <remarks>other is certainly of the same type as `this`.</remarks> 
+        /// <returns></returns>
+        protected abstract bool TypeEquals(Type other);
     }
 
     public sealed class BuiltinType : Type
@@ -38,6 +58,8 @@ namespace Psi.Compiler.Intermediate
         {
             this.Name = name;
         }
+
+        protected override bool TypeEquals(Type other) => object.ReferenceEquals(this, other);
 
         public string Name { get; }
 
@@ -53,6 +75,13 @@ namespace Psi.Compiler.Intermediate
             this.items = items.ToArray();
         }
 
+        protected override bool TypeEquals(Type other)
+        {
+            return Enumerable.SequenceEqual(this.items, ((EnumType)other).items);
+        }
+
+        public override int GetHashCode() => this.items.Select(x => x.GetHashCode()).Aggregate(0, (a, b) => a ^ b);
+
         public IReadOnlyList<string> Members => this.items;
 
         public override string ToString() => "enum(" + string.Join(",", this.items) + ")";
@@ -61,6 +90,13 @@ namespace Psi.Compiler.Intermediate
     public sealed class RecordType : Type
     {
         public IList<RecordMember> Members { get; set; }
+
+        protected override bool TypeEquals(Type other)
+        {
+            return Enumerable.SequenceEqual(this.Members, ((RecordType)other).Members);
+        }
+
+        public override int GetHashCode() => this.Members.Select(x => x.GetHashCode()).Aggregate(0, (a, b) => a ^ b);
     }
 
     public sealed class ArrayType : Type
@@ -68,11 +104,23 @@ namespace Psi.Compiler.Intermediate
         public Type ElementType { get; set; }
 
         public int Dimensions { get; set; } = 1;
+
+        public override int GetHashCode() => ElementType.GetHashCode();
+
+        protected override bool TypeEquals(Type other)
+        {
+            var at = (ArrayType)other;
+            return this.Dimensions == at.Dimensions && ElementType.Equals(at.ElementType);
+        }
     }
 
     public sealed class ReferenceType : Type
     {
         public Type ObjectType { get; set; }
+
+        public override int GetHashCode() => -this.ObjectType.GetHashCode();
+
+        protected override bool TypeEquals(Type other) => object.Equals(ObjectType, ((ReferenceType)other).ObjectType);
     }
 
     public sealed class FunctionType : Type
@@ -80,5 +128,15 @@ namespace Psi.Compiler.Intermediate
         public Type ReturnType { get; set; }
 
         public IList<Parameter> Parameters { get; set; }
+
+        protected override bool TypeEquals(Type other)
+        {
+            var ft = (FunctionType)other;
+            if (!object.Equals(ReturnType, ft.ReturnType))
+                return false;
+            return Enumerable.SequenceEqual(this.Parameters, ft.Parameters);
+        }
+
+        public override int GetHashCode() =>this.ReturnType.GetHashCode() ^  this.Parameters.Select(x => x.GetHashCode()).Aggregate(0, (a, b) => a ^ b);
     }
 }

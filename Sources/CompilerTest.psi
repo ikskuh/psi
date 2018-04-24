@@ -1,14 +1,13 @@
 /*****************************************************************************
- * Compiler Test Program                                                     *
- ****************************************************************************/
+* Compiler Test Program                                                      *
+*****************************************************************************/
 
 import std;
 
-var x : int;
+var x : fn(i : int);
 
-var x : record(name : string);
+var x : fn(this j : int); // same as other "x"
 
-var x : record(name : string);
 
 /*
 var foo : int = 10;

@@ -2,7 +2,7 @@
 
 namespace Psi.Compiler.Intermediate
 {
-    public sealed class Parameter
+    public sealed class Parameter : IEquatable<Parameter>
     {
         public Parameter(FunctionType owner, string name, int position)
         {
@@ -24,5 +24,23 @@ namespace Psi.Compiler.Intermediate
         public Type Type { get; set; }
 
         public Expression Initializer { get; set; }
+
+        public override bool Equals(object obj) => Equals(obj as Parameter);
+
+        public override int GetHashCode() =>
+              Position.GetHashCode()
+            ^ (Flags & ~ParameterFlags.This).GetHashCode()
+            ^ (Type?.GetHashCode() ?? 0)
+            ^ (Initializer?.GetHashCode() ?? 0);
+
+        public bool Equals(Parameter other)
+        {
+            if (other == null)
+                return false;
+            return object.Equals(Position, other.Position)
+                && object.Equals((Flags & ~ParameterFlags.This), (other.Flags & ~ParameterFlags.This))
+                && object.Equals(Type, other.Type)
+                && object.Equals(Initializer, other.Initializer);
+        }
     }
 }

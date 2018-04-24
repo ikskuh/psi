@@ -52,7 +52,7 @@
     <Compile Include="Intermediate\ASTConverter.cs" />
     <Compile Include="Intermediate\CompilerError.cs" />
     <Compile Include="Intermediate\Expression.cs" />
-    <Compile Include="Intermediate\IntermediateType.cs" />
+    <Compile Include="Intermediate\Type.cs" />
     <Compile Include="Intermediate\Module.cs" />
     <Compile Include="Intermediate\Parameter.cs" />
     <Compile Include="Intermediate\RecordMember.cs" />
