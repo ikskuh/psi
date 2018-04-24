@@ -20,6 +20,30 @@ namespace Psi.Compiler.Intermediate
             this.LocalName = this.Name.Split('.').Last();
         }
 
+        public Symbol AddType(string name, IntermediateType type, bool isExported)
+        {
+            var sym = new Symbol(IntermediateType.MetaType, name)
+            {
+                Initializer = new Literal<IntermediateType>(type),
+                IsConst = true,
+                IsExported = isExported,
+            };
+            this.Symbols.Add(sym);
+            return sym;
+        }
+
+        public Symbol AddModule(string name, Module submodule)
+        {
+            var sym = new Symbol(IntermediateType.ModuleType, name)
+            {
+                Initializer = new Literal<Module>(submodule),
+                IsConst = true,
+                IsExported = true,
+            };
+            this.Symbols.Add(sym);
+            return sym;
+        }
+
         public SymbolCollection Symbols => this.symbols;
 
         public IReadOnlyDictionary<string, Module> Submodules => this.symbols

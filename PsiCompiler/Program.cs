@@ -61,13 +61,22 @@ namespace Psi.Compiler
 
         private static Intermediate.Module CreateStd()
         {
+            var t_int = new BuiltinType("int");
+            var t_char = new BuiltinType("char");
+            var t_string = new ArrayType { ElementType = t_char, Dimensions = 1 };
+
+
             var std = new Intermediate.Module(null, "std");
-            std.Symbols.Add(new Symbol(IntermediateType.MetaType, "int")
-            {
-                Initializer = new Literal<IntermediateType>(new BuiltinType()),
-                IsConst = true,
-                IsExported = true,
-            });
+            std.AddType("int", t_int, true);
+            std.AddType("char", t_char, true);
+            std.AddType("string", t_string, true);
+
+            var compiler = new Intermediate.Module(std, "compiler");
+            compiler.AddType("type", IntermediateType.MetaType, true);
+            compiler.AddType("void", IntermediateType.VoidType, true);
+            compiler.AddType("module", IntermediateType.ModuleType, true);
+            std.AddModule("compiler", compiler);
+
             return std;
         }
 	}

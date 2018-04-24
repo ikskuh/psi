@@ -12,7 +12,13 @@ module submodule
 // TODO: Implement support for complex compound names
 // module submodule.inception { }
 
-type fwdred = gender;
+import std;
+type myint = int; // requires "import std;"
+
+type stringlist = array<string>;
+type matrix = array<std.int, 2>;
+
+type fwdref = gender;
 
 type gender = enum(none,male,female,ah64);
 
@@ -22,14 +28,16 @@ type backref = gender;
 
 type person = record
 (
-	age : std.int
+	age    : std.int,
+	name   : std.string,
+	gender : gender
 );
 
-// TODO: Test import by using:
-// import std;
-// type builtin2 = int;
-
-/*
+type recursive = record
+	(
+		age : int,
+		next : recursive
+	);
 
 // tests dependencies
 type bam = bar;
@@ -40,22 +48,16 @@ type foo = std.int;
 
 type bar = foo;
 
-// tests different types
-type genders = enum(none,male,female,ah64);
-
-type someType = std.type;
-
-type person = record(name : string, age : int);
-
-type someone = ref<person>;
+type someType = std.compiler.type;
 
 type family = array<foo>;
 
-type mainFunc = fn(argc : int, argv : array<string>) -> int;
-
-type matrix = array<real,2>;
+type someone = ref<person>;
 
 type bunchOfPeople = array<ref<person> >;
+
+/*
+type mainFunc = fn(argc : int, argv : array<string>) -> int;
 
 var foo : int = 10;
 
@@ -63,12 +65,6 @@ var bar : int = foo;
 
 var v0 : person;
 var v1 : record(x : string, y : int) = v0;
-
-type recursive = record
-	(
-		age : int,
-		next : recursive
-	);
 
 */
 

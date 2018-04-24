@@ -103,25 +103,94 @@ namespace Psi.Compiler.Intermediate
 
         public void Convert()
         {
+            // Step 1: Prepare all compilation steps
             foreach (var unit in this.units)
                 this.CreateTypeSymbols(unit);
+
+            foreach (var unit in this.units)
+                this.ImportSymbolsIntoUnit(unit);
+
+            // Step 2: Run tasks until all tasks are done:
+            while (this.units.Sum(u => u.Tasks.Count) > 0)
+            {
+                var anySuccess = false;
+                var errors = new List<CompilerError>();
+                foreach (var unit in this.units)
+                {
+                    // take the current set of tasks and dequeue them
+                    int count = unit.Tasks.Count;
+                    for (int i = 0; i < count; i++)
+                    {
+                        var task = unit.Tasks.Dequeue();
+                        try
+                        {
+                            var error = task();
+                            if (error != null)
+                            {
+                                errors.Add(error);
+                                unit.Tasks.Enqueue(task);
+                                continue;
+                            }
+                            anySuccess = true;
+                        }
+                        catch (Exception ex)
+                        {
+                            errors.Add(new CompilerError(ex.Message));
+                            unit.Tasks.Enqueue(task);
+                        }
+                    }
+                }
+                if (!anySuccess)
+                {
+                    foreach (var err in errors)
+                        Console.Error.WriteLine("{0}", err.Description);
+                    throw new InvalidOperationException("Cyclic dependency or other error encountered!");
+                }
+            }
+
+            // Step 3: Postprocess the converted modules
+        }
+
+        private void ImportSymbolsIntoUnit(TranslationUnit unit)
+        {
+            foreach (var name in unit.Source.Imports)
+            {
+                unit.AddTask(() =>
+                {
+                    var sym = GlobalScope.FindNamedSymbol(name, IntermediateType.ModuleType, true);
+                    if (sym == null)
+                        return new CompilerError($"Could not find import module '{name}'");
+                    var mod = sym.GetValue<Module>();
+                    if (mod == null)
+                        throw new InvalidOperationException("imported module is not a constant!");
+
+                    unit.Imports.Push(mod.Symbols);
+
+                    return CompilerError.None;
+                });
+            }
         }
 
         private void CreateTypeSymbols(TranslationUnit unit)
         {
-            var dst = unit.Module;
             foreach (var decl in unit.Source.TypeDeclarations)
             {
-                IntermediateType type = ConvertType(unit, unit.Scope, decl.Type);
-                if (type == IntermediateType.UnknownType)
-                    throw new InvalidOperationException("Unknown type not allows in declaration");
-                if (type == IntermediateType.VoidType)
-                    throw new InvalidOperationException("Void type may not be aliased!");
-                unit.Module.Symbols.Add(new Symbol(IntermediateType.MetaType, decl.Name)
+                unit.AddTask(() =>
                 {
-                    IsConst = true,
-                    IsExported = decl.IsExported,
-                    Initializer = new Literal<IntermediateType>(type),
+                    IntermediateType type = ConvertType(unit, unit.Scope, decl.Type);
+                    if (type == null)
+                        return new CompilerError($"{decl.Type} is not resolvable!");
+                    if (type == IntermediateType.UnknownType)
+                        throw new InvalidOperationException("Unknown type not allows in declaration");
+                    if (type == IntermediateType.VoidType)
+                        throw new InvalidOperationException("Void type may not be aliased!");
+                    unit.Module.Symbols.Add(new Symbol(IntermediateType.MetaType, decl.Name)
+                    {
+                        IsConst = true,
+                        IsExported = decl.IsExported,
+                        Initializer = new Literal<IntermediateType>(type),
+                    });
+                    return CompilerError.None;
                 });
             }
         }
@@ -139,20 +208,28 @@ namespace Psi.Compiler.Intermediate
             }
             else if (asttype is NamedTypeLiteral ntl)
             {
-                IScope srcScope = scope;
-                for (int i = 0; i < ntl.Name.Count - 1; i++)
-                {
-                    var nom = srcScope[new SymbolName(IntermediateType.ModuleType, ntl.Name[i])];
-                    srcScope = (nom.Initializer as Literal<Module>).Value.Symbols;
-                }
-                var tsym = srcScope[new SymbolName(IntermediateType.MetaType, ntl.Name.Identifier)];
-
-                // TODO: Implement alias-types here or just use the direct type?
-                return (tsym.Initializer as Literal<IntermediateType>).Value;
+                var sym = scope.FindNamedSymbol(ntl.Name, IntermediateType.MetaType, true);
+                if (sym != null)
+                    return sym.GetValue<IntermediateType>();
+                else
+                    return null;
             }
             else if (asttype is EnumTypeLiteral etl)
             {
                 return new EnumType(etl.Items);
+            }
+            else if (asttype is ArrayTypeLiteral atl)
+            {
+                var type = new ArrayType();
+                type.Dimensions = atl.Dimensions;
+                unit.AddTask(() =>
+                {
+                    type.ElementType = ConvertType(unit, scope, atl.ElementType);
+                    if (type.ElementType == null)
+                        return new CompilerError($"Could not resolve '{atl.ElementType}'");
+                    return CompilerError.None;
+                });
+                return type;
             }
             else if (asttype is RecordTypeLiteral rtl)
             {
@@ -165,7 +242,7 @@ namespace Psi.Compiler.Intermediate
                     {
                         var ftype = ConvertType(unit, scope, m.Type);
                         if (ftype == null)
-                            return false;
+                            return new CompilerError($"Could not resolve type for record field {m.Name}.");
                         var member = new RecordMember(type, m.Name)
                         {
                             Type = ftype,
@@ -176,7 +253,7 @@ namespace Psi.Compiler.Intermediate
                     if (type.Members != null)
                         throw new InvalidOperationException("record type was somehow already translated?!");
                     type.Members = members;
-                    foreach(var member in type.Members)
+                    foreach (var member in type.Members)
                     {
                         var m = map[member];
                         if (m.Value == null)
@@ -184,10 +261,25 @@ namespace Psi.Compiler.Intermediate
                         unit.AddTask(() =>
                         {
                             member.Initializer = ConvertExpression(unit, scope, m.Value);
-                            return (member.Initializer != null);
+                            if (member.Initializer != null)
+                                return CompilerError.None;
+                            else
+                                return new CompilerError($"Failed to convert initializer for {member.Name}");
                         });
                     }
-                    return true;
+                    return CompilerError.None;
+                });
+                return type;
+            }
+            else if (asttype is ReferenceTypeLiteral rftl)
+            {
+                var type = new ReferenceType();
+                unit.AddTask(() =>
+                {
+                    type.ObjectType = ConvertType(unit, scope, rftl.ObjectType);
+                    if (type.ObjectType == null)
+                        return new CompilerError($"Could not find type '{rftl.ObjectType}'");
+                    return CompilerError.None;
                 });
                 return type;
             }
@@ -197,6 +289,7 @@ namespace Psi.Compiler.Intermediate
             }
         }
 
+
         private static Expression ConvertExpression(TranslationUnit unit, IScope scope, Grammar.Expression value)
         {
             throw new NotImplementedException();
@@ -204,20 +297,20 @@ namespace Psi.Compiler.Intermediate
 
         private class TranslationUnit
         {
-            public delegate bool CompilationTask();
+            public delegate CompilerError CompilationTask();
 
             public TranslationUnit(Grammar.Module input, Module output)
             {
                 this.Source = input ?? throw new ArgumentNullException(nameof(input));
                 this.Module = output ?? throw new ArgumentNullException(nameof(output));
             }
-            
+
             public bool AddTask(CompilationTask task)
             {
-                var success = task();
-                if (!success)
+                var error = task();
+                if (error != null)
                     this.Tasks.Enqueue(task);
-                return success;
+                return (error == null);
             }
 
             public Grammar.Module Source { get; }

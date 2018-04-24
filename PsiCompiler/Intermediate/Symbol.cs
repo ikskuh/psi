@@ -28,5 +28,7 @@ namespace Psi.Compiler.Intermediate
         public bool IsConst { get; set; }
 
         public bool IsExported { get; set; }
+
+        public T GetValue<T>() => (this.Initializer as Literal<T>).Value;
     }
 }

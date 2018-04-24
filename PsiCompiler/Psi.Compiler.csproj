@@ -48,6 +48,7 @@
   <ItemGroup>
     <Compile Include="Grammar\AST\Statements.cs" />
     <Compile Include="Intermediate\ASTConverter.cs" />
+    <Compile Include="Intermediate\CompilerError.cs" />
     <Compile Include="Intermediate\Expression.cs" />
     <Compile Include="Intermediate\IntermediateType.cs" />
     <Compile Include="Intermediate\Module.cs" />
