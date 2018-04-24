@@ -7,7 +7,7 @@ namespace Psi.Compiler.Intermediate
     /// </summary>
     public sealed class Symbol
     {
-        public Symbol(IntermediateType type, string id) :
+        public Symbol(Type type, string id) :
             this(new SymbolName(type, id))
         {
 
@@ -21,7 +21,7 @@ namespace Psi.Compiler.Intermediate
 
         public SymbolName Name { get; }
 
-        public IntermediateType Type { get; }
+        public Type Type { get; }
 
         public Expression Initializer { get; set; }
 

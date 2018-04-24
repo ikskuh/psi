@@ -62,7 +62,7 @@ namespace Psi.Compiler.Intermediate
 
             foreach (var sm in module.Submodules)
             {
-                output.Symbols.Add(new Symbol(IntermediateType.ModuleType, sm.Name.Identifier)
+                output.Symbols.Add(new Symbol(Type.ModuleType, sm.Name.Identifier)
                 {
                     Initializer = new Literal<Module>(this.AddModule(sm, output)),
                     IsConst = true,
@@ -157,7 +157,7 @@ namespace Psi.Compiler.Intermediate
             {
                 unit.AddTask(() =>
                 {
-                    var sym = GlobalScope.FindNamedSymbol(name, IntermediateType.ModuleType, true);
+                    var sym = GlobalScope.FindNamedSymbol(name, Type.ModuleType, true);
                     if (sym == null)
                         return new CompilerError($"Could not find import module '{name}'");
                     var mod = sym.GetValue<Module>();
@@ -177,40 +177,40 @@ namespace Psi.Compiler.Intermediate
             {
                 unit.AddTask(() =>
                 {
-                    IntermediateType type = ConvertType(unit, unit.Scope, decl.Type);
+                    Type type = ConvertType(unit, unit.Scope, decl.Type);
                     if (type == null)
                         return new CompilerError($"{decl.Type} is not resolvable!");
-                    if (type == IntermediateType.UnknownType)
+                    if (type == Type.UnknownType)
                         throw new InvalidOperationException("Unknown type not allows in declaration");
-                    if (type == IntermediateType.VoidType)
+                    if (type == Type.VoidType)
                         throw new InvalidOperationException("Void type may not be aliased!");
-                    unit.Module.Symbols.Add(new Symbol(IntermediateType.MetaType, decl.Name)
+                    unit.Module.Symbols.Add(new Symbol(Type.MetaType, decl.Name)
                     {
                         IsConst = true,
                         IsExported = decl.IsExported,
-                        Initializer = new Literal<IntermediateType>(type),
+                        Initializer = new Literal<Type>(type),
                     });
                     return CompilerError.None;
                 });
             }
         }
 
-        private static IntermediateType ConvertType(TranslationUnit unit, IScope scope, AstType asttype)
+        private static Type ConvertType(TranslationUnit unit, IScope scope, AstType asttype)
         {
             if (asttype is LiteralType lt)
             {
                 if (lt == LiteralType.Void)
-                    return IntermediateType.VoidType;
+                    return Type.VoidType;
                 else if (lt == LiteralType.Unknown)
-                    return IntermediateType.UnknownType;
+                    return Type.UnknownType;
                 else
                     throw new NotSupportedException("Unknown literal type!");
             }
             else if (asttype is NamedTypeLiteral ntl)
             {
-                var sym = scope.FindNamedSymbol(ntl.Name, IntermediateType.MetaType, true);
+                var sym = scope.FindNamedSymbol(ntl.Name, Type.MetaType, true);
                 if (sym != null)
-                    return sym.GetValue<IntermediateType>();
+                    return sym.GetValue<Type>();
                 else
                     return null;
             }
@@ -281,6 +281,54 @@ namespace Psi.Compiler.Intermediate
                         return new CompilerError($"Could not find type '{rftl.ObjectType}'");
                     return CompilerError.None;
                 });
+                return type;
+            }
+            else if (asttype is FunctionTypeLiteral ftl)
+            {
+                var type = new FunctionType();
+                unit.AddTask(() =>
+                {
+                    type.ReturnType = ConvertType(unit, scope, ftl.ReturnType);
+                    if (type.ReturnType == null)
+                        return new CompilerError($"Could not resolve type '{type.ReturnType}'");
+                    return CompilerError.None;
+                });
+                var @params = new Parameter[ftl.Parameters.Count];
+                for(int i = 0; i < ftl.Parameters.Count; i++)
+                {
+                    var par = ftl.Parameters[i];
+                    var p = new Parameter(type, par.Name, i)
+                    {
+                        Flags = par.Prefix,
+                    };
+                    // Set "in" as default if neither in nor out is given
+                    if (!p.Flags.HasFlag(ParameterFlags.In) && !p.Flags.HasFlag(ParameterFlags.Out))
+                        p.Flags |= ParameterFlags.In;
+                    if (par.Type != null)
+                    {
+                        unit.AddTask(() =>
+                        {
+                            p.Type = ConvertType(unit, scope, par.Type);
+                            if (p.Type == null)
+                                return new CompilerError($"Could not resolve type '{par.Value}'");
+                            return CompilerError.None;
+                        });
+                    }
+                    if (par.Value != null)
+                    {
+                        unit.AddTask(() =>
+                        {
+                            p.Initializer = ConvertExpression(unit, scope, par.Value);
+                            if (p.Initializer == null)
+                                return new CompilerError($"Could not translate expression '{par.Value}'");
+                            return CompilerError.None;
+                        });
+                    }
+                    @params[i] = p;
+                }
+
+                type.Parameters = @params;
+
                 return type;
             }
             else

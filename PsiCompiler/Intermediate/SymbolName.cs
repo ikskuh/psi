@@ -7,13 +7,13 @@ namespace Psi.Compiler.Intermediate
     /// </summary>
     public sealed class SymbolName : IEquatable<SymbolName>
     {
-        public SymbolName(IntermediateType type, string id)
+        public SymbolName(Type type, string id)
         {
             this.Type = type ?? throw new ArgumentNullException(nameof(type));
             this.ID = id ?? throw new ArgumentNullException(nameof(id));
         }
 
-        public IntermediateType Type { get; set; }
+        public Type Type { get; set; }
 
         public string ID { get; set; }
 

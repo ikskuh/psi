@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TypeLiteral = Psi.Compiler.Intermediate.Literal<Psi.Compiler.Intermediate.IntermediateType>;
+using TypeLiteral = Psi.Compiler.Intermediate.Literal<Psi.Compiler.Intermediate.Type>;
 using ModuleLiteral = Psi.Compiler.Intermediate.Literal<Psi.Compiler.Intermediate.Module>;
 
 namespace Psi.Compiler.Intermediate
@@ -20,11 +20,11 @@ namespace Psi.Compiler.Intermediate
             this.LocalName = this.Name.Split('.').Last();
         }
 
-        public Symbol AddType(string name, IntermediateType type, bool isExported)
+        public Symbol AddType(string name, Type type, bool isExported)
         {
-            var sym = new Symbol(IntermediateType.MetaType, name)
+            var sym = new Symbol(Type.MetaType, name)
             {
-                Initializer = new Literal<IntermediateType>(type),
+                Initializer = new Literal<Type>(type),
                 IsConst = true,
                 IsExported = isExported,
             };
@@ -34,7 +34,7 @@ namespace Psi.Compiler.Intermediate
 
         public Symbol AddModule(string name, Module submodule)
         {
-            var sym = new Symbol(IntermediateType.ModuleType, name)
+            var sym = new Symbol(Type.ModuleType, name)
             {
                 Initializer = new Literal<Module>(submodule),
                 IsConst = true,
@@ -49,20 +49,20 @@ namespace Psi.Compiler.Intermediate
         public IReadOnlyDictionary<string, Module> Submodules => this.symbols
             .Where<Symbol>(s => s.IsConst)
             .Where(s => s.Initializer is ModuleLiteral)
-            .Where(s => s.Type == IntermediateType.ModuleType)
+            .Where(s => s.Type == Type.ModuleType)
             .ToDictionary(s => s.Name.ID, s => (s.Initializer as ModuleLiteral).Value);
 
-        public IReadOnlyDictionary<string, IntermediateType> Types => this.symbols
+        public IReadOnlyDictionary<string, Type> Types => this.symbols
             .Where<Symbol>(s => s.IsConst)
             .Where(s => s.Initializer is TypeLiteral)
-            .Where(s => s.Type == IntermediateType.MetaType)
+            .Where(s => s.Type == Type.MetaType)
             .ToDictionary(s => s.Name.ID, s => (s.Initializer as TypeLiteral).Value);
 
-        public IReadOnlyDictionary<string, IntermediateType> ExportedTypes => this.symbols
+        public IReadOnlyDictionary<string, Type> ExportedTypes => this.symbols
             .Where<Symbol>(s => s.IsConst)
             .Where(s => s.IsExported)
             .Where(s => s.Initializer is TypeLiteral)
-            .Where(s => s.Type == IntermediateType.MetaType)
+            .Where(s => s.Type == Type.MetaType)
             .ToDictionary(s => s.Name.ID, s => (s.Initializer as TypeLiteral).Value);
 
         public Module Parent { get; }

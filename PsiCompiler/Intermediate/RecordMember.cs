@@ -14,7 +14,7 @@ namespace Psi.Compiler.Intermediate
 
         public string Name { get; }
 
-        public IntermediateType Type { get; set; }
+        public Type Type { get; set; }
 
         public Expression Initializer { get; set; }
     }

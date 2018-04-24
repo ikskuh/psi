@@ -99,12 +99,12 @@ namespace Psi.Compiler
         public static Intermediate.Symbol FindNamedSymbol(
             this Intermediate.IScope scope, 
             CompoundName name, 
-            Intermediate.IntermediateType type,
+            Intermediate.Type type,
             bool requireConst = false)
         {
             for (int i = 0; i < name.Count - 1; i++)
             {
-                if (!scope.TryGetSymbol(new Intermediate.SymbolName(Intermediate.IntermediateType.ModuleType, name[i]), out Intermediate.Symbol scopeSym))
+                if (!scope.TryGetSymbol(new Intermediate.SymbolName(Intermediate.Type.ModuleType, name[i]), out Intermediate.Symbol scopeSym))
                     return null;
                 if (!scopeSym.IsConst) // don't try to resolve actual module variables!
                     return null;

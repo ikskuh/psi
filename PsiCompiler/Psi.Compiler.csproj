@@ -46,12 +46,14 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ParameterFlags.cs" />
     <Compile Include="Grammar\AST\Statements.cs" />
     <Compile Include="Intermediate\ASTConverter.cs" />
     <Compile Include="Intermediate\CompilerError.cs" />
     <Compile Include="Intermediate\Expression.cs" />
     <Compile Include="Intermediate\IntermediateType.cs" />
     <Compile Include="Intermediate\Module.cs" />
+    <Compile Include="Intermediate\Parameter.cs" />
     <Compile Include="Intermediate\RecordMember.cs" />
     <Compile Include="Intermediate\Scope.cs" />
     <Compile Include="Intermediate\Symbol.cs" />

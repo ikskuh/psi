@@ -77,18 +77,7 @@ namespace Psi.Compiler.Grammar
 		public override string ToString() => string.Format("{0} {1} : {2} = {3}", Prefix, Name, Type, Value);
 	}
 
-
-	[Flags]
-	public enum ParameterFlags
-	{
-		None = 0,
-		In = 1,
-		Out = 2,
-		InOut = In | Out,
-		This = 4,
-		Lazy = 8
-	}
-
+    
 	public sealed class EnumTypeLiteral : AstType
 	{
 		public EnumTypeLiteral(IEnumerable<string> items)

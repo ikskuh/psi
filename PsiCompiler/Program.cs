@@ -21,7 +21,7 @@ namespace Psi.Compiler
                 
                 var globalScope = new SimpleScope
                 {
-                    new Symbol(IntermediateType.ModuleType, "std")
+                    new Symbol(Type.ModuleType, "std")
                     {
                         Initializer = new Literal<Intermediate.Module>(std),
                         IsConst = true,
@@ -72,9 +72,9 @@ namespace Psi.Compiler
             std.AddType("string", t_string, true);
 
             var compiler = new Intermediate.Module(std, "compiler");
-            compiler.AddType("type", IntermediateType.MetaType, true);
-            compiler.AddType("void", IntermediateType.VoidType, true);
-            compiler.AddType("module", IntermediateType.ModuleType, true);
+            compiler.AddType("type", Type.MetaType, true);
+            compiler.AddType("void", Type.VoidType, true);
+            compiler.AddType("module", Type.ModuleType, true);
             std.AddModule("compiler", compiler);
 
             return std;

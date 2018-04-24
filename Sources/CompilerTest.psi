@@ -56,9 +56,9 @@ type someone = ref<person>;
 
 type bunchOfPeople = array<ref<person> >;
 
-/*
 type mainFunc = fn(argc : int, argv : array<string>) -> int;
 
+/*
 var foo : int = 10;
 
 var bar : int = foo;

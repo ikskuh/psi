@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Psi.Compiler.Intermediate
 {
-    public abstract class IntermediateType
+    public abstract class Type
     {
         /// <summary>
         /// A type that marks a non-value
@@ -14,7 +14,7 @@ namespace Psi.Compiler.Intermediate
         /// <summary>
         /// A marker type that marks "unknown" types that have to be deduced
         /// </summary>
-        public static readonly IntermediateType UnknownType = new BuiltinType("?");
+        public static readonly Type UnknownType = new BuiltinType("?");
 
         /// <summary>
         /// The type that represents a Psi type.
@@ -27,7 +27,7 @@ namespace Psi.Compiler.Intermediate
         public static readonly BuiltinType ModuleType = new BuiltinType("module");
     }
 
-    public sealed class BuiltinType : IntermediateType
+    public sealed class BuiltinType : Type
     {
         public BuiltinType(string name)
         {
@@ -39,7 +39,7 @@ namespace Psi.Compiler.Intermediate
         public override string ToString() => "builtin:" + this.Name;
     }
 
-    public sealed class EnumType : IntermediateType
+    public sealed class EnumType : Type
     {
         private string[] items;
 
@@ -53,20 +53,27 @@ namespace Psi.Compiler.Intermediate
         public override string ToString() => "enum(" + string.Join(",", this.items) + ")";
     }
 
-    public sealed class RecordType : IntermediateType
+    public sealed class RecordType : Type
     {
         public IList<RecordMember> Members { get; set; }
     }
 
-    public sealed class ArrayType : IntermediateType
+    public sealed class ArrayType : Type
     {
-        public IntermediateType ElementType { get; set; }
+        public Type ElementType { get; set; }
 
         public int Dimensions { get; set; } = 1;
     }
 
-    public sealed class ReferenceType : IntermediateType
+    public sealed class ReferenceType : Type
     {
-        public IntermediateType ObjectType { get; set; }
+        public Type ObjectType { get; set; }
+    }
+
+    public sealed class FunctionType : Type
+    {
+        public Type ReturnType { get; set; }
+
+        public IList<Parameter> Parameters { get; set; }
     }
 }
