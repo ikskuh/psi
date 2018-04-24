@@ -116,12 +116,19 @@ namespace Psi.Compiler.Intermediate
         public void Convert()
         {
             // Step 1: Prepare all compilation steps
+            
+            // Prepare type symbols
             foreach (var unit in this.units)
                 this.CreateTypeSymbols(unit);
 
+            // Prepare imports
             foreach (var unit in this.units)
                 this.ImportSymbolsIntoUnit(unit);
 
+            // Prepare rest of the symbols
+            foreach (var unit in this.units)
+                this.CreateVariables(unit);
+            
             // Step 2: Run tasks until all tasks are done:
             while (this.units.Sum(u => u.Tasks.Count) > 0)
             {
@@ -161,6 +168,62 @@ namespace Psi.Compiler.Intermediate
             }
 
             // Step 3: Postprocess the converted modules
+
+            // Step 4: Validate all assertions
+        }
+
+        private void CreateVariables(TranslationUnit unit)
+        {
+            foreach(var def in unit.Source.Declarations)
+            {
+                unit.AddTask(() =>
+                {
+                    Type type;
+                    if (def.Type != null)
+                        type = ConvertType(unit, unit.Scope, def.Type);
+                    else
+                        type = Type.UnknownType;
+
+                    if (type == null)
+                        return new CompilerError($"could not resolve {def.Type}");
+
+                    Expression initializer = null;
+                    if (def.Value != null)
+                    {
+                        // TODO: A type hint should be passed into convert expression here
+                        initializer = ConvertExpression(unit, unit.Scope, def.Value);
+                        if(initializer == null)
+                            return new CompilerError($"could not compile {def.Value}");
+                    }
+
+                    if ((type == Type.UnknownType) && (initializer == null))
+                        return new CompilerError("Symbol does neither have a type nor an initializer");
+
+                    if ((type == Type.UnknownType) && (initializer != null))
+                    {
+                        type = initializer.Type;
+                        if((type == null) || (type == Type.UnknownType))
+                            return new CompilerError("Could not deduce type of symbol");
+                    }
+
+                    if((initializer != null) && (type != initializer.Type))
+                        return new CompilerError("Value does not mach declared type");
+
+                    if ((type == null) || (type == Type.UnknownType))
+                        return new CompilerError("Invalid symbol: No type has been detected");
+
+                    var sym = new Symbol(type, def.Name)
+                    {
+                        IsConst = def.IsConst,
+                        IsExported = def.IsExported,
+                        Initializer = initializer,
+                    };
+
+                    unit.Module.Symbols.Add(sym);
+
+                    return CompilerError.None;
+                });
+            }
         }
 
         private void ImportSymbolsIntoUnit(TranslationUnit unit)

@@ -2,6 +2,14 @@
  * Compiler Test Program                                                     *
  ****************************************************************************/
 
+import std;
+
+var x : int;
+
+var x : record(name : string);
+
+var x : record(name : string);
+
 /*
 var foo : int = 10;
 
@@ -13,7 +21,7 @@ var v1 : record(x : string, y : int) = v0;
 */
 
 /*
-// Tests out params
+// Tests 'out' params
 const set = fn(out dst : int, src : int) { dst = src; };
 
 // Tests return values

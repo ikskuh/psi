@@ -4,7 +4,7 @@ namespace Psi.Compiler.Intermediate
 {
     public abstract class Expression
     {
-
+        public Type Type { get; set; }
     }
 
     public sealed class Literal<T> : Expression
