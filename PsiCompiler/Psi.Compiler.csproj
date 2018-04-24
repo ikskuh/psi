@@ -46,6 +46,7 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Intermediate\TypeMapper.cs" />
     <Compile Include="ParameterFlags.cs" />
     <Compile Include="Grammar\AST\Statements.cs" />
     <Compile Include="Intermediate\ASTConverter.cs" />

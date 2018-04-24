@@ -11,6 +11,18 @@ namespace Psi.Compiler
 	{
 		public static void Main(string[] args)
 		{
+            // primitives
+            TypeMapper.Add(typeof(int), BuiltinType.Integer);
+            TypeMapper.Add(typeof(double), BuiltinType.Real);
+            TypeMapper.Add(typeof(string), BuiltinType.String);
+            TypeMapper.Add(typeof(char), BuiltinType.Character); // TODO: this is wrong for now, but works. replace with int32 later!
+
+            // required types
+            TypeMapper.Add(typeof(void), Type.VoidType);
+            TypeMapper.Add(typeof(Type), Type.MetaType);
+            TypeMapper.Add(typeof(Intermediate.Module), Type.ModuleType);
+
+
             var std = CreateStd();
 			var module = Load("../../../Sources/CompilerTest.psi");
 
@@ -61,15 +73,11 @@ namespace Psi.Compiler
 
         private static Intermediate.Module CreateStd()
         {
-            var t_int = new BuiltinType("int");
-            var t_char = new BuiltinType("char");
-            var t_string = new ArrayType { ElementType = t_char, Dimensions = 1 };
-
-
             var std = new Intermediate.Module(null, "std");
-            std.AddType("int", t_int, true);
-            std.AddType("char", t_char, true);
-            std.AddType("string", t_string, true);
+            std.AddType("int", BuiltinType.Integer, true);
+            std.AddType("char", BuiltinType.Character, true);
+            std.AddType("real", BuiltinType.Real, true);
+            std.AddType("string", BuiltinType.String, true);
 
             var compiler = new Intermediate.Module(std, "compiler");
             compiler.AddType("type", Type.MetaType, true);

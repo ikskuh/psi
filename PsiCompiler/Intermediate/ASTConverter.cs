@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,6 +13,8 @@ namespace Psi.Compiler.Intermediate
         private readonly List<TranslationUnit> units = new List<TranslationUnit>();
 
         private readonly Dictionary<string, Module> modules = new Dictionary<string, Module>();
+
+        public IFormatProvider SystemFormat => CultureInfo.InvariantCulture;
 
         public IScope GlobalScope { get; }
 
@@ -47,7 +50,7 @@ namespace Psi.Compiler.Intermediate
                     {
                         var child = new Module(target, mname);
                         modules.Add(mname, child);
-                        if(target != null)
+                        if (target != null)
                         {
                             target.Symbols.Add(new Symbol(Type.ModuleType, child.LocalName)
                             {
@@ -116,7 +119,7 @@ namespace Psi.Compiler.Intermediate
         public void Convert()
         {
             // Step 1: Prepare all compilation steps
-            
+
             // Prepare type symbols
             foreach (var unit in this.units)
                 this.CreateTypeSymbols(unit);
@@ -128,7 +131,7 @@ namespace Psi.Compiler.Intermediate
             // Prepare rest of the symbols
             foreach (var unit in this.units)
                 this.CreateVariables(unit);
-            
+
             // Step 2: Run tasks until all tasks are done:
             while (this.units.Sum(u => u.Tasks.Count) > 0)
             {
@@ -174,7 +177,7 @@ namespace Psi.Compiler.Intermediate
 
         private void CreateVariables(TranslationUnit unit)
         {
-            foreach(var def in unit.Source.Declarations)
+            foreach (var def in unit.Source.Declarations)
             {
                 unit.AddTask(() =>
                 {
@@ -192,7 +195,7 @@ namespace Psi.Compiler.Intermediate
                     {
                         // TODO: A type hint should be passed into convert expression here
                         initializer = ConvertExpression(unit, unit.Scope, def.Value);
-                        if(initializer == null)
+                        if (initializer == null)
                             return new CompilerError($"could not compile {def.Value}");
                     }
 
@@ -202,11 +205,11 @@ namespace Psi.Compiler.Intermediate
                     if ((type == Type.UnknownType) && (initializer != null))
                     {
                         type = initializer.Type;
-                        if((type == null) || (type == Type.UnknownType))
+                        if ((type == null) || (type == Type.UnknownType))
                             return new CompilerError("Could not deduce type of symbol");
                     }
 
-                    if((initializer != null) && (type != initializer.Type))
+                    if ((initializer != null) && (type != initializer.Type))
                         return new CompilerError("Value does not mach declared type");
 
                     if ((type == null) || (type == Type.UnknownType))
@@ -270,7 +273,7 @@ namespace Psi.Compiler.Intermediate
             }
         }
 
-        private static Type ConvertType(TranslationUnit unit, IScope scope, AstType asttype)
+        private Type ConvertType(TranslationUnit unit, IScope scope, AstType asttype)
         {
             if (asttype is LiteralType lt)
             {
@@ -295,8 +298,10 @@ namespace Psi.Compiler.Intermediate
             }
             else if (asttype is ArrayTypeLiteral atl)
             {
-                var type = new ArrayType();
-                type.Dimensions = atl.Dimensions;
+                var type = new ArrayType
+                {
+                    Dimensions = atl.Dimensions
+                };
                 unit.AddTask(() =>
                 {
                     type.ElementType = ConvertType(unit, scope, atl.ElementType);
@@ -413,9 +418,27 @@ namespace Psi.Compiler.Intermediate
         }
 
 
-        private static Expression ConvertExpression(TranslationUnit unit, IScope scope, Grammar.Expression value)
+        private Expression ConvertExpression(TranslationUnit unit, IScope scope, Grammar.Expression value)
         {
-            throw new NotImplementedException();
+            if (value is NumberLiteral num)
+            {
+                if (double.TryParse(num.Value, NumberStyles.Number, SystemFormat, out double dbl))
+                    return new Literal<double>(dbl);
+                else if (int.TryParse(num.Value, NumberStyles.HexNumber, SystemFormat, out int i))
+                    return new Literal<int>(i);
+                else if (int.TryParse(num.Value, NumberStyles.Integer, SystemFormat, out i))
+                    return new Literal<int>(i);
+                else
+                    return null;
+            }
+            else if (value is StringLiteral str)
+            {
+                return new Literal<string>(str.Text);
+            }
+            else
+            {
+                throw new NotSupportedException($"The expression type '{value?.GetType()?.Name ?? "?"}' is not supported yet.");
+            }
         }
 
         private class TranslationUnit
@@ -430,10 +453,18 @@ namespace Psi.Compiler.Intermediate
 
             public bool AddTask(CompilationTask task)
             {
-                var error = task();
-                if (error != null)
+                try
+                {
+                    var error = task();
+                    if (error != null)
+                        this.Tasks.Enqueue(task);
+                    return (error == null);
+                }
+                catch(Exception)
+                {
                     this.Tasks.Enqueue(task);
-                return (error == null);
+                    return false;
+                }
             }
 
             public Grammar.Module Source { get; }

@@ -29,6 +29,11 @@ namespace Psi.Compiler.Intermediate
 
     public sealed class BuiltinType : Type
     {
+        public static readonly BuiltinType Integer = new BuiltinType("int");
+        public static readonly BuiltinType Real = new BuiltinType("real");
+        public static readonly BuiltinType Character = new BuiltinType("char");
+        public static readonly ArrayType String = new ArrayType { ElementType = Character, Dimensions = 1 };
+
         public BuiltinType(string name)
         {
             this.Name = name;
