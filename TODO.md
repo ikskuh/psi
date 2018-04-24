@@ -5,7 +5,19 @@
 	- Mostly bullshit and not the expected behaviour...
 - Is `fn(this i : int)` equivalent to `fn(i : int)` or not? (`this` prefix equality)
 	- Would also be bullshit to have `this` modify equality
+- Create a list of possible optimizations
+	- Same-tree-merging in expressions
+
+## Documentation tasks
+- Document structural equality in Psi
+	- Records
+	- Functions
+	- Types in general
+- Document in/inout/out behaviour
+- Document ref<T> with all its quirks (especially with `inout param : ref<T>`)
 
 ## Actual programming tasks
 - Update function type equality
--
+- Remove order dependency in record equality
+- Remove initializers from record equality
+- Remove initializers from function equality
