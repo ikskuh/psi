@@ -7,7 +7,7 @@ using System.IO;
 
 namespace CompilerKit
 {
-	public sealed class TokenDefinitionFile : IDictionary<string, Regex>, IReadOnlyDictionary<string, Regex>
+	public sealed class TokenDefinitionFile : IDictionary<string, Regex>
 	{
 		private static readonly string Separator = ":=";
 		private static readonly string LineComment = "#";
@@ -71,10 +71,10 @@ namespace CompilerKit
 					var regex = new Regex(regtext, rgxoptions);
 
 					// regtext = regtext.Replace("\"", "\"\"");
-					return Tuple.Create(name, regex);
+					return new KeyValuePair<string, Regex>(name, regex);
 				});
 			foreach (var token in tokens)
-				file.tokentypes.Add(token.Item1, token.Item2);
+				file.tokentypes.Add(token.Key, token.Value);
 
 			var ppSteps = lines
 				.Where(l => l.StartsWith("PP("))
@@ -84,10 +84,10 @@ namespace CompilerKit
 					var name = l.Substring(3, idx - 3).Trim();
 					name = name.Substring(0, name.Length - 1);
 					var code = l.Substring(idx + Separator.Length).Trim();
-					return Tuple.Create(name, code);
+					return new KeyValuePair<string,string>(name, code);
 				});
 			foreach (var step in ppSteps)
-				file.postprocess.Add(step.Item1, step.Item2);
+				file.postprocess.Add(step.Key, step.Value);
 
 			return file;
 		}
@@ -105,8 +105,9 @@ namespace CompilerKit
 						.GetValues(typeof(RegexOptions))
 						.Cast<RegexOptions>()
 						.Where(o => (o != RegexOptions.None))
-						.Where(o => options.HasFlag(o))
-						.Select(o => o.ToString()));
+						.Where(o => (options & o) != RegexOptions.None)
+						.Select(o => o.ToString())
+                        .ToArray());
 				}
 				
 				writer.WriteLine("{0}{1} := {2}", token.Key, postfix, token.Value.ToString());
@@ -143,7 +144,7 @@ namespace CompilerKit
 		{
 			get
 			{
-				return ((IReadOnlyDictionary<string, Regex>)tokentypes).Keys;
+				return ((IDictionary<string, Regex>)tokentypes).Keys;
 			}
 		}
 
@@ -151,7 +152,7 @@ namespace CompilerKit
 		{
 			get
 			{
-				return ((IReadOnlyDictionary<string, Regex>)tokentypes).Values;
+				return ((IDictionary<string, Regex>)tokentypes).Values;
 			}
 		}
 
@@ -199,7 +200,7 @@ namespace CompilerKit
 
 		public IEnumerator<KeyValuePair<string, Regex>> GetEnumerator()
 		{
-			return ((IReadOnlyDictionary<string, Regex>)tokentypes).GetEnumerator();
+			return ((IDictionary<string, Regex>)tokentypes).GetEnumerator();
 		}
 
 		public bool TryGetValue(string key, out Regex value)
@@ -209,7 +210,7 @@ namespace CompilerKit
 
 		IEnumerator IEnumerable.GetEnumerator()
 		{
-			return ((IReadOnlyDictionary<string, Regex>)tokentypes).GetEnumerator();
+			return ((IDictionary<string, Regex>)tokentypes).GetEnumerator();
 		}
 
 		public void Add(string key, Regex value)

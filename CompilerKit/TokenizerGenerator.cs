@@ -11,6 +11,8 @@ namespace CompilerKit
 {
     using System.Linq;
     using System.Text;
+    using System.Text.RegularExpressions;
+    using System.IO;
     using System.Collections.Generic;
     using System;
     
@@ -18,9 +20,9 @@ namespace CompilerKit
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\HeaderGenerator.tt"
+    #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
-    public partial class HeaderGenerator : HeaderGeneratorBase
+    public partial class TokenizerGenerator : TokenizerGeneratorBase
     {
 #line hidden
         /// <summary>
@@ -28,41 +30,128 @@ namespace CompilerKit
         /// </summary>
         public virtual string TransformText()
         {
-            this.Write("﻿");
             this.Write("\n");
             this.Write("\n");
             this.Write("\n");
             this.Write("\n");
-            this.Write("\n\nusing System;\nusing System.IO;\nusing System.Collections.Generic;\nusing System.T" +
-                    "ext.RegularExpressions;\nusing CompilerKit;\n\npublic enum ");
+            this.Write("\n");
+            this.Write("\n");
+            this.Write("\n\nsealed partial class ");
             
-            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\HeaderGenerator.tt"
+            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(TokenizerName));
+            
+            #line default
+            #line hidden
+            this.Write(" : Tokenizer<");
+            
+            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(TokenType));
             
             #line default
             #line hidden
-            this.Write("\n{\n");
+            this.Write(">\n{\n\tpublic ");
             
-            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\HeaderGenerator.tt"
- foreach(var tdef in Tokens) { 
+            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(TokenizerName));
             
             #line default
             #line hidden
-            this.Write("\n\t");
+            this.Write("(TextReader reader, string fileName) : this(reader, fileName, true)\n\t{\n\t\n\t}\n\n\tpub" +
+                    "lic ");
             
-            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\HeaderGenerator.tt"
+            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(TokenizerName));
+            
+            #line default
+            #line hidden
+            this.Write("(TextReader reader, string fileName, bool closeOnDispose) : base(reader, fileName" +
+                    ", closeOnDispose)\n\t{\n");
+            
+            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
+ foreach(var tdef in Source) { 
+            
+            #line default
+            #line hidden
+            this.Write("\n\t\tthis.RegisterToken(");
+            
+            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(TokenType));
+            
+            #line default
+            #line hidden
+            this.Write(".");
+            
+            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(tdef.Key));
             
             #line default
             #line hidden
-            this.Write(",\n");
+            this.Write(", new Regex(@\"");
             
-            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\HeaderGenerator.tt"
+            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(tdef.Value.ToString().Replace("\"", "\"\"")));
+            
+            #line default
+            #line hidden
+            this.Write("\", ");
+            
+            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(MakeEnum(tdef.Value.Options)));
+            
+            #line default
+            #line hidden
+            this.Write("));\n");
+            
+            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
  } 
             
             #line default
             #line hidden
-            this.Write("\n}");
+            this.Write("\n\t\t\t\n\t\tthis.Initialize();\n\t}\n\n\tpartial void Initialize();\n\n\tprotected override Fu" +
+                    "nc<string,string> GetPostProcessor(");
+            
+            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(TokenType));
+            
+            #line default
+            #line hidden
+            this.Write(" type)\n\t{\n\t\tswitch(type)\n\t\t{\n");
+            
+            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
+ foreach(var step in Source.PostProcessings) { 
+            
+            #line default
+            #line hidden
+            this.Write("\n\t\t\tcase ");
+            
+            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(TokenType));
+            
+            #line default
+            #line hidden
+            this.Write(".");
+            
+            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(step.Key));
+            
+            #line default
+            #line hidden
+            this.Write(":\n\t\t\t\treturn ");
+            
+            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(step.Value));
+            
+            #line default
+            #line hidden
+            this.Write(";\n");
+            
+            #line 1 "C:\Users\Felix\Desktop\Projekte\psilang\CompilerKit\TokenizerGenerator.tt"
+ } 
+            
+            #line default
+            #line hidden
+            this.Write("\n\t\t\tdefault:\n\t\t\t\treturn (text) => text;\n\t\t}\n\t}\n}\n");
             return this.GenerationEnvironment.ToString();
         }
     }
@@ -74,7 +163,7 @@ namespace CompilerKit
     /// Base class for this transformation
     /// </summary>
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "15.0.0.0")]
-    public class HeaderGeneratorBase
+    public class TokenizerGeneratorBase
     {
         #region Fields
         private global::System.Text.StringBuilder generationEnvironmentField;

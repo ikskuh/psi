@@ -16,7 +16,7 @@ namespace CompilerKit
 		
 		public CodeLocation(string fileName, int line, int column = 1) : this(line, column)
 		{
-			if (string.IsNullOrWhiteSpace(fileName))
+			if (string.IsNullOrEmpty(fileName))
 				throw new ArgumentOutOfRangeException(nameof(fileName));
 			this.File = fileName;
 		}
