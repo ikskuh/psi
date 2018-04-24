@@ -2,12 +2,48 @@
  * Compiler Test Program                                                     *
  ****************************************************************************/
 
-module submodule
+
+/*
+var foo : int = 10;
+
+var bar : int = foo;
+
+var v0 : person;
+var v1 : record(x : string, y : int) = v0;
+
+*/
+
+/*
+// Tests out params
+const set = fn(out dst : int, src : int) { dst = src; };
+
+// Tests return values
+const limit = fn() -> int { return 38; }
+
+// Tests closures and flow control
+const main = fn()
 {
-	module inception
+	var i : int;
+	set(i, 42);
+	
+	while(i > limit())
 	{
+		i = i - 1;
 	}
-}
+
+	const print = fn() 
+	{
+		print("i = ");
+		print(i);
+		print("\n");
+	};
+
+	print();
+};
+*/
+
+/*
+
 
 // TODO: Implement support for complex compound names
 // module submodule.inception { }
@@ -58,41 +94,24 @@ type bunchOfPeople = array<ref<person> >;
 
 type mainFunc = fn(argc : int, argv : array<string>) -> int;
 
-/*
-var foo : int = 10;
-
-var bar : int = foo;
-
-var v0 : person;
-var v1 : record(x : string, y : int) = v0;
-
 */
 
 /*
-// Tests out params
-const set = fn(out dst : int, src : int) { dst = src; };
+lexical scope test
 
-// Tests return values
-const limit = fn() -> int { return 38; }
+type a = std.int;
 
-// Tests closures and flow control
-const main = fn()
+module submodule
 {
-	var i : int;
-	set(i, 42);
-	
-	while(i > limit())
+	type b = a;
+
+	module inception
 	{
-		i = i - 1;
+		type c = a;
+		type d1 = b;
+		type d2 = submodule.b;
+		type e1 = c;
+		type e2 = submodule.inception.c;
 	}
-
-	const print = fn() 
-	{
-		print("i = ");
-		print(i);
-		print("\n");
-	};
-
-	print();
-};
+}
 */

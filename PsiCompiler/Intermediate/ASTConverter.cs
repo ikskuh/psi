@@ -22,7 +22,7 @@ namespace Psi.Compiler.Intermediate
 
         public void AddModule(Grammar.Module module) => this.AddModule(module, null);
 
-        private Module AddModule(Grammar.Module module, Module parent)
+        private Module AddModule(Grammar.Module module, TranslationUnit parent)
         {
             // TODO: Fix parent/child relation of modules with complex compound name
 
@@ -35,7 +35,7 @@ namespace Psi.Compiler.Intermediate
             if (units.Any(u => u.Source == module))
                 throw new InvalidOperationException("Cannot add the same module twice!");
 
-            var name = (parent != null ? parent.Name + "." : "") + module.Name;
+            var name = (parent != null ? parent.Module.Name + "." : "") + module.Name;
 
             Module output;
             if (units.Any(m => m.Module.Name == name))
@@ -46,7 +46,7 @@ namespace Psi.Compiler.Intermediate
             else
             {
                 // module not known, use new output
-                output = new Module(parent, name);
+                output = new Module(parent?.Module, name);
             }
             var tu = new TranslationUnit(module, output)
             {
@@ -54,7 +54,10 @@ namespace Psi.Compiler.Intermediate
             };
 
             // Initialize the base scope of the translation unit
-            tu.Scope.Push(this.GlobalScope);
+            if (parent == null)
+                tu.Scope.Push(this.GlobalScope);
+            else
+                tu.Scope.Push(parent.Scope);
             tu.Scope.Push(tu.Imports);
             tu.Scope.Push(tu.Module.Symbols);
 
@@ -64,7 +67,7 @@ namespace Psi.Compiler.Intermediate
             {
                 output.Symbols.Add(new Symbol(Type.ModuleType, sm.Name.Identifier)
                 {
-                    Initializer = new Literal<Module>(this.AddModule(sm, output)),
+                    Initializer = new Literal<Module>(this.AddModule(sm, tu)),
                     IsConst = true,
                     IsExported = true
                 });
