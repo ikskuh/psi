@@ -11,6 +11,8 @@ namespace Psi.Compiler.Intermediate
     {
         private readonly List<TranslationUnit> units = new List<TranslationUnit>();
 
+        private readonly Dictionary<string, Module> modules = new Dictionary<string, Module>();
+
         public IScope GlobalScope { get; }
 
         public ASTConverter(IScope globalScope)
@@ -24,11 +26,6 @@ namespace Psi.Compiler.Intermediate
 
         private Module AddModule(Grammar.Module module, TranslationUnit parent)
         {
-            // TODO: Fix parent/child relation of modules with complex compound name
-
-            if (module.Name.Count > 1)
-                throw new NotSupportedException("Compound module names not supported yet.");
-
             if (module == null)
                 throw new ArgumentNullException(nameof(module));
 
@@ -36,19 +33,37 @@ namespace Psi.Compiler.Intermediate
                 throw new InvalidOperationException("Cannot add the same module twice!");
 
             var name = (parent != null ? parent.Module.Name + "." : "") + module.Name;
+            Module target = null;
+            {
+                var parts = name.Split('.');
+                for (int i = 0; i < parts.Length; i++)
+                {
+                    var mname = string.Join(".", parts, 0, i + 1);
+                    if (modules.ContainsKey(mname))
+                    {
+                        target = modules[mname];
+                    }
+                    else
+                    {
+                        var child = new Module(target, mname);
+                        modules.Add(mname, child);
+                        if(target != null)
+                        {
+                            target.Symbols.Add(new Symbol(Type.ModuleType, child.LocalName)
+                            {
+                                Initializer = new Literal<Module>(child),
+                                IsConst = true,
+                                IsExported = true
+                            });
+                        }
+                        target = child;
+                    }
+                }
+            }
+            if (target?.Name != name)
+                throw new InvalidOperationException("An error happened in module name resolvation!");
 
-            Module output;
-            if (units.Any(m => m.Module.Name == name))
-            {
-                // already known module, use same output
-                output = units.Single(m => (m.Module.Name == name)).Module;
-            }
-            else
-            {
-                // module not known, use new output
-                output = new Module(parent?.Module, name);
-            }
-            var tu = new TranslationUnit(module, output)
+            var tu = new TranslationUnit(module, target)
             {
                 IsComplete = false
             };
@@ -63,17 +78,11 @@ namespace Psi.Compiler.Intermediate
 
             this.units.Add(tu);
 
+            // Now create each lexical sub-module (not logical submodule!)
             foreach (var sm in module.Submodules)
-            {
-                output.Symbols.Add(new Symbol(Type.ModuleType, sm.Name.Identifier)
-                {
-                    Initializer = new Literal<Module>(this.AddModule(sm, tu)),
-                    IsConst = true,
-                    IsExported = true
-                });
-            }
+                this.AddModule(sm, tu);
 
-            return output;
+            return target;
         }
 
         /// <summary>
@@ -297,7 +306,7 @@ namespace Psi.Compiler.Intermediate
                     return CompilerError.None;
                 });
                 var @params = new Parameter[ftl.Parameters.Count];
-                for(int i = 0; i < ftl.Parameters.Count; i++)
+                for (int i = 0; i < ftl.Parameters.Count; i++)
                 {
                     var par = ftl.Parameters[i];
                     var p = new Parameter(type, par.Name, i)

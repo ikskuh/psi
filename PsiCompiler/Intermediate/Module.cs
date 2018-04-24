@@ -69,5 +69,7 @@ namespace Psi.Compiler.Intermediate
         public string Name { get; }
 
         public string LocalName { get; }
+
+        public override string ToString() => $"module:{Name}";
     }
 }
