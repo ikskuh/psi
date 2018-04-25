@@ -2,13 +2,14 @@ module std
 {
     type byte = ???;
     type int  = ???;
+    type uint  = ???;
     type real = ???;
     type char = ???;
 
     type string    = array<char>;
-    type string = array<byte>;
-    type bool   = enum(false, true);
+    type bitstring = array<byte>;
 
+    type bool      = enum(false, true);
     const true  : bool = :true;
     const false : bool = :false;
 
@@ -28,6 +29,8 @@ module std
             type imag = record(real : real, imag : imag);
 
             const i = imag(real: 0, imag: 1);
+
+            // ...
         }
 
         module linear_algebra
@@ -36,6 +39,8 @@ module std
             type vec3 = record(x : real, y : real, z : real);
             
             type mat4 = record(m11 : real)
+
+            // ...
         }
     }
 
@@ -43,13 +48,13 @@ module std
     {
         type encoding = record
         (
-            name : string,
-            decode : fn(data : bitstring, offset : int, length : int) -> string,
-            encoding : fn(text : string, offset : int, length : int) -> bitstring
+            name     : string,
+            decode   : fn(data : bitstring, offset : uint, length : uint) -> string,
+            encoding : fn(text : string,    offset : uint, length : uint) -> bitstring
         );
 
-        const ascii : encoding;
-        const utf8 : encoding;
+        const ascii   : encoding;
+        const utf8    : encoding;
         const utf16le : encoding;
         const utf16be : encoding;
         const utf32le : encoding;
@@ -59,16 +64,51 @@ module std
 
         const decode : fn(this enc : encoding, data : bitstring) -> string;
 
-        const to_codepoint : fn(c : char) -> int;
+        const to_codepoint : fn(c : char) -> uint;
         
-        const to_codepoint : fn(text : string, index : int) -> int;
+        const to_codepoint : fn(text : string, index : int) -> uint;
 
-        const for_codepoint : fn(i : int) -> char;
+        const for_codepoint : fn(i : uint) -> char;
+
+        module regular_expressions
+        {
+            type group = record
+            (
+                success : bool,
+                start : int,
+                length : int,
+                value : string
+            );
+
+            type match = record
+            (
+                success : bool,
+                start : int,
+                length : int,
+                value : string,
+                groups : array<group>
+            );
+
+            type regex 
+            (
+                match : fn(rgx : regex, text : string, offset : uint, length : uint) -> match
+            );
+
+            const match = fn(this rgx : regex, text : string) -> match
+            {
+                return rgx.match(text, 0, text.length);
+            };
+        }
     }
 
     module io
     {
-        type stream = ???;
+        type stream = record
+        (
+            write : fn(data : bitstring, offset : uint, length : uint) -> uint;
+            read  : fn(length : int, mode : readmode = :full) -> bitstring;
+            close : fn();
+        );
 
         type filemode = enum(open,create,create_new,open_or_create,append,truncate);
 
@@ -76,24 +116,45 @@ module std
 
         type readmode = enum(partial, full);
 
-        var stdin : stream;
+        var stdin  : stream;
         var stdout : stream;
         var stderr : stream;
 
         const open : fn(path : string, mode : filemode,  access : fileaccess) -> stream;
 
-        const write : fn(this stream : stream, data : bitstring) -> int;
+        const write = fn(this stream : stream, data : bitstring) -> uint
+        {
+            return stream.write(data, 0, data.length);
+        };
 
-        const read : fn(this stream : stream, length : int, mode : readmode = :full) -> bitstring;
+        module networking
+        {
+            // TODO: Network hosting, "real" socket API, DNS queries, ...
 
-        const close : fn(this stream : stream);
+            const connect_udp : fn(host : string, port : int) -> stream;
+            const connect_tcp : fn(host : string, port : int) -> stream;
+        }
     }
 
     module serialization
     {
-        const to_binary : fn(value : int )  -> bitstring;
-        const to_binary : fn(value : real ) -> bitstring;
-        const to_binary : fn(value : byte ) -> bitstring;
+        type inttype = enum(i8, i16, i32); 
+
+        type floattype = enum(binary16, binary32, binary64);
+
+        type endianess = enum(little_endian, big_endian);
+
+        const to_binary : fn(value : int,  type : inttype   = :i64,      endian : endianess = :little_endian) -> bitstring;
+        const to_binary : fn(value : uint, type : inttype   = :i64,      endian : endianess = :little_endian) -> bitstring;
+        const to_binary : fn(value : real, type : realtype  = :binary64, endian : endianess = :little_endian) -> bitstring;
+        const to_binary = fn(value : byte) -> bitstring { return [ value ]; };
+
+        const to_int  : fn(data : bitstring, type : inttype = :i64, offset : uint = 0) -> int;
+        const to_uint : fn(data : bitstring, type : inttype = :i64, offset : uint = 0) -> uint;
+        const to_real : fn(data : bitstring, type : realtype = :i64, offset : uint = 0) -> real;
+        const to_byte = fn(data : bitstring, offset : uint = 0) -> int { return data[offset]; };
+
+        // TODO: Generic implementation for arrays
     }
 
     module compiler

@@ -7,6 +7,11 @@
 	- Would also be bullshit to have `this` modify equality
 - Create a list of possible optimizations
 	- Same-tree-merging in expressions
+- Make records extendable with a set of other records?
+	```psi
+	type vec2 = record(x : real, y : real);
+	type vec3 = record extending vec2 (z : real);
+	```
 
 ## Documentation tasks
 - Document structural equality in Psi

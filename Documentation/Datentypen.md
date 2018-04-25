@@ -12,12 +12,20 @@ const ETX : byte = 3;
 ```
 
 ### `std.int`
-Ein 32 Bit breiter, vorzeichenbehafter Ganzzahlen-Datentyp, der als Zweierkomplement implementiert ist.
-Der Wertebereich geht von *-2147483648* bis *2147483647*.
+Ein 64 Bit breiter, vorzeichenbehafter Ganzzahlen-Datentyp, der als Zweierkomplement implementiert ist.
+Der Wertebereich geht von *-9223372036854775808* bis *9223372036854775807*.
 
 ```psi
 var x : int = 10;
 var y : int = -25000;
+```
+
+### `std.uint`
+Ein 64 Bit breiter, vorzeichenloser Ganzzahlen-Datentyp. Der Wertebereich geht von *0* bis *18446744073709551615*.
+
+```psi
+var x : int = 10;
+var y : int = 0xFF00FF00FF00FF00;
 ```
 
 ### `std.real`

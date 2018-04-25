@@ -51,6 +51,7 @@ namespace Psi.Compiler.Intermediate
     {
         public static readonly EnumType Boolean = new EnumType(new[] { "false", "true" });
         public static readonly BuiltinType Integer = new BuiltinType("int");
+        public static readonly BuiltinType UnsignedInteger = new BuiltinType("uint");
         public static readonly BuiltinType Real = new BuiltinType("real");
         public static readonly BuiltinType Character = new BuiltinType("char");
         public static readonly ArrayType String = new ArrayType { ElementType = Character, Dimensions = 1 };

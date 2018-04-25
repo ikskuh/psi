@@ -77,6 +77,7 @@ namespace Psi.Compiler
             var std = new Intermediate.Module(null, "std");
             std.AddType("bool", BuiltinType.Boolean, true);
             std.AddType("int", BuiltinType.Integer, true);
+            std.AddType("uint", BuiltinType.UnsignedInteger, true);
             std.AddType("char", BuiltinType.Character, true);
             std.AddType("real", BuiltinType.Real, true);
             std.AddType("string", BuiltinType.String, true);
