@@ -12,6 +12,8 @@
 	type vec2 = record(x : real, y : real);
 	type vec3 = record extending vec2 (z : real);
 	```
+- Integrate checked/unchecked blocks into Psi (straight from C#)
+- Integrate useful exception handling.
 
 ## Documentation tasks
 - Document structural equality in Psi
