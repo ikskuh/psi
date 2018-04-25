@@ -12,6 +12,7 @@ namespace Psi.Compiler
 		public static void Main(string[] args)
 		{
             // primitives
+            TypeMapper.Add(typeof(bool), BuiltinType.Boolean);
             TypeMapper.Add(typeof(int), BuiltinType.Integer);
             TypeMapper.Add(typeof(double), BuiltinType.Real);
             TypeMapper.Add(typeof(string), BuiltinType.String);
@@ -74,16 +75,27 @@ namespace Psi.Compiler
         private static Intermediate.Module CreateStd()
         {
             var std = new Intermediate.Module(null, "std");
+            std.AddType("bool", BuiltinType.Boolean, true);
             std.AddType("int", BuiltinType.Integer, true);
             std.AddType("char", BuiltinType.Character, true);
             std.AddType("real", BuiltinType.Real, true);
             std.AddType("string", BuiltinType.String, true);
+
+            std.AddConst("true", BuiltinType.Boolean, new Literal<bool>(true), true);
+            std.AddConst("false", BuiltinType.Boolean, new Literal<bool>(false), true);
 
             var compiler = new Intermediate.Module(std, "compiler");
             compiler.AddType("type", Type.MetaType, true);
             compiler.AddType("void", Type.VoidType, true);
             compiler.AddType("module", Type.ModuleType, true);
             std.AddModule("compiler", compiler);
+
+            var math = new Intermediate.Module(std, "math");
+
+            math.AddConst("pi", BuiltinType.Real, new Literal<double>(3.14159265358979323846), true);
+            math.AddConst("e",  BuiltinType.Real, new Literal<double>(2.71828182845904523536), true);
+
+            std.AddModule("math", math);
 
             return std;
         }

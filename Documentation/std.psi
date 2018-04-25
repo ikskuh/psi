@@ -1,0 +1,107 @@
+module std
+{
+    type byte = ???;
+    type int  = ???;
+    type real = ???;
+    type char = ???;
+
+    type string    = array<char>;
+    type string = array<byte>;
+    type bool   = enum(false, true);
+
+    const true  : bool = :true;
+    const false : bool = :false;
+
+    module math
+    {
+        const pi : real = 3.14159265358979323846;
+        const e  : real = 2.71828182845904523536;
+
+        const sin : fn(a : double) -> double;
+        const cos : fn(a : double) -> double;
+        const tan : fn(a : double) -> double;
+        
+        // ...
+
+        module complex
+        {
+            type imag = record(real : real, imag : imag);
+
+            const i = imag(real: 0, imag: 1);
+        }
+
+        module linear_algebra
+        {
+            type vec2 = record(x : real, y : real);
+            type vec3 = record(x : real, y : real, z : real);
+            
+            type mat4 = record(m11 : real)
+        }
+    }
+
+    module text
+    {
+        type encoding = record
+        (
+            name : string,
+            decode : fn(data : bitstring, offset : int, length : int) -> string,
+            encoding : fn(text : string, offset : int, length : int) -> bitstring
+        );
+
+        const ascii : encoding;
+        const utf8 : encoding;
+        const utf16le : encoding;
+        const utf16be : encoding;
+        const utf32le : encoding;
+        const utf32be : encoding;
+
+        const encode : fn(this enc : encoding, text : string) -> bitstring;
+
+        const decode : fn(this enc : encoding, data : bitstring) -> string;
+
+        const to_codepoint : fn(c : char) -> int;
+        
+        const to_codepoint : fn(text : string, index : int) -> int;
+
+        const for_codepoint : fn(i : int) -> char;
+    }
+
+    module io
+    {
+        type stream = ???;
+
+        type filemode = enum(open,create,create_new,open_or_create,append,truncate);
+
+        type fileaccess = enum(read,write,readwrite);
+
+        type readmode = enum(partial, full);
+
+        var stdin : stream;
+        var stdout : stream;
+        var stderr : stream;
+
+        const open : fn(path : string, mode : filemode,  access : fileaccess) -> stream;
+
+        const write : fn(this stream : stream, data : bitstring) -> int;
+
+        const read : fn(this stream : stream, length : int, mode : readmode = :full) -> bitstring;
+
+        const close : fn(this stream : stream);
+    }
+
+    module serialization
+    {
+        const to_binary : fn(value : int )  -> bitstring;
+        const to_binary : fn(value : real ) -> bitstring;
+        const to_binary : fn(value : byte ) -> bitstring;
+    }
+
+    module compiler
+    {
+        type std.compiler.void = ???;
+
+        type std.compiler.type = ???;
+
+        type std.compiler.module = ???;
+    }
+}

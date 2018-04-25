@@ -43,6 +43,18 @@ namespace Psi.Compiler.Intermediate
             this.Symbols.Add(sym);
             return sym;
         }
+        
+        public Symbol AddConst(string name, Type type, Expression value, bool isExported)
+        {
+            var sym = new Symbol(type, name)
+            {
+                Initializer = value ?? throw new ArgumentNullException(nameof(value)),
+                IsConst = true,
+                IsExported = isExported,
+            };
+            this.Symbols.Add(sym);
+            return sym;
+        }
 
         public SymbolCollection Symbols => this.symbols;
 

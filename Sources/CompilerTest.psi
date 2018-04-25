@@ -8,7 +8,6 @@ var x : fn(i : int);
 
 var x : fn(this j : int); // same as other "x"
 
-
 /*
 var foo : int = 10;
 

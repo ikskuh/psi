@@ -13,8 +13,10 @@
 	- Records
 	- Functions
 	- Types in general
-- Document in/inout/out behaviour
 - Document ref<T> with all its quirks (especially with `inout param : ref<T>`)
+
+## Meta-Tasks
+- Define Standard-Library-API
 
 ## Actual programming tasks
 - Update function type equality
