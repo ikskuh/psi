@@ -25,10 +25,10 @@ namespace Psi.Compiler.Intermediate
             if (other == null)
                 return false;
             return object.Equals(Name, other.Name)
-                && object.Equals(Type, other.Type)
-                && object.Equals(Initializer, other.Initializer);
+                && object.Equals(Type, other.Type);
+                // && object.Equals(Initializer, other.Initializer)
         }
 
-        public override int GetHashCode() => Name.GetHashCode() ^ (Type?.GetHashCode() ?? 0) ^ (Initializer?.GetHashCode() ?? 0);
+        public override int GetHashCode() => Name.GetHashCode() ^ (Type?.GetHashCode() ?? 0);
     }
 }

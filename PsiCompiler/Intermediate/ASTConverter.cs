@@ -18,8 +18,11 @@ namespace Psi.Compiler.Intermediate
 
         public IScope GlobalScope { get; }
 
+        protected CompilerErrorCollection Error { get; }
+
         public ASTConverter(IScope globalScope)
         {
+            this.Error = new CompilerErrorCollection();
             this.GlobalScope = globalScope ?? throw new ArgumentNullException(nameof(globalScope));
         }
 
@@ -136,7 +139,9 @@ namespace Psi.Compiler.Intermediate
             while (this.units.Sum(u => u.Tasks.Count) > 0)
             {
                 var anySuccess = false;
-                var errors = new List<CompilerError>();
+
+                ICollection<CompilerError> errors = this.Error; // explicit interface 
+                errors.Clear();
                 foreach (var unit in this.units)
                 {
                     // take the current set of tasks and dequeue them
@@ -147,9 +152,8 @@ namespace Psi.Compiler.Intermediate
                         try
                         {
                             var error = task();
-                            if (error != null)
+                            if (error != CompilerError.None)
                             {
-                                errors.Add(error);
                                 unit.Tasks.Enqueue(task);
                                 continue;
                             }
@@ -173,6 +177,8 @@ namespace Psi.Compiler.Intermediate
             // Step 3: Postprocess the converted modules
 
             // Step 4: Validate all assertions
+
+            Console.WriteLine("Compilation successful.");
         }
 
         private void CreateVariables(TranslationUnit unit)
@@ -188,7 +194,7 @@ namespace Psi.Compiler.Intermediate
                         type = Type.UnknownType;
 
                     if (type == null)
-                        return new CompilerError($"could not resolve {def.Type}");
+                        return Error.UnresolvableType(def.Type);
 
                     Expression initializer = null;
                     if (def.Value != null)
@@ -196,24 +202,24 @@ namespace Psi.Compiler.Intermediate
                         // TODO: A type hint should be passed into convert expression here
                         initializer = ConvertExpression(unit, unit.Scope, def.Value);
                         if (initializer == null)
-                            return new CompilerError($"could not compile {def.Value}");
+                            return Error.InvalidExpression(def.Value);
                     }
 
                     if ((type == Type.UnknownType) && (initializer == null))
-                        return new CompilerError("Symbol does neither have a type nor an initializer");
+                        return Error.InvalidSymbol(def);
 
                     if ((type == Type.UnknownType) && (initializer != null))
                     {
                         type = initializer.Type;
                         if ((type == null) || (type == Type.UnknownType))
-                            return new CompilerError("Could not deduce type of symbol");
+                            return Error.UndeducedType(def);
                     }
 
                     if ((initializer != null) && (type != initializer.Type))
-                        return new CompilerError("Value does not mach declared type");
+                        return Error.TypeMismatch(type, initializer);
 
                     if ((type == null) || (type == Type.UnknownType))
-                        return new CompilerError("Invalid symbol: No type has been detected");
+                        return Error.Critical("Failed to create type!");
 
                     var sym = new Symbol(type, def.Name)
                     {
@@ -222,9 +228,12 @@ namespace Psi.Compiler.Intermediate
                         Initializer = initializer,
                     };
 
+                    if (unit.Module.Symbols.ContainsKey(sym.Name))
+                        return Error.AlreadyDeclared(sym.Name);
+
                     unit.Module.Symbols.Add(sym);
 
-                    return CompilerError.None;
+                    return Error.None;
                 });
             }
         }
@@ -237,7 +246,7 @@ namespace Psi.Compiler.Intermediate
                 {
                     var sym = GlobalScope.FindNamedSymbol(name, Type.ModuleType, true);
                     if (sym == null)
-                        return new CompilerError($"Could not find import module '{name}'");
+                        return Error.UnknownImport(name);
                     var mod = sym.GetValue<Module>();
                     if (mod == null)
                         throw new InvalidOperationException("imported module is not a constant!");
@@ -257,7 +266,7 @@ namespace Psi.Compiler.Intermediate
                 {
                     Type type = ConvertType(unit, unit.Scope, decl.Type);
                     if (type == null)
-                        return new CompilerError($"{decl.Type} is not resolvable!");
+                        return Error.UnresolvableType(decl.Type);
                     if (type == Type.UnknownType)
                         throw new InvalidOperationException("Unknown type not allows in declaration");
                     if (type == Type.VoidType)
@@ -306,7 +315,7 @@ namespace Psi.Compiler.Intermediate
                 {
                     type.ElementType = ConvertType(unit, scope, atl.ElementType);
                     if (type.ElementType == null)
-                        return new CompilerError($"Could not resolve '{atl.ElementType}'");
+                        return Error.UnresolvableType(atl.ElementType);
                     return CompilerError.None;
                 });
                 return type;
@@ -314,41 +323,33 @@ namespace Psi.Compiler.Intermediate
             else if (asttype is RecordTypeLiteral rtl)
             {
                 var type = new RecordType();
-                unit.AddTask(() =>
+                type.Members = new List<RecordMember>();
+                foreach (var m in rtl.Fields)
                 {
-                    var members = new List<RecordMember>();
-                    var map = new Dictionary<RecordMember, Declaration>();
-                    foreach (var m in rtl.Fields)
+                    var mem = new RecordMember(type, m.Name);
+                    unit.AddTask(() =>
                     {
                         var ftype = ConvertType(unit, scope, m.Type);
                         if (ftype == null)
-                            return new CompilerError($"Could not resolve type for record field {m.Name}.");
+                            return Error.UnresolvableType(m.Type);
                         var member = new RecordMember(type, m.Name)
                         {
                             Type = ftype,
                         };
-                        map[member] = m;
-                        members.Add(member);
-                    }
-                    if (type.Members != null)
-                        throw new InvalidOperationException("record type was somehow already translated?!");
-                    type.Members = members;
-                    foreach (var member in type.Members)
+                        return Error.None;
+                    });
+                    if (m.Value != null)
                     {
-                        var m = map[member];
-                        if (m.Value == null)
-                            continue;
                         unit.AddTask(() =>
                         {
-                            member.Initializer = ConvertExpression(unit, scope, m.Value);
-                            if (member.Initializer != null)
-                                return CompilerError.None;
-                            else
-                                return new CompilerError($"Failed to convert initializer for {member.Name}");
+                            mem.Initializer = ConvertExpression(unit, scope, m.Value);
+                            if (mem.Initializer == null)
+                                return Error.InvalidExpression(m.Value);
+                            return Error.None;
                         });
                     }
-                    return CompilerError.None;
-                });
+                    type.Members.Add(mem);
+                }
                 return type;
             }
             else if (asttype is ReferenceTypeLiteral rftl)
@@ -358,7 +359,7 @@ namespace Psi.Compiler.Intermediate
                 {
                     type.ObjectType = ConvertType(unit, scope, rftl.ObjectType);
                     if (type.ObjectType == null)
-                        return new CompilerError($"Could not find type '{rftl.ObjectType}'");
+                        return Error.UnresolvableType(rftl.ObjectType);
                     return CompilerError.None;
                 });
                 return type;
@@ -370,7 +371,7 @@ namespace Psi.Compiler.Intermediate
                 {
                     type.ReturnType = ConvertType(unit, scope, ftl.ReturnType);
                     if (type.ReturnType == null)
-                        return new CompilerError($"Could not resolve type '{type.ReturnType}'");
+                        return Error.UnresolvableType(ftl.ReturnType);
                     return CompilerError.None;
                 });
                 var @params = new Parameter[ftl.Parameters.Count];
@@ -390,7 +391,7 @@ namespace Psi.Compiler.Intermediate
                         {
                             p.Type = ConvertType(unit, scope, par.Type);
                             if (p.Type == null)
-                                return new CompilerError($"Could not resolve type '{par.Value}'");
+                                return Error.UnresolvableType(par.Type);
                             return CompilerError.None;
                         });
                     }
@@ -400,7 +401,7 @@ namespace Psi.Compiler.Intermediate
                         {
                             p.Initializer = ConvertExpression(unit, scope, par.Value);
                             if (p.Initializer == null)
-                                return new CompilerError($"Could not translate expression '{par.Value}'");
+                                return Error.InvalidExpression(par.Value);
                             return CompilerError.None;
                         });
                     }

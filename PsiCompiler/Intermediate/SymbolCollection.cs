@@ -17,6 +17,8 @@ namespace Psi.Compiler.Intermediate
         {
             if (sym == null)
                 throw new ArgumentNullException(nameof(sym));
+            if (this.symbols.ContainsKey(sym.Name))
+                throw new InvalidOperationException($"A symbol {sym.Name} already exists!");
             this.symbols.Add(sym.Name, sym);
         }
 

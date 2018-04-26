@@ -30,7 +30,7 @@ namespace Psi.Compiler.Intermediate
 
         public override int GetHashCode() => Type.GetHashCode() ^ ID.GetHashCode();
         
-        public override string ToString() => $"{ID} ({Type})";
+        public override string ToString() => $"({ID} : {Type})";
 
         public static bool operator ==(SymbolName lhs, SymbolName rhs) => lhs?.Equals(rhs) ?? false;
         public static bool operator !=(SymbolName lhs, SymbolName rhs) => !(lhs == rhs);

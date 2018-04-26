@@ -30,8 +30,9 @@ namespace Psi.Compiler.Intermediate
         public override int GetHashCode() =>
               Position.GetHashCode()
             ^ (Flags & ~ParameterFlags.This).GetHashCode()
-            ^ (Type?.GetHashCode() ?? 0)
-            ^ (Initializer?.GetHashCode() ?? 0);
+            ^ (Type?.GetHashCode() ?? 0);
+        // same initializer is bullshit like in record type
+        // ^ (Initializer?.GetHashCode() ?? 0);
 
         public bool Equals(Parameter other)
         {
@@ -39,8 +40,8 @@ namespace Psi.Compiler.Intermediate
                 return false;
             return object.Equals(Position, other.Position)
                 && object.Equals((Flags & ~ParameterFlags.This), (other.Flags & ~ParameterFlags.This))
-                && object.Equals(Type, other.Type)
-                && object.Equals(Initializer, other.Initializer);
+                && object.Equals(Type, other.Type);
+                // && object.Equals(Initializer, other.Initializer);
         }
     }
 }

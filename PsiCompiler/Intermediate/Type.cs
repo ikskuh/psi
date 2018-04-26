@@ -93,9 +93,11 @@ namespace Psi.Compiler.Intermediate
     {
         public IList<RecordMember> Members { get; set; }
 
-        protected override bool TypeEquals(Type other)
+        protected override bool TypeEquals(Type _other)
         {
-            return Enumerable.SequenceEqual(this.Members, ((RecordType)other).Members);
+            RecordType other = (RecordType)_other;
+            return this.Members.All(m => other.Members.Contains(m))
+                && other.Members.All(m => this.Members.Contains(m));
         }
 
         public override int GetHashCode() => this.Members.Select(x => x.GetHashCode()).Aggregate(0, (a, b) => a ^ b);

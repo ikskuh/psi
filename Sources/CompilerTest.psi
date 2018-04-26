@@ -4,9 +4,9 @@
 
 import std;
 
-var x : fn(i : int);
+var x : record(x : real, y : real);
 
-var x : fn(this j : int); // same as other "x"
+var x : record(y : real, x : real);
 
 /*
 var foo : int = 10;
