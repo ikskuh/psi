@@ -81,10 +81,22 @@ namespace Psi.Compiler.Intermediate
 
         public bool HasSymbol(SymbolName name) => this.scopes.Any(s => s.HasSymbol(name));
 
-        public IEnumerator<Symbol> GetEnumerator()
+        private IEnumerable<Symbol> EnumerateSymbols()
         {
-            throw new NotImplementedException();
+            var exclusion = new HashSet<SymbolName>();
+            foreach(var group in this.scopes)
+            {
+                foreach(var item in group)
+                {
+                    if (exclusion.Contains(item.Name))
+                        continue;
+                    yield return item;
+                    exclusion.Add(item.Name);
+                }
+            }
         }
+
+        public IEnumerator<Symbol> GetEnumerator() => this.EnumerateSymbols().GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
@@ -93,5 +105,29 @@ namespace Psi.Compiler.Intermediate
         // this is kinda stupid... pushing a stack into a stack initialize reverses order
         // so we reverse it back, so stack ctor will un-reverse it again
         public StackableScope Clone() => new StackableScope(this.scopes.Reverse()); 
+    }
+
+    public sealed class ExtendingScope : IScope
+    {
+        private readonly IScope scope;
+        private readonly Symbol symbol;
+
+        public ExtendingScope(IScope scope, Symbol sym)
+        {
+            this.scope = scope ?? throw new ArgumentNullException(nameof(scope));
+            this.symbol = sym ?? throw new ArgumentNullException(nameof(sym));
+        }
+
+        public Symbol this[SymbolName name] => (name == symbol.Name) ? symbol : scope[name];
+
+        public IEnumerator<Symbol> GetEnumerator()
+        {
+            var list = new Symbol[] { this.symbol };
+            return list.Concat(this.scope.Except(list)).GetEnumerator();
+        }
+
+        public bool HasSymbol(SymbolName name) => (name == symbol.Name) ? true : scope.HasSymbol(name);
+
+        IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }
 }

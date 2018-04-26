@@ -181,52 +181,66 @@ namespace Psi.Compiler.Intermediate
             Console.WriteLine("Compilation successful.");
         }
 
+        private CompilerError CreateSymbol(TranslationUnit unit, IScope scope, Declaration def, out Symbol sym)
+        {
+            sym = null;
+
+            Type type;
+            if (def.Type != null)
+                type = ConvertType(unit, scope, def.Type);
+            else
+                type = Type.UnknownType;
+
+            if (type == null)
+                return Error.UnresolvableType(def.Type);
+
+            Expression initializer = null;
+            if (def.Value != null)
+            {
+                // TODO: A type hint should be passed into convert expression here
+                initializer = ConvertExpression(unit, scope, def.Value);
+                if (initializer == null)
+                    return Error.InvalidExpression(def.Value);
+            }
+
+            if ((type == Type.UnknownType) && (initializer == null))
+                return Error.InvalidSymbol(def);
+
+            if ((type == Type.UnknownType) && (initializer != null))
+            {
+                type = initializer.Type;
+                if ((type == null) || (type == Type.UnknownType))
+                    return Error.UndeducedType(def);
+            }
+
+            if ((initializer != null) && (type != initializer.Type))
+                return Error.TypeMismatch(type, initializer);
+
+            if ((type == null) || (type == Type.UnknownType))
+                return Error.Critical("Failed to create type!");
+
+            sym = new Symbol(type, def.Name)
+            {
+                IsConst = def.IsConst,
+                IsExported = def.IsExported,
+                Initializer = initializer,
+            };
+
+            if (def.IsConst && (sym.Initializer == null))
+                return Error.RequiresInitializer(sym);
+
+            return Error.None;
+        }
+
         private void CreateVariables(TranslationUnit unit)
         {
             foreach (var def in unit.Source.Declarations)
             {
                 unit.AddTask(() =>
                 {
-                    Type type;
-                    if (def.Type != null)
-                        type = ConvertType(unit, unit.Scope, def.Type);
-                    else
-                        type = Type.UnknownType;
-
-                    if (type == null)
-                        return Error.UnresolvableType(def.Type);
-
-                    Expression initializer = null;
-                    if (def.Value != null)
-                    {
-                        // TODO: A type hint should be passed into convert expression here
-                        initializer = ConvertExpression(unit, unit.Scope, def.Value);
-                        if (initializer == null)
-                            return Error.InvalidExpression(def.Value);
-                    }
-
-                    if ((type == Type.UnknownType) && (initializer == null))
-                        return Error.InvalidSymbol(def);
-
-                    if ((type == Type.UnknownType) && (initializer != null))
-                    {
-                        type = initializer.Type;
-                        if ((type == null) || (type == Type.UnknownType))
-                            return Error.UndeducedType(def);
-                    }
-
-                    if ((initializer != null) && (type != initializer.Type))
-                        return Error.TypeMismatch(type, initializer);
-
-                    if ((type == null) || (type == Type.UnknownType))
-                        return Error.Critical("Failed to create type!");
-
-                    var sym = new Symbol(type, def.Name)
-                    {
-                        IsConst = def.IsConst,
-                        IsExported = def.IsExported,
-                        Initializer = initializer,
-                    };
+                    var err = CreateSymbol(unit, unit.Scope, def, out var sym);
+                    if (err != CompilerError.None)
+                        return err;
 
                     if (unit.Module.Symbols.ContainsKey(sym.Name))
                         return Error.AlreadyDeclared(sym.Name);
@@ -423,23 +437,154 @@ namespace Psi.Compiler.Intermediate
         {
             if (value is NumberLiteral num)
             {
-                if (double.TryParse(num.Value, NumberStyles.Number, SystemFormat, out double dbl))
-                    return new Literal<double>(dbl);
-                else if (int.TryParse(num.Value, NumberStyles.HexNumber, SystemFormat, out int i))
+                if (int.TryParse(num.Value, NumberStyles.HexNumber, SystemFormat, out int i))
                     return new Literal<int>(i);
                 else if (int.TryParse(num.Value, NumberStyles.Integer, SystemFormat, out i))
                     return new Literal<int>(i);
+                else if (double.TryParse(num.Value, NumberStyles.Number, SystemFormat, out double dbl))
+                    return new Literal<double>(dbl);
                 else
-                    return null;
+                return null;
             }
             else if (value is StringLiteral str)
             {
                 return new Literal<string>(str.Text);
             }
+            else if(value is ArrayLiteral array)
+            {
+                var expr = new ArrayExpression();
+                expr.Items = new Expression[array.Values.Count];
+                for(int i = 0; i  < expr.Items.Length; i++)
+                {
+                    int idx = i;
+                    unit.AddTask(() =>
+                    {
+                        var elem = ConvertExpression(unit, scope, array.Values[idx]);
+                        if (elem == null)
+                            return Error.InvalidExpression(value);
+                        expr.Items[idx] = elem;
+                        return Error.None;
+                    });
+                }
+                unit.AddTask(() =>
+                {
+                    if (expr.Items.Any(i => i is null))
+                        return Error.Critical("Not all array elements could be translated!");
+
+                    var type = FindCommonType(expr.Items.Select(i => i.Type));
+                    if (type == null)
+                        return Error.NoCommmonType();
+
+                    expr.ItemType = type;
+
+                    return Error.None;
+                });
+                return expr;
+            }
+            else if (value is Grammar.FunctionLiteral function)
+            {
+                var type = ConvertType(unit, scope, function.Type) as FunctionType;
+                if (type == null)
+                {
+                    Error.UnresolvableType(function.Type);
+                    return null;
+                }
+
+                var fun = new UserFunction(type);
+
+                var paramscope = new SimpleScope();
+                foreach(var param in type.Parameters)
+                {
+                    paramscope.Add(new Symbol(param.Type, param.Name)
+                    {
+                        Kind = SymbolKind.Parameter
+                    });
+                }
+
+                fun.Scope.Push(scope);
+                fun.Scope.Push(paramscope);
+
+                unit.AddTask(() =>
+                {
+                    var body = ConvertStatement(unit, fun.Scope, function.Body);
+                    if (body == null)
+                        return Error.UntranslatableStatement(function.Body);
+                    fun.Body = body;
+                    return Error.None;
+                });
+                
+                return new FunctionLiteral(fun);
+            }
+            else if(value is VariableReference vref)
+            {
+                var syms = scope.Where(s => s.Name.ID == vref.Variable).ToArray();
+                if (syms.Length == 0)
+                {
+                    Error.SymbolNotFound(vref.Variable);
+                    return null;
+                }
+                if (syms.Length != 1)
+                    throw new NotSupportedException("multi-variables are not supported yet!");
+                return new SymbolReference(syms[0]);
+            }
             else
             {
                 throw new NotSupportedException($"The expression type '{value?.GetType()?.Name ?? "?"}' is not supported yet.");
             }
+        }
+
+        private Statement ConvertStatement(TranslationUnit unit, IScope scope, Grammar.Statement stmt)
+        {
+            if (stmt is Grammar.Block block)
+            {
+                var result = new Block();
+                unit.AddTask(() =>
+                {
+                    var sequence = new List<Statement>();
+                    var blockscope = scope;
+                    foreach(var sub in block)
+                    {
+                        if(sub is Declaration decl)
+                        {
+                            // TODO: Allow CreateSymbol initializer to access the self-defined symbol
+                            var err = CreateSymbol(unit, blockscope, decl, out var sym);
+                            if (err != CompilerError.None)
+                                return err;
+                            sym.Kind = SymbolKind.Local;
+                            blockscope = new ExtendingScope(blockscope, sym);
+                            if (sym.Initializer != null)
+                                sequence.Add(new ExpressionStatement(sym.Initializer));
+                        }
+                        else
+                        {
+                            var substmt = ConvertStatement(unit, blockscope, sub);
+                            if (substmt == null)
+                                return Error.UntranslatableStatement(sub);
+                            sequence.Add(substmt);
+                        }
+                    }
+                    result.Statements = sequence;
+                    return Error.None;
+                });
+                return result;
+            }
+            else
+            {
+                throw new NotSupportedException($"The statement type {stmt?.GetType()?.Name ?? "?"} is not supported yet.");
+            }
+        }
+
+        private Type FindCommonType(IEnumerable<Type> enumerable)
+        {
+            var list = enumerable.ToArray();
+            if (list.Length == 0)
+                return Type.UnknownType;
+            if (list.All(l => (l.Equals(list[0]))))
+                return list[0];
+
+            Error.Add("Common type could not be found!");
+
+            return null;
         }
 
         private class TranslationUnit

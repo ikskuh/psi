@@ -25,40 +25,8 @@ namespace Psi.Compiler.Intermediate
             return err;
         }
 
-        #region Specialized Messages
-
-        internal CompilerError UnresolvableType(AstType type) => Add("The type {0} could not be resolved!", type);
-
-        internal CompilerError InvalidExpression(object value)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal CompilerError InvalidSymbol(Declaration def)
-        {
-            throw new NotImplementedException();
-        }
-
-        internal CompilerError UndeducedType(Declaration def)
-        {
-            throw new NotImplementedException();
-        }
-
-        public CompilerError TypeMismatch(Type type, Expression initializer)
-        {
-            throw new NotImplementedException();
-        }
-
-        public CompilerError Critical(string msg) => Add("Critical: {0}", msg);
-
-        public CompilerError AlreadyDeclared(SymbolName name) => Add("A symbol with the name {0} is already declared in this scope!", name);
-
-        public CompilerError UnknownImport(CompoundName name) => Add($"Could not find module {name} for import.");
-
-        #endregion
-
         #region ICollection<CompilerError>
-        
+
 
         int ICollection<CompilerError>.Count => ((ICollection<CompilerError>)contents).Count;
 
@@ -98,6 +66,43 @@ namespace Psi.Compiler.Intermediate
         {
             return ((ICollection<CompilerError>)contents).GetEnumerator();
         }
+        #endregion
+
+
+
+        #region Specialized Messages
+
+        internal CompilerError UnresolvableType(AstType type) => Add("The type {0} could not be resolved!", type);
+
+        internal CompilerError InvalidExpression(Grammar.Expression value) => Add($"The expression '{value}' could not be translated!");
+
+        internal CompilerError InvalidSymbol(Declaration def)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal CompilerError UndeducedType(Declaration def)
+        {
+            throw new NotImplementedException();
+        }
+
+        public CompilerError TypeMismatch(Type type, Expression initializer) => Add($"The expression {initializer} does not match the type {type}");
+
+        public CompilerError Critical(string msg) => Add("Critical: {0}", msg);
+
+        public CompilerError AlreadyDeclared(SymbolName name) => Add("A symbol with the name {0} is already declared in this scope!", name);
+
+        public CompilerError UnknownImport(CompoundName name) => Add($"Could not find module {name} for import.");
+
+
+        public CompilerError RequiresInitializer(Symbol sym) => Add($"The constant {sym.Name} requires an initializer!");
+
+        public CompilerError NoCommmonType() => Add("No common type was found!");
+
+        public CompilerError UntranslatableStatement(Grammar.Statement body) => Add($"The statement {body} was not translatable.");
+
+        public CompilerError SymbolNotFound(string variable) => Add($"The variable {variable} could not be found!");
+
         #endregion
     }
 }

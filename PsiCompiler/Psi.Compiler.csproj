@@ -46,8 +46,12 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Intermediate\ArrayExpression.cs" />
     <Compile Include="Intermediate\CompilerErrorCollection.cs" />
+    <Compile Include="Intermediate\Function.cs" />
+    <Compile Include="Intermediate\SymbolReference.cs" />
     <Compile Include="Intermediate\TypeMapper.cs" />
+    <Compile Include="Intermediate\UserFunction.cs" />
     <Compile Include="ParameterFlags.cs" />
     <Compile Include="Grammar\AST\Statements.cs" />
     <Compile Include="Intermediate\ASTConverter.cs" />
@@ -91,6 +95,9 @@
     </Compile>
     <Compile Include="PsiString.cs" />
     <Compile Include="Grammar\AST\Types.cs" />
+    <Compile Include="Psi\Compiler\Intermediate\Block.cs" />
+    <Compile Include="Psi\Compiler\Intermediate\ExpressionStatement.cs" />
+    <Compile Include="Psi\Compiler\Intermediate\Statement.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Grammar\Psi.tok" />

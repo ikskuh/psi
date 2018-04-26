@@ -4,9 +4,9 @@
 
 // GPPG version 1.5.2
 // Machine:  DENKPLATTE-W7
-// DateTime: 26.04.2018 09:56:30
+// DateTime: 26.04.2018 23:42:12
 // UserName: Felix
-// Input file <Psi.y - 23.04.2018 10:50:59>
+// Input file <Psi.y - 26.04.2018 19:10:17>
 
 // options: lines
 
@@ -607,51 +607,51 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
     switch (action)
     {
       case 2: // program -> /* empty */
-#line 64 "Psi.y"
+#line 65 "Psi.y"
                                   { CurrentSemanticValue.Module = new Module() { Name = new CompoundName("GLOBAL") }; }
 #line default
         break;
       case 3: // program -> program, assertion
-#line 65 "Psi.y"
+#line 66 "Psi.y"
                                   { CurrentSemanticValue.Module = ValueStack[ValueStack.Depth-2].Module.Add(ValueStack[ValueStack.Depth-1].Assertion); }
 #line default
         break;
       case 4: // program -> program, declaration
-#line 66 "Psi.y"
+#line 67 "Psi.y"
                                   { CurrentSemanticValue.Module = ValueStack[ValueStack.Depth-2].Module.Add(ValueStack[ValueStack.Depth-1].Declaration); }
 #line default
         break;
       case 5: // program -> program, typedecl
-#line 67 "Psi.y"
+#line 68 "Psi.y"
                                   { CurrentSemanticValue.Module = ValueStack[ValueStack.Depth-2].Module.Add(ValueStack[ValueStack.Depth-1].TypeDeclaration); }
 #line default
         break;
       case 6: // program -> program, module
-#line 68 "Psi.y"
+#line 69 "Psi.y"
                                   { CurrentSemanticValue.Module = ValueStack[ValueStack.Depth-2].Module.Add(ValueStack[ValueStack.Depth-1].Module); }
 #line default
         break;
       case 7: // program -> program, import
-#line 69 "Psi.y"
+#line 70 "Psi.y"
                                   { CurrentSemanticValue.Module = ValueStack[ValueStack.Depth-2].Module.Add(ValueStack[ValueStack.Depth-1].Name); }
 #line default
         break;
       case 8: // assertion -> ASSERT, expression, TERMINATOR
-#line 73 "Psi.y"
+#line 74 "Psi.y"
    {
             	CurrentSemanticValue.Assertion = new Assertion(ValueStack[ValueStack.Depth-2].Expression); 
             }
 #line default
         break;
       case 9: // import -> IMPORT, modname, TERMINATOR
-#line 79 "Psi.y"
+#line 80 "Psi.y"
    {
 				CurrentSemanticValue.Name = ValueStack[ValueStack.Depth-2].Name;
 			}
 #line default
         break;
       case 10: // module -> MODULE, modname, CURLY_O, program, CURLY_C
-#line 85 "Psi.y"
+#line 86 "Psi.y"
    {
 				CurrentSemanticValue.Module = ValueStack[ValueStack.Depth-2].Module;
 				CurrentSemanticValue.Module.Name = ValueStack[ValueStack.Depth-4].Name;
@@ -659,14 +659,14 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 11: // modname -> identifier
-#line 92 "Psi.y"
+#line 93 "Psi.y"
    {
             	CurrentSemanticValue.Name = new CompoundName(ValueStack[ValueStack.Depth-1].String); 
             }
 #line default
         break;
       case 12: // modname -> modname, DOT, identifier
-#line 96 "Psi.y"
+#line 97 "Psi.y"
    {
             	CurrentSemanticValue.Name = ValueStack[ValueStack.Depth-3].Name;
             	CurrentSemanticValue.Name.Add(ValueStack[ValueStack.Depth-1].String);
@@ -674,7 +674,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 13: // declaration -> export, vardecl
-#line 103 "Psi.y"
+#line 104 "Psi.y"
    {
             	CurrentSemanticValue.Declaration = ValueStack[ValueStack.Depth-1].Declaration;
             	CurrentSemanticValue.Declaration.IsExported = (bool)ValueStack[ValueStack.Depth-2].Boolean;
@@ -682,7 +682,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 14: // typedecl -> export, TYPE, identifier, IS, type, TERMINATOR
-#line 110 "Psi.y"
+#line 111 "Psi.y"
    {
             	CurrentSemanticValue.TypeDeclaration = new TypeDeclaration(ValueStack[ValueStack.Depth-4].String, ValueStack[ValueStack.Depth-2].AstType);
             	CurrentSemanticValue.TypeDeclaration.IsExported = ValueStack[ValueStack.Depth-6].Boolean ?? false;
@@ -690,7 +690,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 15: // vardecl -> storage, identifier, COLON, type, terminator
-#line 117 "Psi.y"
+#line 118 "Psi.y"
    {
             	CurrentSemanticValue.Declaration = new Declaration(ValueStack[ValueStack.Depth-4].String, ValueStack[ValueStack.Depth-2].AstType, null);
             	CurrentSemanticValue.Declaration.IsConst = (bool)ValueStack[ValueStack.Depth-5].Boolean;
@@ -698,7 +698,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 16: // vardecl -> storage, identifier, IS, expression, terminator
-#line 122 "Psi.y"
+#line 123 "Psi.y"
             {
             	CurrentSemanticValue.Declaration = new Declaration(ValueStack[ValueStack.Depth-4].String, Undefined, ValueStack[ValueStack.Depth-2].Expression);
             	CurrentSemanticValue.Declaration.IsConst = (bool)ValueStack[ValueStack.Depth-5].Boolean;
@@ -706,7 +706,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 17: // vardecl -> storage, identifier, COLON, type, IS, expression, terminator
-#line 127 "Psi.y"
+#line 128 "Psi.y"
    {
             	CurrentSemanticValue.Declaration = new Declaration(ValueStack[ValueStack.Depth-6].String, ValueStack[ValueStack.Depth-4].AstType, ValueStack[ValueStack.Depth-2].Expression);
             	CurrentSemanticValue.Declaration.IsConst = (bool)ValueStack[ValueStack.Depth-7].Boolean;
@@ -714,545 +714,545 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 18: // type -> ENUM, ROUND_O, idlist, ROUND_C
-#line 134 "Psi.y"
+#line 135 "Psi.y"
    {
 				CurrentSemanticValue.AstType = new EnumTypeLiteral(ValueStack[ValueStack.Depth-2].StringList);
 			}
 #line default
         break;
       case 19: // type -> ENUM, LESS, type, MORE, ROUND_O, fieldlist, ROUND_C
-#line 138 "Psi.y"
+#line 139 "Psi.y"
    {
 				CurrentSemanticValue.AstType = new TypedEnumTypeLiteral(ValueStack[ValueStack.Depth-5].AstType, ValueStack[ValueStack.Depth-2].FieldList);
 			}
 #line default
         break;
       case 20: // type -> REF, LESS, type, MORE
-#line 142 "Psi.y"
+#line 143 "Psi.y"
    {
 				CurrentSemanticValue.AstType = new ReferenceTypeLiteral(ValueStack[ValueStack.Depth-2].AstType);
 			}
 #line default
         break;
       case 21: // type -> RECORD, ROUND_O, fieldlist, ROUND_C
-#line 146 "Psi.y"
+#line 147 "Psi.y"
    {
 				CurrentSemanticValue.AstType = new RecordTypeLiteral(ValueStack[ValueStack.Depth-2].FieldList);
 			}
 #line default
         break;
       case 22: // type -> ARRAY, LESS, type, MORE
-#line 150 "Psi.y"
+#line 151 "Psi.y"
    {
 				CurrentSemanticValue.AstType = new ArrayTypeLiteral(ValueStack[ValueStack.Depth-2].AstType, 1);
 			}
 #line default
         break;
       case 23: // type -> ARRAY, LESS, type, COMMA, NUMBER, MORE
-#line 154 "Psi.y"
+#line 155 "Psi.y"
    {
 				CurrentSemanticValue.AstType = new ArrayTypeLiteral(ValueStack[ValueStack.Depth-4].AstType, int.Parse(ValueStack[ValueStack.Depth-2].String));
 			}
 #line default
         break;
       case 24: // type -> functiontype
-#line 158 "Psi.y"
+#line 159 "Psi.y"
    {
 				CurrentSemanticValue.AstType = ValueStack[ValueStack.Depth-1].FunctionType;
 			}
 #line default
         break;
       case 25: // type -> modname
-#line 162 "Psi.y"
+#line 163 "Psi.y"
    {
             	CurrentSemanticValue.AstType = new NamedTypeLiteral(ValueStack[ValueStack.Depth-1].Name);
             }
 #line default
         break;
       case 28: // storage -> CONST
-#line 170 "Psi.y"
+#line 171 "Psi.y"
                              { CurrentSemanticValue.Boolean = true;  }
 #line default
         break;
       case 29: // storage -> VAR
-#line 171 "Psi.y"
+#line 172 "Psi.y"
                              { CurrentSemanticValue.Boolean = false; }
 #line default
         break;
       case 30: // export -> /* empty */
-#line 174 "Psi.y"
+#line 175 "Psi.y"
                              { CurrentSemanticValue.Boolean = false; }
 #line default
         break;
       case 31: // export -> EXPORT
-#line 175 "Psi.y"
+#line 176 "Psi.y"
                              { CurrentSemanticValue.Boolean = true;  }
 #line default
         break;
       case 32: // expression -> expression, IS, expression
-#line 179 "Psi.y"
+#line 180 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.CopyAssign);
 			}
 #line default
         break;
       case 33: // expression -> expression, ASSIGN, expression
-#line 183 "Psi.y"
+#line 184 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.SemanticAssign);
 			}
 #line default
         break;
       case 34: // expression -> expression, WB_CONCAT, expression
-#line 187 "Psi.y"
+#line 188 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.WritebackConcat);
 			}
 #line default
         break;
       case 35: // expression -> expression, WB_PLUS, expression
-#line 191 "Psi.y"
+#line 192 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.WritebackPlus);
 			}
 #line default
         break;
       case 36: // expression -> expression, WB_MINUS, expression
-#line 195 "Psi.y"
+#line 196 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.WritebackMinus);
 			}
 #line default
         break;
       case 37: // expression -> expression, WB_EXP, expression
-#line 199 "Psi.y"
+#line 200 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.WritebackExponentiate);
 			}
 #line default
         break;
       case 38: // expression -> expression, WB_MULT, expression
-#line 203 "Psi.y"
+#line 204 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.WritebackMultiply);
 			}
 #line default
         break;
       case 39: // expression -> expression, WB_MOD, expression
-#line 207 "Psi.y"
+#line 208 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.WritebackModulo);
 			}
 #line default
         break;
       case 40: // expression -> expression, WB_DIV, expression
-#line 211 "Psi.y"
+#line 212 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.WritebackDivide);
 			}
 #line default
         break;
       case 41: // expression -> expression, WB_AND, expression
-#line 215 "Psi.y"
+#line 216 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.WritebackAnd);
 			}
 #line default
         break;
       case 42: // expression -> expression, WB_OR, expression
-#line 219 "Psi.y"
+#line 220 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.WritebackOr);
 			}
 #line default
         break;
       case 43: // expression -> expression, WB_XOR, expression
-#line 223 "Psi.y"
+#line 224 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.WritebackXor);
 			}
 #line default
         break;
       case 44: // expression -> expression, WB_ASR, expression
-#line 227 "Psi.y"
+#line 228 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.WritebackArithmeticShiftRight);
 			}
 #line default
         break;
       case 45: // expression -> expression, WB_SHL, expression
-#line 231 "Psi.y"
+#line 232 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.WritebackShiftLeft);
 			}
 #line default
         break;
       case 46: // expression -> expression, WB_SHR, expression
-#line 235 "Psi.y"
+#line 236 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.WritebackShiftRight);
 			}
 #line default
         break;
       case 47: // expression -> expr_or
-#line 239 "Psi.y"
+#line 240 "Psi.y"
    {
 				CurrentSemanticValue.Expression = ValueStack[ValueStack.Depth-1].Expression;
 			}
 #line default
         break;
       case 48: // expr_or -> expr_or, OR, expr_or
-#line 245 "Psi.y"
+#line 246 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.Or);
 			}
 #line default
         break;
       case 49: // expr_or -> expr_xor
-#line 249 "Psi.y"
+#line 250 "Psi.y"
    {
 				CurrentSemanticValue.Expression = ValueStack[ValueStack.Depth-1].Expression;
 			}
 #line default
         break;
       case 50: // expr_xor -> expr_xor, XOR, expr_xor
-#line 255 "Psi.y"
+#line 256 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.Xor);
 			}
 #line default
         break;
       case 51: // expr_xor -> expr_and
-#line 259 "Psi.y"
+#line 260 "Psi.y"
    {
 				CurrentSemanticValue.Expression = ValueStack[ValueStack.Depth-1].Expression;
 			}
 #line default
         break;
       case 52: // expr_and -> expr_and, AND, expr_and
-#line 265 "Psi.y"
+#line 266 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.And);
 			}
 #line default
         break;
       case 53: // expr_and -> equality
-#line 269 "Psi.y"
+#line 270 "Psi.y"
    {
 				CurrentSemanticValue.Expression = ValueStack[ValueStack.Depth-1].Expression;
 			}
 #line default
         break;
       case 54: // equality -> equality, EQUAL, equality
-#line 275 "Psi.y"
+#line 276 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.Equals);
 			}
 #line default
         break;
       case 55: // equality -> equality, NEQUAL, equality
-#line 279 "Psi.y"
+#line 280 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.NotEquals);
 			}
 #line default
         break;
       case 56: // equality -> comparison
-#line 283 "Psi.y"
+#line 284 "Psi.y"
    {
 				CurrentSemanticValue.Expression = ValueStack[ValueStack.Depth-1].Expression;
 			}
 #line default
         break;
       case 57: // comparison -> comparison, LEQUAL, comparison
-#line 289 "Psi.y"
+#line 290 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.LessOrEqual);
 			}
 #line default
         break;
       case 58: // comparison -> comparison, GEQUAL, comparison
-#line 293 "Psi.y"
+#line 294 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.MoreOrEqual);
 			}
 #line default
         break;
       case 59: // comparison -> comparison, LESS, comparison
-#line 297 "Psi.y"
+#line 298 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.Less);
 			}
 #line default
         break;
       case 60: // comparison -> comparison, MORE, comparison
-#line 301 "Psi.y"
+#line 302 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.More);
 			}
 #line default
         break;
       case 61: // comparison -> expr_arrows
-#line 305 "Psi.y"
+#line 306 "Psi.y"
    {
 				CurrentSemanticValue.Expression = ValueStack[ValueStack.Depth-1].Expression;
 			}
 #line default
         break;
       case 62: // expr_arrows -> expr_arrows, FORWARD, expr_arrows
-#line 311 "Psi.y"
+#line 312 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.Forward);
 			}
 #line default
         break;
       case 63: // expr_arrows -> expr_arrows, BACKWARD, expr_arrows
-#line 315 "Psi.y"
+#line 316 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.Backward);
 			}
 #line default
         break;
       case 64: // expr_arrows -> sum
-#line 319 "Psi.y"
+#line 320 "Psi.y"
    {
 				CurrentSemanticValue.Expression = ValueStack[ValueStack.Depth-1].Expression;
 			}
 #line default
         break;
       case 65: // sum -> sum, PLUS, sum
-#line 325 "Psi.y"
+#line 326 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.Plus);
 			}
 #line default
         break;
       case 66: // sum -> sum, MINUS, sum
-#line 329 "Psi.y"
+#line 330 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.Minus);
 			}
 #line default
         break;
       case 67: // sum -> sum, CONCAT, sum
-#line 333 "Psi.y"
+#line 334 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.Concat);
 			}
 #line default
         break;
       case 68: // sum -> term
-#line 337 "Psi.y"
+#line 338 "Psi.y"
    {
 				CurrentSemanticValue.Expression = ValueStack[ValueStack.Depth-1].Expression;
 			}
 #line default
         break;
       case 69: // term -> term, MULT, term
-#line 343 "Psi.y"
+#line 344 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.Multiply);
 			}
 #line default
         break;
       case 70: // term -> term, DIV, term
-#line 347 "Psi.y"
+#line 348 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.Divide);
 			}
 #line default
         break;
       case 71: // term -> term, MOD, term
-#line 351 "Psi.y"
+#line 352 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.Modulo);
 			}
 #line default
         break;
       case 72: // term -> expo
-#line 355 "Psi.y"
+#line 356 "Psi.y"
    {
 				CurrentSemanticValue.Expression = ValueStack[ValueStack.Depth-1].Expression;
 			}
 #line default
         break;
       case 73: // expo -> expo, EXP, expo
-#line 361 "Psi.y"
+#line 362 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.Exponentiate);
 			}
 #line default
         break;
       case 74: // expo -> shifting
-#line 365 "Psi.y"
+#line 366 "Psi.y"
    {
 				CurrentSemanticValue.Expression = ValueStack[ValueStack.Depth-1].Expression;
 			}
 #line default
         break;
       case 75: // shifting -> shifting, ASR, shifting
-#line 371 "Psi.y"
+#line 372 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.ArithmeticShiftRight);
 			}
 #line default
         break;
       case 76: // shifting -> shifting, SHR, shifting
-#line 375 "Psi.y"
+#line 376 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.ShiftRight);
 			}
 #line default
         break;
       case 77: // shifting -> shifting, SHL, shifting
-#line 379 "Psi.y"
+#line 380 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Expression, PsiOperator.ShiftLeft);
 			}
 #line default
         break;
       case 78: // shifting -> unary
-#line 383 "Psi.y"
+#line 384 "Psi.y"
    {
 				CurrentSemanticValue.Expression = ValueStack[ValueStack.Depth-1].Expression;
 			}
 #line default
         break;
       case 79: // unary -> PLUS, value
-#line 389 "Psi.y"
+#line 390 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-1].Expression, PsiOperator.Plus);
 			}
 #line default
         break;
       case 80: // unary -> MINUS, value
-#line 393 "Psi.y"
+#line 394 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-1].Expression, PsiOperator.Minus);
 			}
 #line default
         break;
       case 81: // unary -> INVERT, value
-#line 397 "Psi.y"
+#line 398 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-1].Expression, PsiOperator.Invert);
 			}
 #line default
         break;
       case 82: // unary -> NEW, value
-#line 401 "Psi.y"
+#line 402 "Psi.y"
    {
 				CurrentSemanticValue.Expression = Apply(ValueStack[ValueStack.Depth-1].Expression, PsiOperator.New);
 			}
 #line default
         break;
       case 83: // unary -> value
-#line 405 "Psi.y"
+#line 406 "Psi.y"
    {
 				CurrentSemanticValue.Expression = ValueStack[ValueStack.Depth-1].Expression;
 			}
 #line default
         break;
       case 84: // value -> value, DOT, identifier
-#line 411 "Psi.y"
+#line 412 "Psi.y"
    {
 				CurrentSemanticValue.Expression = ApplyDot(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].String);
 			}
 #line default
         break;
       case 85: // value -> value, META, identifier
-#line 415 "Psi.y"
+#line 416 "Psi.y"
    {
 				CurrentSemanticValue.Expression = ApplyMeta(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].String);
 			}
 #line default
         break;
       case 86: // value -> value, SQUARE_O, exprlist, SQUARE_C
-#line 419 "Psi.y"
+#line 420 "Psi.y"
    {
 				CurrentSemanticValue.Expression = new ArrayIndexingExpression(ValueStack[ValueStack.Depth-4].Expression, ValueStack[ValueStack.Depth-2].ExpressionList);
 			}
 #line default
         break;
       case 87: // value -> SQUARE_O, exprlist, SQUARE_C
-#line 423 "Psi.y"
+#line 424 "Psi.y"
    {
 				CurrentSemanticValue.Expression = new ArrayLiteral(ValueStack[ValueStack.Depth-2].ExpressionList);
 			}
 #line default
         break;
       case 88: // value -> value, ROUND_O, ROUND_C
-#line 427 "Psi.y"
+#line 428 "Psi.y"
    {
 				CurrentSemanticValue.Expression = new FunctionCallExpression(ValueStack[ValueStack.Depth-3].Expression, new List<Argument>());
 			}
 #line default
         break;
       case 89: // value -> value, ROUND_O, arglist, ROUND_C
-#line 431 "Psi.y"
+#line 432 "Psi.y"
    {
 				CurrentSemanticValue.Expression = new FunctionCallExpression(ValueStack[ValueStack.Depth-4].Expression, ValueStack[ValueStack.Depth-2].ArgumentList);
 			}
 #line default
         break;
       case 90: // value -> ROUND_O, expression, ROUND_C
-#line 435 "Psi.y"
+#line 436 "Psi.y"
             {
                 CurrentSemanticValue.Expression = ValueStack[ValueStack.Depth-2].Expression;
             }
 #line default
         break;
       case 91: // value -> identifier
-#line 439 "Psi.y"
+#line 440 "Psi.y"
    {
             	CurrentSemanticValue.Expression = new VariableReference(ValueStack[ValueStack.Depth-1].String);
             }
 #line default
         break;
       case 92: // value -> functiontype, block
-#line 443 "Psi.y"
+#line 444 "Psi.y"
    {
 				CurrentSemanticValue.Expression = new FunctionLiteral(ValueStack[ValueStack.Depth-2].FunctionType, ValueStack[ValueStack.Depth-1].Statement);
 			}
 #line default
         break;
       case 93: // value -> functiontype, MAPSTO, expression
-#line 447 "Psi.y"
+#line 448 "Psi.y"
    {
 				CurrentSemanticValue.Expression = new FunctionLiteral(ValueStack[ValueStack.Depth-3].FunctionType, new ExpressionStatement(ValueStack[ValueStack.Depth-1].Expression));
 			}
 #line default
         break;
       case 94: // value -> LAMBDA, ROUND_O, idlist, ROUND_C, MAPSTO, expression
-#line 451 "Psi.y"
+#line 452 "Psi.y"
    {
 				CurrentSemanticValue.Expression = new LambdaLiteral(ValueStack[ValueStack.Depth-4].StringList, new ExpressionStatement(ValueStack[ValueStack.Depth-1].Expression));
 			}
 #line default
         break;
       case 95: // value -> STRING
-#line 455 "Psi.y"
+#line 456 "Psi.y"
    {
 				CurrentSemanticValue.Expression = new StringLiteral(ValueStack[ValueStack.Depth-1].String);
             }
 #line default
         break;
       case 96: // value -> ENUMVAL
-#line 459 "Psi.y"
+#line 460 "Psi.y"
    {
 				CurrentSemanticValue.Expression = new EnumLiteral(ValueStack[ValueStack.Depth-1].String);
             }
 #line default
         break;
       case 97: // value -> NUMBER
-#line 463 "Psi.y"
+#line 464 "Psi.y"
    {
 				CurrentSemanticValue.Expression = new NumberLiteral(ValueStack[ValueStack.Depth-1].String);
             }
 #line default
         break;
       case 98: // idlist -> idlist, COMMA, identifier
-#line 469 "Psi.y"
+#line 470 "Psi.y"
    {
 				CurrentSemanticValue.StringList = ValueStack[ValueStack.Depth-3].StringList;
 				CurrentSemanticValue.StringList.Add(ValueStack[ValueStack.Depth-1].String);
@@ -1260,7 +1260,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 99: // idlist -> identifier
-#line 474 "Psi.y"
+#line 475 "Psi.y"
    {
 				CurrentSemanticValue.StringList = new List<string>();
 				CurrentSemanticValue.StringList.Add(ValueStack[ValueStack.Depth-1].String);
@@ -1268,7 +1268,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 100: // fieldlist -> fieldlist, COMMA, field
-#line 481 "Psi.y"
+#line 482 "Psi.y"
    {
 				CurrentSemanticValue.FieldList = ValueStack[ValueStack.Depth-3].FieldList;
 				CurrentSemanticValue.FieldList.Add(ValueStack[ValueStack.Depth-1].Declaration);	
@@ -1276,7 +1276,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 101: // fieldlist -> field
-#line 486 "Psi.y"
+#line 487 "Psi.y"
    {
 				CurrentSemanticValue.FieldList = new List<Declaration>();
 				CurrentSemanticValue.FieldList.Add(ValueStack[ValueStack.Depth-1].Declaration);
@@ -1284,7 +1284,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 102: // field -> identifier, COLON, type, terminator
-#line 492 "Psi.y"
+#line 493 "Psi.y"
                                                {
             	CurrentSemanticValue.Declaration = new Declaration(ValueStack[ValueStack.Depth-4].String, ValueStack[ValueStack.Depth-2].AstType, null);
             	CurrentSemanticValue.Declaration.IsField = true;
@@ -1292,7 +1292,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 103: // field -> identifier, IS, expression, terminator
-#line 496 "Psi.y"
+#line 497 "Psi.y"
                                                      {
             	CurrentSemanticValue.Declaration = new Declaration(ValueStack[ValueStack.Depth-4].String, Undefined, ValueStack[ValueStack.Depth-2].Expression);
             	CurrentSemanticValue.Declaration.IsField = true;
@@ -1300,7 +1300,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 104: // field -> identifier, COLON, type, IS, expression, terminator
-#line 500 "Psi.y"
+#line 501 "Psi.y"
                                                              {
             	CurrentSemanticValue.Declaration = new Declaration(ValueStack[ValueStack.Depth-6].String, ValueStack[ValueStack.Depth-4].AstType, ValueStack[ValueStack.Depth-2].Expression);
             	CurrentSemanticValue.Declaration.IsField = true;
@@ -1308,35 +1308,35 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 105: // functiontype -> FN, ROUND_O, paramlist, ROUND_C, FORWARD, type
-#line 507 "Psi.y"
+#line 508 "Psi.y"
    {
 				CurrentSemanticValue.FunctionType = new FunctionTypeLiteral(ValueStack[ValueStack.Depth-4].ParameterList, ValueStack[ValueStack.Depth-1].AstType);
 			}
 #line default
         break;
       case 106: // functiontype -> FN, ROUND_O, ROUND_C, FORWARD, type
-#line 511 "Psi.y"
+#line 512 "Psi.y"
    {
 				CurrentSemanticValue.FunctionType = new FunctionTypeLiteral(new List<Parameter>(), ValueStack[ValueStack.Depth-1].AstType);
 			}
 #line default
         break;
       case 107: // functiontype -> FN, ROUND_O, paramlist, ROUND_C
-#line 515 "Psi.y"
+#line 516 "Psi.y"
    {
 				CurrentSemanticValue.FunctionType = new FunctionTypeLiteral(ValueStack[ValueStack.Depth-2].ParameterList, Void);
 			}
 #line default
         break;
       case 108: // functiontype -> FN, ROUND_O, ROUND_C
-#line 519 "Psi.y"
+#line 520 "Psi.y"
    {
 				CurrentSemanticValue.FunctionType = new FunctionTypeLiteral(new List<Parameter>(), Void);
 			}
 #line default
         break;
       case 109: // paramlist -> paramlist, COMMA, parameter
-#line 525 "Psi.y"
+#line 526 "Psi.y"
    {
 				CurrentSemanticValue.ParameterList = ValueStack[ValueStack.Depth-3].ParameterList;
 				CurrentSemanticValue.ParameterList.Add(ValueStack[ValueStack.Depth-1].Parameter);
@@ -1344,7 +1344,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 110: // paramlist -> parameter
-#line 530 "Psi.y"
+#line 531 "Psi.y"
    {
 				CurrentSemanticValue.ParameterList = new List<Parameter>();
 				CurrentSemanticValue.ParameterList.Add(ValueStack[ValueStack.Depth-1].Parameter);
@@ -1352,70 +1352,70 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 111: // parameter -> prefix, identifier, COLON, type, IS, expression
-#line 537 "Psi.y"
+#line 538 "Psi.y"
    {
 				CurrentSemanticValue.Parameter = new Parameter((ParameterFlags)ValueStack[ValueStack.Depth-6].ParameterPrefix, ValueStack[ValueStack.Depth-5].String, ValueStack[ValueStack.Depth-3].AstType, ValueStack[ValueStack.Depth-1].Expression);
 			}
 #line default
         break;
       case 112: // parameter -> prefix, identifier, IS, expression
-#line 541 "Psi.y"
+#line 542 "Psi.y"
    {
 				CurrentSemanticValue.Parameter = new Parameter((ParameterFlags)ValueStack[ValueStack.Depth-4].ParameterPrefix, ValueStack[ValueStack.Depth-3].String, Undefined, ValueStack[ValueStack.Depth-1].Expression);
 			}
 #line default
         break;
       case 113: // parameter -> prefix, identifier, COLON, type
-#line 545 "Psi.y"
+#line 546 "Psi.y"
    {
 				CurrentSemanticValue.Parameter = new Parameter((ParameterFlags)ValueStack[ValueStack.Depth-4].ParameterPrefix, ValueStack[ValueStack.Depth-3].String, ValueStack[ValueStack.Depth-1].AstType, null);
 			}
 #line default
         break;
       case 114: // prefix -> /* empty */
-#line 551 "Psi.y"
+#line 552 "Psi.y"
    {
 				CurrentSemanticValue.ParameterPrefix = ParameterFlags.None;
 			}
 #line default
         break;
       case 115: // prefix -> prefix, IN
-#line 555 "Psi.y"
+#line 556 "Psi.y"
    {
 				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | ParameterFlags.In;
 			}
 #line default
         break;
       case 116: // prefix -> prefix, OUT
-#line 559 "Psi.y"
+#line 560 "Psi.y"
    {
 				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | ParameterFlags.Out;
 			}
 #line default
         break;
       case 117: // prefix -> prefix, INOUT
-#line 563 "Psi.y"
+#line 564 "Psi.y"
    {
 				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | ParameterFlags.InOut;
 			}
 #line default
         break;
       case 118: // prefix -> prefix, THIS
-#line 567 "Psi.y"
+#line 568 "Psi.y"
    {
 				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | ParameterFlags.This;
 			}
 #line default
         break;
       case 119: // prefix -> prefix, LAZY
-#line 571 "Psi.y"
+#line 572 "Psi.y"
    {
 				CurrentSemanticValue.ParameterPrefix = ValueStack[ValueStack.Depth-2].ParameterPrefix | ParameterFlags.Lazy;
 			}
 #line default
         break;
       case 120: // arglist -> arglist, COMMA, argument
-#line 577 "Psi.y"
+#line 578 "Psi.y"
    {
 				CurrentSemanticValue.ArgumentList = ValueStack[ValueStack.Depth-3].ArgumentList;
 				CurrentSemanticValue.ArgumentList.Add(ValueStack[ValueStack.Depth-1].Argument);
@@ -1423,7 +1423,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 121: // arglist -> argument
-#line 582 "Psi.y"
+#line 583 "Psi.y"
    {
 				CurrentSemanticValue.ArgumentList = new List<Argument>();
 				CurrentSemanticValue.ArgumentList.Add(ValueStack[ValueStack.Depth-1].Argument);
@@ -1431,21 +1431,21 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 122: // argument -> expression
-#line 589 "Psi.y"
+#line 590 "Psi.y"
    {
 				CurrentSemanticValue.Argument = new PositionalArgument(ValueStack[ValueStack.Depth-1].Expression);
 			}
 #line default
         break;
       case 123: // argument -> identifier, COLON, expression
-#line 593 "Psi.y"
+#line 594 "Psi.y"
    {
 				CurrentSemanticValue.Argument = new NamedArgument(ValueStack[ValueStack.Depth-3].String, ValueStack[ValueStack.Depth-1].Expression);
 			}
 #line default
         break;
       case 124: // exprlist -> expression
-#line 599 "Psi.y"
+#line 600 "Psi.y"
    {
 				CurrentSemanticValue.ExpressionList = new List<Expression>();
 				CurrentSemanticValue.ExpressionList.Add(ValueStack[ValueStack.Depth-1].Expression);
@@ -1453,7 +1453,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 125: // exprlist -> exprlist, COMMA, expression
-#line 604 "Psi.y"
+#line 605 "Psi.y"
    {
 				CurrentSemanticValue.ExpressionList = ValueStack[ValueStack.Depth-3].ExpressionList;
 				CurrentSemanticValue.ExpressionList.Add(ValueStack[ValueStack.Depth-1].Expression);
@@ -1461,28 +1461,28 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 126: // block -> CURLY_O, stmtlist, CURLY_C
-#line 611 "Psi.y"
+#line 612 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new Block(ValueStack[ValueStack.Depth-2].StatementList);
 			}
 #line default
         break;
       case 127: // block -> CURLY_O, CURLY_C
-#line 615 "Psi.y"
+#line 616 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new Block(new List<Statement>());
 			}
 #line default
         break;
       case 128: // stmtlist -> /* empty */
-#line 621 "Psi.y"
+#line 622 "Psi.y"
    {
 				CurrentSemanticValue.StatementList = new List<Statement>();
 			}
 #line default
         break;
       case 129: // stmtlist -> stmtlist, statement
-#line 625 "Psi.y"
+#line 626 "Psi.y"
    {
 				CurrentSemanticValue.StatementList = ValueStack[ValueStack.Depth-2].StatementList;
 				CurrentSemanticValue.StatementList.Add(ValueStack[ValueStack.Depth-1].Statement);
@@ -1490,154 +1490,154 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 130: // statement -> declaration
-#line 632 "Psi.y"
+#line 633 "Psi.y"
    {
 				CurrentSemanticValue.Statement = ValueStack[ValueStack.Depth-1].Declaration;
 			}
 #line default
         break;
       case 131: // statement -> typedecl
-#line 636 "Psi.y"
+#line 637 "Psi.y"
    {
 				CurrentSemanticValue.Statement = ValueStack[ValueStack.Depth-1].TypeDeclaration;
 			}
 #line default
         break;
       case 132: // statement -> assertion
-#line 640 "Psi.y"
+#line 641 "Psi.y"
    {
 				CurrentSemanticValue.Statement = ValueStack[ValueStack.Depth-1].Assertion;
 			}
 #line default
         break;
       case 133: // statement -> block
-#line 644 "Psi.y"
+#line 645 "Psi.y"
    {
 				CurrentSemanticValue.Statement = ValueStack[ValueStack.Depth-1].Statement;
 			}
 #line default
         break;
       case 134: // statement -> BREAK, TERMINATOR
-#line 648 "Psi.y"
+#line 649 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new FlowBreakStatement(FlowBreakType.Break);
 			}
 #line default
         break;
       case 135: // statement -> FALLTROUGH, TERMINATOR
-#line 652 "Psi.y"
+#line 653 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new FlowBreakStatement(FlowBreakType.Fallthrough);
 			}
 #line default
         break;
       case 136: // statement -> CONTINUE, TERMINATOR
-#line 656 "Psi.y"
+#line 657 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new FlowBreakStatement(FlowBreakType.Continue);
 			}
 #line default
         break;
       case 137: // statement -> ERROR, expression, TERMINATOR
-#line 660 "Psi.y"
+#line 661 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new FlowBreakStatement(FlowBreakType.Error, ValueStack[ValueStack.Depth-2].Expression);
 			}
 #line default
         break;
       case 138: // statement -> RETURN, expression, TERMINATOR
-#line 664 "Psi.y"
+#line 665 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new FlowBreakStatement(FlowBreakType.Return, ValueStack[ValueStack.Depth-2].Expression);
 			}
 #line default
         break;
       case 139: // statement -> RETURN, TERMINATOR
-#line 668 "Psi.y"
+#line 669 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new FlowBreakStatement(FlowBreakType.Return);
 			}
 #line default
         break;
       case 140: // statement -> GOTO, expression, TERMINATOR
-#line 672 "Psi.y"
+#line 673 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new FlowBreakStatement(FlowBreakType.Goto, ValueStack[ValueStack.Depth-2].Expression);
 			}
 #line default
         break;
       case 141: // statement -> IF, ROUND_O, expression, ROUND_C, statement, ELSE, statement
-#line 676 "Psi.y"
+#line 677 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new IfElseStatement(ValueStack[ValueStack.Depth-5].Expression, ValueStack[ValueStack.Depth-3].Statement, ValueStack[ValueStack.Depth-1].Statement);
 			}
 #line default
         break;
       case 142: // statement -> IF, ROUND_O, expression, ROUND_C, statement
-#line 680 "Psi.y"
+#line 681 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new IfElseStatement(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Statement, null);
 			}
 #line default
         break;
       case 143: // statement -> WHILE, ROUND_O, expression, ROUND_C, statement
-#line 684 "Psi.y"
+#line 685 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new WhileLoopStatement(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Statement);
 			}
 #line default
         break;
       case 144: // statement -> LOOP, statement, UNTIL, ROUND_O, expression, ROUND_C, TERMINATOR
-#line 688 "Psi.y"
+#line 689 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new LoopUntilStatement(ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-6].Statement);
 			}
 #line default
         break;
       case 145: // statement -> RESTRICT, ROUND_O, exprlist, ROUND_C, statement
-#line 692 "Psi.y"
+#line 693 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new RestrictStatement(ValueStack[ValueStack.Depth-3].ExpressionList, ValueStack[ValueStack.Depth-1].Statement);
 			}
 #line default
         break;
       case 146: // statement -> FOR, ROUND_O, identifier, IN, expression, ROUND_C, statement
-#line 696 "Psi.y"
+#line 697 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new ForLoopStatement(ValueStack[ValueStack.Depth-5].String, ValueStack[ValueStack.Depth-3].Expression, ValueStack[ValueStack.Depth-1].Statement);
 			}
 #line default
         break;
       case 147: // statement -> SELECT, ROUND_O, expression, ROUND_C, CURLY_O, options, CURLY_C
-#line 700 "Psi.y"
+#line 701 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new SelectStatement(ValueStack[ValueStack.Depth-5].Expression, ValueStack[ValueStack.Depth-2].SelectOptions);
 			}
 #line default
         break;
       case 148: // statement -> expression, TERMINATOR
-#line 704 "Psi.y"
+#line 705 "Psi.y"
    {
 				CurrentSemanticValue.Statement = new ExpressionStatement(ValueStack[ValueStack.Depth-2].Expression);
 			}
 #line default
         break;
       case 149: // statement -> TERMINATOR
-#line 708 "Psi.y"
+#line 709 "Psi.y"
    {
 				CurrentSemanticValue.Statement = Statement.Null;
 			}
 #line default
         break;
       case 150: // options -> /* empty */
-#line 714 "Psi.y"
+#line 715 "Psi.y"
    {
 				CurrentSemanticValue.SelectOptions = new List<SelectOption>();
 			}
 #line default
         break;
       case 151: // options -> options, WHEN, expression, COLON, stmtlist
-#line 718 "Psi.y"
+#line 719 "Psi.y"
    {
 				CurrentSemanticValue.SelectOptions = ValueStack[ValueStack.Depth-5].SelectOptions;
 				CurrentSemanticValue.SelectOptions.Add(new SelectOption(ValueStack[ValueStack.Depth-3].Expression, new Block(ValueStack[ValueStack.Depth-1].StatementList)));
@@ -1645,11 +1645,16 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
 #line default
         break;
       case 152: // options -> options, OTHERWISE, COLON, stmtlist
-#line 723 "Psi.y"
+#line 724 "Psi.y"
    {
 				CurrentSemanticValue.SelectOptions = ValueStack[ValueStack.Depth-4].SelectOptions;
 				CurrentSemanticValue.SelectOptions.Add(new SelectOption(new Block(ValueStack[ValueStack.Depth-1].StatementList)));
 			}
+#line default
+        break;
+      case 155: // identifier -> OPERATOR, META, opsym, META
+#line 732 "Psi.y"
+                              { CurrentSemanticValue.String = ValueStack[ValueStack.Depth-4].String + " '" + Converter.ToString(ValueStack[ValueStack.Depth-2].Operator ?? throw new InvalidOperationException("Unknown operator? WTF")) + "'"; }
 #line default
         break;
     }
@@ -1666,7 +1671,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
         return CharToString((char)terminal);
   }
 
-#line 771 "Psi.y"
+#line 772 "Psi.y"
 public PsiParser(PsiLexer lexer) : base(lexer) 
 { 
 	

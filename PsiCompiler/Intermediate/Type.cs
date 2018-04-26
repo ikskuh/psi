@@ -27,6 +27,8 @@ namespace Psi.Compiler.Intermediate
         /// </summary>
         public static readonly BuiltinType ModuleType = new BuiltinType("module");
 
+        public override int GetHashCode() => base.GetHashCode();
+
         public override bool Equals(object obj) => Equals(obj as Type);
 
         public bool Equals(Type other)
@@ -101,6 +103,8 @@ namespace Psi.Compiler.Intermediate
         }
 
         public override int GetHashCode() => this.Members.Select(x => x.GetHashCode()).Aggregate(0, (a, b) => a ^ b);
+
+        public override string ToString() => "record(" + string.Join(", ", Members.Select(m => $"{m.Name} : {m.Type}")) + ")";
     }
 
     public sealed class ArrayType : Type

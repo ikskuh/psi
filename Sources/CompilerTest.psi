@@ -4,9 +4,12 @@
 
 import std;
 
-var x : record(x : real, y : real);
+const operator '+' = fn(i : int, j : int) -> int
+{
+	var x : int = i;
+};
 
-var x : record(y : real, x : real);
+
 
 /*
 var foo : int = 10;
@@ -16,9 +19,6 @@ var bar : int = foo;
 var v0 : person;
 var v1 : record(x : string, y : int) = v0;
 
-*/
-
-/*
 // Tests 'out' params
 const set = fn(out dst : int, src : int) { dst = src; };
 

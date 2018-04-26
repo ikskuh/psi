@@ -29,6 +29,17 @@ namespace Psi.Compiler.Intermediate
 
         public bool IsExported { get; set; }
 
+        public SymbolKind Kind { get; set; }
+
         public T GetValue<T>() => (this.Initializer as Literal<T>).Value;
+
+        public override string ToString() => $"{Kind} {this.Name}";
+    }
+
+    public enum SymbolKind
+    {
+        Global = 0,
+        Parameter = 1,
+        Local = 2,
     }
 }

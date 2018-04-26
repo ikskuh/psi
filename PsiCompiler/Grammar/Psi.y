@@ -37,7 +37,8 @@
 
 %namespace Psi.Compiler.Grammar
 
-%type <String> identifier opsym
+%type <String> identifier
+%type <Operator> opsym
 %type <Module> module program
 %type <Name> modname import
 %type <Assertion> assertion
@@ -728,7 +729,7 @@ options     : /* empty */
 
 identifier  : IDENT
 			| TYPE
-			| OPERATOR META opsym META
+			| OPERATOR META opsym META	{ $$ = $1 + " '" + Converter.ToString($3 ?? throw new InvalidOperationException("Unknown operator? WTF")) + "'"; }
 			;
 
 /*			
