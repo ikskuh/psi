@@ -90,7 +90,7 @@ namespace Psi.Compiler.Intermediate
 
         public CompilerError Critical(string msg) => Add("Critical: {0}", msg);
 
-        public CompilerError AlreadyDeclared(SymbolName name) => Add("A symbol with the name {0} is already declared in this scope!", name);
+        public CompilerError AlreadyDeclared(Signature name) => Add("A symbol with the name {0} is already declared in this scope!", name);
 
         public CompilerError UnknownImport(CompoundName name) => Add($"Could not find module {name} for import.");
 
@@ -102,6 +102,11 @@ namespace Psi.Compiler.Intermediate
         public CompilerError UntranslatableStatement(Grammar.Statement body) => Add($"The statement {body} was not translatable.");
 
         public CompilerError SymbolNotFound(string variable) => Add($"The variable {variable} could not be found!");
+
+        internal void UnknownOperator(BinaryOperation binop)
+        {
+            throw new NotImplementedException();
+        }
 
         #endregion
     }

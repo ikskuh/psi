@@ -1,6 +1,10 @@
-﻿using System;
+﻿using Psi.Compiler.Intermediate;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+
+using Type = Psi.Compiler.Intermediate.Type;
+
 namespace Psi.Compiler
 {
     internal static class Extensions
@@ -86,7 +90,7 @@ namespace Psi.Compiler
             yield return next;
         }
 
-        public static bool TryGetSymbol(this Intermediate.IScope scope, Intermediate.SymbolName name, out Intermediate.Symbol sym)
+        public static bool TryGetSymbol(this Intermediate.IScope scope, Intermediate.Signature name, out Intermediate.Symbol sym)
         {
             var good = scope.HasSymbol(name);
             if (good)
@@ -104,7 +108,7 @@ namespace Psi.Compiler
         {
             for (int i = 0; i < name.Count - 1; i++)
             {
-                if (!scope.TryGetSymbol(new Intermediate.SymbolName(Intermediate.Type.ModuleType, name[i]), out Intermediate.Symbol scopeSym))
+                if (!scope.TryGetSymbol(new Signature(Type.ModuleType.Signature, name[i]), out Intermediate.Symbol scopeSym))
                     return null;
                 if (!scopeSym.IsConst) // don't try to resolve actual module variables!
                     return null;
@@ -113,7 +117,7 @@ namespace Psi.Compiler
                     return null;
             }
             // TODO: Implement alias-types here or just use the direct type?
-            if (scope.TryGetSymbol(new Intermediate.SymbolName(type, name.Identifier), out Intermediate.Symbol modSym) == false)
+            if (scope.TryGetSymbol(new Signature(type, name.Identifier), out Intermediate.Symbol modSym) == false)
                 return null;
             if (requireConst && !modSym.IsConst)
                 return null;

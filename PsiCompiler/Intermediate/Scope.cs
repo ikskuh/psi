@@ -7,34 +7,34 @@ namespace Psi.Compiler.Intermediate
 {
     public interface IScope : IEnumerable<Symbol>
     {
-        bool HasSymbol(SymbolName name);
+        bool HasSymbol(Signature name);
 
-        Symbol this[SymbolName name] { get; }
+        Symbol this[Signature name] { get; }
     }
 
     public sealed class SimpleScope : IScope, ICloneable
     {
-        private readonly Dictionary<SymbolName, Symbol> symbols;
+        private readonly Dictionary<Signature, Symbol> symbols;
 
         public SimpleScope()
         {
-            this.symbols = new Dictionary<SymbolName, Symbol>();
+            this.symbols = new Dictionary<Signature, Symbol>();
         }
 
         private SimpleScope(SimpleScope other)
         {
-            this.symbols = new Dictionary<SymbolName, Symbol>(other.symbols);
+            this.symbols = new Dictionary<Signature, Symbol>(other.symbols);
         }
 
         public void Add(Symbol sym) => this.symbols.Add(sym.Name, sym);
 
         public SimpleScope Clone() => new SimpleScope(this);
 
-        public Symbol this[SymbolName name] => this.symbols.ContainsKey(name) ? this.symbols[name] : null;
+        public Symbol this[Signature name] => this.symbols.ContainsKey(name) ? this.symbols[name] : null;
 
         public IEnumerator<Symbol> GetEnumerator() => this.symbols.Values.GetEnumerator();
 
-        public bool HasSymbol(SymbolName name) => this.symbols.ContainsKey(name);
+        public bool HasSymbol(Signature name) => this.symbols.ContainsKey(name);
 
         object ICloneable.Clone() => this.Clone();
 
@@ -55,7 +55,7 @@ namespace Psi.Compiler.Intermediate
             this.scopes = new Stack<IScope>(contents);
         }
 
-        public Symbol this[SymbolName name]
+        public Symbol this[Signature name]
         {
             get
             {
@@ -79,11 +79,11 @@ namespace Psi.Compiler.Intermediate
             this.scopes.Pop();
         }
 
-        public bool HasSymbol(SymbolName name) => this.scopes.Any(s => s.HasSymbol(name));
+        public bool HasSymbol(Signature name) => this.scopes.Any(s => s.HasSymbol(name));
 
         private IEnumerable<Symbol> EnumerateSymbols()
         {
-            var exclusion = new HashSet<SymbolName>();
+            var exclusion = new HashSet<Signature>();
             foreach(var group in this.scopes)
             {
                 foreach(var item in group)
@@ -118,7 +118,7 @@ namespace Psi.Compiler.Intermediate
             this.symbol = sym ?? throw new ArgumentNullException(nameof(sym));
         }
 
-        public Symbol this[SymbolName name] => (name == symbol.Name) ? symbol : scope[name];
+        public Symbol this[Signature name] => (name == symbol.Name) ? symbol : scope[name];
 
         public IEnumerator<Symbol> GetEnumerator()
         {
@@ -126,7 +126,7 @@ namespace Psi.Compiler.Intermediate
             return list.Concat(this.scope.Except(list)).GetEnumerator();
         }
 
-        public bool HasSymbol(SymbolName name) => (name == symbol.Name) ? true : scope.HasSymbol(name);
+        public bool HasSymbol(Signature name) => (name == symbol.Name) ? true : scope.HasSymbol(name);
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
     }

@@ -51,6 +51,8 @@
     <Compile Include="Intermediate\ArrayExpression.cs" />
     <Compile Include="Intermediate\CompilerErrorCollection.cs" />
     <Compile Include="Intermediate\Function.cs" />
+    <Compile Include="Intermediate\FunctionCall.cs" />
+    <Compile Include="Intermediate\ITypeSignature.cs" />
     <Compile Include="Intermediate\SymbolReference.cs" />
     <Compile Include="Intermediate\TypeMapper.cs" />
     <Compile Include="Intermediate\UserFunction.cs" />
@@ -66,7 +68,7 @@
     <Compile Include="Intermediate\Scope.cs" />
     <Compile Include="Intermediate\Symbol.cs" />
     <Compile Include="Intermediate\SymbolCollection.cs" />
-    <Compile Include="Intermediate\SymbolName.cs" />
+    <Compile Include="Intermediate\Signature.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Grammar\ParserNode.cs">

@@ -40,6 +40,8 @@ namespace Psi.Compiler.Intermediate
             return this.TypeEquals(other);
         }
 
+        protected abstract ITypeSignature CreateSignature();
+
         /// <summary>
         /// Compares the two types for equality.
         /// </summary>
@@ -47,9 +49,11 @@ namespace Psi.Compiler.Intermediate
         /// <remarks>other is certainly of the same type as `this`.</remarks> 
         /// <returns></returns>
         protected abstract bool TypeEquals(Type other);
+
+        public ITypeSignature Signature => this.CreateSignature();
     }
 
-    public sealed class BuiltinType : Type
+    public sealed class BuiltinType : Type, ITypeSignature
     {
         public static readonly EnumType Boolean = new EnumType(new[] { "false", "true" });
         public static readonly BuiltinType Byte = new BuiltinType("byte");
@@ -69,9 +73,13 @@ namespace Psi.Compiler.Intermediate
         public string Name { get; }
 
         public override string ToString() => "builtin:" + this.Name;
+
+        protected override ITypeSignature CreateSignature() => this;
+
+        public bool Equals(ITypeSignature sig) => this.Equals(sig as Type);
     }
 
-    public sealed class EnumType : Type
+    public sealed class EnumType : Type, ITypeSignature
     {
         private string[] items;
 
@@ -90,9 +98,13 @@ namespace Psi.Compiler.Intermediate
         public IReadOnlyList<string> Members => this.items;
 
         public override string ToString() => "enum(" + string.Join(",", this.items) + ")";
+
+        protected override ITypeSignature CreateSignature() => this;
+
+        public bool Equals(ITypeSignature sig) => this.Equals(sig as Type);
     }
 
-    public sealed class RecordType : Type
+    public sealed class RecordType : Type, ITypeSignature
     {
         public IList<RecordMember> Members { get; set; }
 
@@ -106,9 +118,13 @@ namespace Psi.Compiler.Intermediate
         public override int GetHashCode() => this.Members.Select(x => x.GetHashCode()).Aggregate(0, (a, b) => a ^ b);
 
         public override string ToString() => "record(" + string.Join(", ", Members.Select(m => $"{m.Name} : {m.Type}")) + ")";
+
+        protected override ITypeSignature CreateSignature() => this;
+
+        public bool Equals(ITypeSignature sig) => this.Equals(sig as Type);
     }
 
-    public sealed class ArrayType : Type
+    public sealed class ArrayType : Type, ITypeSignature
     {
         public Type ElementType { get; set; }
 
@@ -121,15 +137,23 @@ namespace Psi.Compiler.Intermediate
             var at = (ArrayType)other;
             return this.Dimensions == at.Dimensions && ElementType.Equals(at.ElementType);
         }
+
+        protected override ITypeSignature CreateSignature() => this;
+
+        public bool Equals(ITypeSignature sig) => this.Equals(sig as Type);
     }
 
-    public sealed class ReferenceType : Type
+    public sealed class ReferenceType : Type, ITypeSignature
     {
         public Type ObjectType { get; set; }
 
         public override int GetHashCode() => -this.ObjectType.GetHashCode();
 
         protected override bool TypeEquals(Type other) => object.Equals(ObjectType, ((ReferenceType)other).ObjectType);
+
+        protected override ITypeSignature CreateSignature() => this;
+
+        public bool Equals(ITypeSignature sig) => this.Equals(sig as Type);
     }
 
     public sealed class FunctionType : Type
@@ -146,7 +170,7 @@ namespace Psi.Compiler.Intermediate
             return Enumerable.SequenceEqual(this.Parameters, ft.Parameters);
         }
 
-        public override int GetHashCode() =>this.ReturnType.GetHashCode() ^  this.Parameters.Select(x => x.GetHashCode()).Aggregate(0, (a, b) => a ^ b);
+        public override int GetHashCode() => this.ReturnType.GetHashCode() ^ this.Parameters.Select(x => x.GetHashCode()).Aggregate(0, (a, b) => a ^ b);
 
 
         public static FunctionType CreateBinaryOperator(Type allType) => CreateBinaryOperator(allType, allType, allType);
@@ -175,6 +199,34 @@ namespace Psi.Compiler.Intermediate
                 }
             };
             return fun;
+        }
+
+        protected override ITypeSignature CreateSignature() => new FunctionSignature(this);
+
+        /// <summary>
+        /// Implements parameter list matching, but ignores return type.
+        /// </summary>
+        private class FunctionSignature : ITypeSignature, IEquatable<FunctionSignature>
+        {
+            private FunctionType functionType;
+
+            public FunctionSignature(FunctionType functionType)
+            {
+                this.functionType = functionType ?? throw new ArgumentNullException(nameof(functionType));
+            }
+
+            public override bool Equals(object obj) => Equals(obj as FunctionSignature);
+
+            public bool Equals(ITypeSignature obj) => Equals(obj as FunctionSignature);
+
+            public bool Equals(FunctionSignature other)
+            {
+                if (other == null)
+                    return false;
+                return Enumerable.SequenceEqual(this.functionType.Parameters, other.functionType.Parameters);
+            }
+
+            public override int GetHashCode() => this.functionType.Parameters.Select(x => x.GetHashCode()).Aggregate(0, (a, b) => a ^ b);
         }
     }
 }

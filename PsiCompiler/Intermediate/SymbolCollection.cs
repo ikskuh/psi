@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace Psi.Compiler.Intermediate
 {
-    public class SymbolCollection : IReadOnlyDictionary<SymbolName, Symbol>, IScope
+    public class SymbolCollection : IReadOnlyDictionary<Signature, Symbol>, IScope
     {
-        private readonly Dictionary<SymbolName, Symbol> symbols = new Dictionary<SymbolName, Symbol>();
+        private readonly Dictionary<Signature, Symbol> symbols = new Dictionary<Signature, Symbol>();
 
         public SymbolCollection()
         {
@@ -22,35 +22,35 @@ namespace Psi.Compiler.Intermediate
             this.symbols.Add(sym.Name, sym);
         }
 
-        public Symbol this[SymbolName key] => symbols[key];
+        public Symbol this[Signature key] => symbols[key];
 
-        public IEnumerable<SymbolName> Keys => ((IReadOnlyDictionary<SymbolName, Symbol>)symbols).Keys;
+        public IEnumerable<Signature> Keys => ((IReadOnlyDictionary<Signature, Symbol>)symbols).Keys;
 
-        public IEnumerable<Symbol> Values => ((IReadOnlyDictionary<SymbolName, Symbol>)symbols).Values;
+        public IEnumerable<Symbol> Values => ((IReadOnlyDictionary<Signature, Symbol>)symbols).Values;
 
         public int Count => symbols.Count;
 
-        public bool ContainsKey(SymbolName key)
+        public bool ContainsKey(Signature key)
         {
             return symbols.ContainsKey(key);
         }
 
-        public IEnumerator<KeyValuePair<SymbolName, Symbol>> GetEnumerator()
+        public IEnumerator<KeyValuePair<Signature, Symbol>> GetEnumerator()
         {
-            return ((IReadOnlyDictionary<SymbolName, Symbol>)symbols).GetEnumerator();
+            return ((IReadOnlyDictionary<Signature, Symbol>)symbols).GetEnumerator();
         }
 
-        public bool TryGetValue(SymbolName key, out Symbol value)
+        public bool TryGetValue(Signature key, out Symbol value)
         {
             return symbols.TryGetValue(key, out value);
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return ((IReadOnlyDictionary<SymbolName, Symbol>)symbols).GetEnumerator();
+            return ((IReadOnlyDictionary<Signature, Symbol>)symbols).GetEnumerator();
         }
 
-        public bool HasSymbol(SymbolName name) => this.symbols.ContainsKey(name);
+        public bool HasSymbol(Signature name) => this.symbols.ContainsKey(name);
 
         IEnumerator<Symbol> IEnumerable<Symbol>.GetEnumerator() => this.symbols.Values.GetEnumerator();
     }

@@ -7,25 +7,23 @@ namespace Psi.Compiler.Intermediate
     /// </summary>
     public sealed class Symbol
     {
-        public Symbol(Type type, string id) :
-            this(new SymbolName(type, id))
+        public Symbol(Type type, string id)
         {
-
+            if (type == null)
+                throw new ArgumentNullException(nameof(type));
+            if (id == null)
+                throw new ArgumentNullException(nameof(id));
+            this.Name = new Signature(type.Signature, id);
+            this.Type = type;
         }
 
         public Symbol(Type type, PsiOperator id) :
-            this(new SymbolName(type, id.ToSymbolName()))
+            this(type, id.ToSymbolName())
         {
 
         }
 
-        public Symbol(SymbolName name)
-        {
-            this.Name = name ?? throw new ArgumentNullException(nameof(name));
-            this.Type = name.Type;
-        }
-
-        public SymbolName Name { get; }
+        public Signature Name { get; }
 
         public Type Type { get; }
 

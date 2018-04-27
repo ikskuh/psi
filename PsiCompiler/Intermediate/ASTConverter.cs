@@ -529,16 +529,27 @@ namespace Psi.Compiler.Intermediate
             }
             else if(value is BinaryOperation binop)
             {
-                var funname = binop.Operator.ToSymbolName();
-
                 var lhs = ConvertExpression(unit, scope, binop.LeftHandSide);
                 var rhs = ConvertExpression(unit, scope, binop.RightHandSide);
                 if ((lhs == null) || (rhs == null))
                     return null;
 
-                throw new NotSupportedException("zu müde");
-                
+                var type = FunctionType.CreateBinaryOperator(
+                    returnType: Type.UnknownType,
+                    leftType: lhs.Type,
+                    rightType: rhs.Type);
 
+                var sig = new Signature(type, binop.Operator);
+
+                if (scope.HasSymbol(sig) == false)
+                {
+                    Error.UnknownOperator(binop);
+                    return null;
+                }
+
+                var sym = scope[sig];
+
+                return new FunctionCall(new SymbolReference(sym), new[] { lhs, rhs });
             }
             else
             {

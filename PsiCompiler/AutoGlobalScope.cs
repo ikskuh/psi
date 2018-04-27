@@ -7,9 +7,9 @@ namespace Psi.Compiler
 {
     internal class AutoGlobalScope : IScope
     {
-        private readonly Dictionary<SymbolName, Symbol> values = new Dictionary<SymbolName, Symbol>();
+        private readonly Dictionary<Signature, Symbol> values = new Dictionary<Signature, Symbol>();
 
-        public Symbol this[SymbolName name]
+        public Symbol this[Signature name]
         {
             get
             {
@@ -25,16 +25,16 @@ namespace Psi.Compiler
 
         public IEnumerator<Symbol> GetEnumerator() => new List<Symbol>().GetEnumerator();
 
-        public bool HasSymbol(SymbolName name) => CanGeneratorSymbol(name);
+        public bool HasSymbol(Signature name) => CanGeneratorSymbol(name);
 
         IEnumerator IEnumerable.GetEnumerator() => this.GetEnumerator();
 
-        private bool CanGeneratorSymbol(SymbolName name)
+        private bool CanGeneratorSymbol(Signature name)
         {
             throw new NotImplementedException();
         }
 
-        private void GenerateSymbolForName(SymbolName name)
+        private void GenerateSymbolForName(Signature name)
         {
             throw new NotImplementedException();
         }
