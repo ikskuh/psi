@@ -524,7 +524,7 @@ namespace Psi.Compiler.Intermediate
                     return null;
                 }
                 if (syms.Length != 1)
-                    throw new NotSupportedException("multi-variables are not supported yet!");
+                    throw new NotSupportedException($"multi-variable {vref.Variable} not found: multi-variables not supported yet!");
                 return new SymbolReference(syms[0]);
             }
             else if (value is UnaryOperation unop)
@@ -573,7 +573,57 @@ namespace Psi.Compiler.Intermediate
             }
             else if (value is FunctionCallExpression fncall)
             {
-                throw new NotImplementedException("hunger");
+                var call = new FunctionCall();
+                unit.AddTask(() =>
+                {
+                    call.Functor = ConvertExpression(unit, scope, fncall.Value);
+                    if (call.Functor == null)
+                        return Error.InvalidExpression(fncall.Value);
+                    var type = call.Functor.Type as FunctionType;
+                    if (type == null)
+                        return Error.InvalidType(call.Type, "Expected function type!");
+
+                    var arglist = new Expression[type.Parameters.Length];
+                    var paramset = new HashSet<Parameter>(type.Parameters);
+
+                    foreach(var arg in fncall.PositionalArguments)
+                    {
+                        unit.AddTask(() =>
+                        {
+                            var param = paramset.SingleOrDefault(p => p.Position == arg.Position);
+                            if (param == null)
+                                return Error.UnknownArgument(type, arg);
+
+                            arglist[param.Position] = ConvertExpression(unit, scope, arg.Value);
+                            if (arglist[param.Position] == null)
+                                return Error.InvalidExpression(arg.Value);
+
+                            paramset.Remove(param);
+                            return Error.None;
+                        });
+                    }
+
+                    foreach(var arg in fncall.NamedArguments)
+                    {
+                        unit.AddTask(() =>
+                        {
+                            var param = paramset.SingleOrDefault(p => p.Name == arg.Name);
+                            if (param == null)
+                                return Error.UnknownArgument(type, arg);
+
+                            arglist[param.Position] = ConvertExpression(unit, scope, arg.Value);
+                            if (arglist[param.Position] == null)
+                                return Error.InvalidExpression(arg.Value);
+
+                            paramset.Remove(param);
+                            return Error.None;
+                        });
+                    }
+
+                    call.Arguments = arglist;
+                    return Error.None;
+                });
+                return call;
             }
             else
             {
@@ -660,6 +710,25 @@ namespace Psi.Compiler.Intermediate
                     default:
                         throw new NotSupportedException($"{flow.Type} is not supported yet.");
                 }
+            }
+            else if (stmt is WhileLoopStatement loop)
+            {
+                var s = new WhileLoop();
+                unit.AddTask(() =>
+                {
+                    s.Condition = ConvertExpression(unit, scope, loop.Condition);
+                    if (s.Condition == null)
+                        return Error.InvalidExpression(loop.Condition);
+                    return Error.None;
+                });
+                unit.AddTask(() =>
+                {
+                    s.Body = ConvertStatement(unit, scope, loop.Body);
+                    if (s.Body == null)
+                        return Error.UntranslatableStatement(loop.Body);
+                    return Error.None;
+                });
+                return s;
             }
             else
             {

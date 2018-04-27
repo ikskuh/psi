@@ -3,6 +3,7 @@
 *****************************************************************************/
 
 import std;
+import std.io;
 
 // Tests 'out' params
 const set = fn(out dst : int, src : int) { dst = src; };

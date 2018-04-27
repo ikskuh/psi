@@ -162,6 +162,17 @@ namespace Psi.Compiler.Intermediate
 
         public Parameter[] Parameters { get; set; }
 
+        public FunctionType()
+        {
+
+        }
+
+        public FunctionType(Type returnType, params Type[] @params)
+        {
+            this.ReturnType = returnType;
+            this.Parameters = @params.Select((a, i) => new Parameter(this, $"p{i + 1}", i) { Type = a }).ToArray();
+        }
+
         protected override bool TypeEquals(Type other)
         {
             var ft = (FunctionType)other;

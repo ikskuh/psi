@@ -8,14 +8,22 @@ namespace Psi.Compiler.Intermediate
     {
         public FunctionCall(Expression function, Expression[] args)
         {
-            this.Function = function ?? throw new ArgumentNullException(nameof(Function));
+            this.Functor = function ?? throw new ArgumentNullException(nameof(Functor));
             this.Arguments = args?.ToArray() ?? throw new ArgumentNullException(nameof(args));
         }
 
-        public Expression Function { get; }
+        public FunctionCall() { }
 
-        public IReadOnlyList<Expression> Arguments { get; }
+        /// <summary>
+        /// The value that is beeing called
+        /// </summary>
+        public Expression Functor { get; set;  }
 
-        public override Type Type => (Function.Type as FunctionType)?.ReturnType;
+        /// <summary>
+        /// The list of arguments that is passed into the function
+        /// </summary>
+        public IReadOnlyList<Expression> Arguments { get;set;  }
+
+        public override Type Type => (Functor.Type as FunctionType)?.ReturnType;
     }
 }

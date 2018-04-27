@@ -113,6 +113,12 @@ namespace Psi.Compiler.Intermediate
             throw new NotImplementedException();
         }
 
+        public CompilerError InvalidType(Type type, string message) => Add($"Invalid type {type}. {message}");
+
+        public CompilerError UnknownArgument(FunctionType type, NamedArgument arg) => Add($"Argument {arg.Name} does not exist in {type}.");
+
+        public CompilerError UnknownArgument(FunctionType type, PositionalArgument arg) => Add($"Argument {arg.Position} does not exist in {type}.");
+
         #endregion
     }
 }

@@ -57,6 +57,7 @@
     <Compile Include="Intermediate\SymbolReference.cs" />
     <Compile Include="Intermediate\TypeMapper.cs" />
     <Compile Include="Intermediate\UserFunction.cs" />
+    <Compile Include="Intermediate\WhileLoop.cs" />
     <Compile Include="ParameterFlags.cs" />
     <Compile Include="Grammar\AST\Statements.cs" />
     <Compile Include="Intermediate\ASTConverter.cs" />

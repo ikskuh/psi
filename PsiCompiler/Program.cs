@@ -3,14 +3,14 @@ using System.IO;
 
 namespace Psi.Compiler
 {
-	using Psi.Compiler.Grammar;
+    using Psi.Compiler.Grammar;
     using Psi.Compiler.Intermediate;
     using System.Diagnostics;
 
-	class MainClass
-	{
-		public static void Main(string[] args)
-		{
+    class MainClass
+    {
+        public static void Main(string[] args)
+        {
             // primitives
             TypeMapper.Add(typeof(bool), BuiltinType.Boolean);
             TypeMapper.Add(typeof(int), BuiltinType.Integer);
@@ -25,12 +25,12 @@ namespace Psi.Compiler
 
 
             var std = CreateStd();
-			var module = Load("../../../Sources/CompilerTest.psi");
+            var module = Load("../../../Sources/CompilerTest.psi");
 
-			if (module != null)
-			{
-				var printer = new ModulePrinter(Console.Out);
-				printer.Print(module);
+            if (module != null)
+            {
+                var printer = new ModulePrinter(Console.Out);
+                printer.Print(module);
 
 
                 var declarableGlobalScope = new SimpleScope
@@ -47,21 +47,21 @@ namespace Psi.Compiler
                 var globalScope = new StackableScope();
                 globalScope.Push(new AutoGlobalScope());
                 globalScope.Push(declarableGlobalScope);
-                
+
                 var astConverter = new ASTConverter(globalScope);
                 astConverter.AddModule(module);
                 astConverter.Convert();
 
                 var output = astConverter.GetModule(module);
-			}
-			else
-			{
-				Console.WriteLine("Failed to parse!");
-			}
+            }
+            else
+            {
+                Console.WriteLine("Failed to parse!");
+            }
 
-			if (Debugger.IsAttached && Environment.OSVersion.Platform != PlatformID.Unix)
-				Console.ReadLine();
-		}
+            if (Debugger.IsAttached && Environment.OSVersion.Platform != PlatformID.Unix)
+                Console.ReadLine();
+        }
 
         private static void InitializeGlobalOperators(SimpleScope scope)
         {
@@ -86,7 +86,7 @@ namespace Psi.Compiler
             }
 
             // Initialize integral types
-            foreach (var type in new[] { BuiltinType.Byte, BuiltinType.Integer, BuiltinType.UnsignedInteger})
+            foreach (var type in new[] { BuiltinType.Byte, BuiltinType.Integer, BuiltinType.UnsignedInteger })
             {
                 scope.AddOperator(PsiOperator.Invert, FunctionType.CreateUnaryOperator(type));
 
@@ -112,19 +112,19 @@ namespace Psi.Compiler
         }
 
         private static Grammar.Module Load(string fileName)
-		{
-			using (var lexer = new PsiLexer(fileName))
-			{
-				var parser = new PsiParser(lexer);
+        {
+            using (var lexer = new PsiLexer(fileName))
+            {
+                var parser = new PsiParser(lexer);
 
-				var success = parser.Parse();
+                var success = parser.Parse();
 
-				if (success)
-					return parser.Result;
-				Console.WriteLine("Line: {0}", lexer.yylloc.StartLine);
-				return null;
-			}
-		}
+                if (success)
+                    return parser.Result;
+                Console.WriteLine("Line: {0}", lexer.yylloc.StartLine);
+                return null;
+            }
+        }
 
         private static Intermediate.Module CreateStd()
         {
@@ -147,29 +147,46 @@ namespace Psi.Compiler
             std.AddModule("compiler", compiler);
 
             var math = new Intermediate.Module(std, "math");
-
             math.AddConst("pi", BuiltinType.Real, new Literal<double>(3.14159265358979323846), true);
-            math.AddConst("e",  BuiltinType.Real, new Literal<double>(2.71828182845904523536), true);
-
+            math.AddConst("e", BuiltinType.Real, new Literal<double>(2.71828182845904523536), true);
             std.AddModule("math", math);
+
+            var io = new Intermediate.Module(std, "io");
+            var typelist = new Type[] { BuiltinType.String, BuiltinType.Real, BuiltinType.UnsignedInteger, BuiltinType.Byte, BuiltinType.Boolean, BuiltinType.Integer };
+            foreach (var type in typelist)
+                io.AddBuiltin(new FunctionType(Type.VoidType, type), "print");
+            std.AddModule("io", io);
 
             return std;
         }
-	}
+    }
 
-        static class ScopeExt
+    static class ScopeExt
+    {
+        public static Symbol AddBuiltin(this Intermediate.Module mod, FunctionType type, string name)
         {
-            public static Symbol AddOperator(this SimpleScope scope, PsiOperator op, FunctionType type)
+            var sym = new Symbol(type, name)
             {
-                var sym = new Symbol(type, op)
-                {
-                    Initializer = new Intermediate.FunctionLiteral(new BuiltinFunction(type)),
-                    IsConst = true,
-                    IsExported = false,
-                    Kind = SymbolKind.Builtin
-                };
-                scope.Add(sym);
-                return sym;
-            }
+                IsConst = true,
+                IsExported = false,
+                Kind = SymbolKind.Builtin,
+                Initializer = new Intermediate.FunctionLiteral(new BuiltinFunction(type)),
+            };
+            mod.Symbols.Add(sym);
+            return sym;
         }
+
+        public static Symbol AddOperator(this SimpleScope scope, PsiOperator op, FunctionType type)
+        {
+            var sym = new Symbol(type, op)
+            {
+                Initializer = new Intermediate.FunctionLiteral(new BuiltinFunction(type)),
+                IsConst = true,
+                IsExported = false,
+                Kind = SymbolKind.Builtin
+            };
+            scope.Add(sym);
+            return sym;
+        }
+    }
 }
