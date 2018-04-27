@@ -46,6 +46,8 @@
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AutoGlobalScope.cs" />
+    <Compile Include="Intermediate\BuiltinFunction.cs" />
     <Compile Include="Intermediate\ArrayExpression.cs" />
     <Compile Include="Intermediate\CompilerErrorCollection.cs" />
     <Compile Include="Intermediate\Function.cs" />
@@ -87,17 +89,16 @@
     </Compile>
     <Compile Include="Grammar\AST\CompoundName.cs" />
     <Compile Include="Grammar\ModulePrinter.cs" />
-    <Compile Include="PsiOperator.cs" />
-    <Compile Include="Grammar\TokenConverter.cs">
-      <DependentUpon>TokenConverter.tt</DependentUpon>
+    <Compile Include="PsiOperator.cs">
+      <DependentUpon>PsiOperator.tt</DependentUpon>
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
     </Compile>
     <Compile Include="PsiString.cs" />
     <Compile Include="Grammar\AST\Types.cs" />
-    <Compile Include="Psi\Compiler\Intermediate\Block.cs" />
-    <Compile Include="Psi\Compiler\Intermediate\ExpressionStatement.cs" />
-    <Compile Include="Psi\Compiler\Intermediate\Statement.cs" />
+    <Compile Include="Intermediate\Block.cs" />
+    <Compile Include="Intermediate\ExpressionStatement.cs" />
+    <Compile Include="Intermediate\Statement.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Grammar\Psi.tok" />
@@ -110,9 +111,9 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>ParserNode.cs</LastGenOutput>
     </None>
-    <None Include="Grammar\TokenConverter.tt">
+    <None Include="PsiOperator.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>TokenConverter.cs</LastGenOutput>
+      <LastGenOutput>PsiOperator.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

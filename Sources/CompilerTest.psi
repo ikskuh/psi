@@ -9,7 +9,7 @@ const operator '+' = fn(i : int, j : int) -> int
 	var x : int = i;
 };
 
-
+var a = 1 + 2;
 
 /*
 var foo : int = 10;

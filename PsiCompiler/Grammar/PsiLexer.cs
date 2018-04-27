@@ -54,7 +54,7 @@ namespace Psi.Compiler.Grammar
             if (Trace)
                 Console.WriteLine("[LEXER] {0}", token);
 
-			var op = Converter.ToOperator(token);
+			var op = PsiOperatorConverter.ToOperator(token);
 
 			if (op != null)
 				this.yylval = new ParserNode(op);

@@ -4,9 +4,9 @@
 
 // GPPG version 1.5.2
 // Machine:  DENKPLATTE-W7
-// DateTime: 26.04.2018 23:42:12
+// DateTime: 27.04.2018 09:37:23
 // UserName: Felix
-// Input file <Psi.y - 26.04.2018 19:10:17>
+// Input file <Psi.y - 26.04.2018 23:49:44>
 
 // options: lines
 
@@ -1654,7 +1654,7 @@ public class PsiParser: ShiftReduceParser<ParserNode, LexLocation>
         break;
       case 155: // identifier -> OPERATOR, META, opsym, META
 #line 732 "Psi.y"
-                              { CurrentSemanticValue.String = ValueStack[ValueStack.Depth-4].String + " '" + Converter.ToString(ValueStack[ValueStack.Depth-2].Operator ?? throw new InvalidOperationException("Unknown operator? WTF")) + "'"; }
+                              { CurrentSemanticValue.String = ValueStack[ValueStack.Depth-2].Operator.Value.ToSymbolName(); }
 #line default
         break;
     }

@@ -1,0 +1,39 @@
+module std.io.control_codes
+{
+	const NUL : byte = 0x00;
+	const SOH : byte = 0x01;
+	const STX : byte = 0x02;
+	const ETX : byte = 0x03;
+	const EOT : byte = 0x04;
+	const ENQ : byte = 0x05;
+	const ACK : byte = 0x06;
+	const BEL : byte = 0x07;
+	const BS  : byte = 0x08;
+	const HT  : byte = 0x09;
+	const LF  : byte = 0x0A;
+	const VT  : byte = 0x0B;
+	const FF  : byte = 0x0C;
+	const CR  : byte = 0x0D;
+	const SO  : byte = 0x0E;
+	const SI  : byte = 0x0F;
+	const DLE : byte = 0x10;
+	const DC1 : byte = 0x11;
+	const DC2 : byte = 0x12;
+	const DC3 : byte = 0x13;
+	const DC4 : byte = 0x14;
+	const NAK : byte = 0x15;
+	const SYN : byte = 0x16;
+	const ETB : byte = 0x17;
+	const CAN : byte = 0x18;
+	const EM  : byte = 0x19;
+	const SUB : byte = 0x1A;
+	const ESC : byte = 0x1B;
+	const FS  : byte = 0x1C;
+	const GS  : byte = 0x1D;
+	const RS  : byte = 0x1E;
+	const US  : byte = 0x1F;
+	
+	
+	const XON  : byte = 0x11;
+	const XOFF : byte = 0x13;
+}

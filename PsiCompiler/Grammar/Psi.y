@@ -729,7 +729,7 @@ options     : /* empty */
 
 identifier  : IDENT
 			| TYPE
-			| OPERATOR META opsym META	{ $$ = $1 + " '" + Converter.ToString($3 ?? throw new InvalidOperationException("Unknown operator? WTF")) + "'"; }
+			| OPERATOR META opsym META	{ $$ = $3.Value.ToSymbolName(); }
 			;
 
 /*			

@@ -13,6 +13,12 @@ namespace Psi.Compiler.Intermediate
 
         }
 
+        public Symbol(Type type, PsiOperator id) :
+            this(new SymbolName(type, id.ToSymbolName()))
+        {
+
+        }
+
         public Symbol(SymbolName name)
         {
             this.Name = name ?? throw new ArgumentNullException(nameof(name));
@@ -41,5 +47,6 @@ namespace Psi.Compiler.Intermediate
         Global = 0,
         Parameter = 1,
         Local = 2,
+        Builtin = 3,
     }
 }

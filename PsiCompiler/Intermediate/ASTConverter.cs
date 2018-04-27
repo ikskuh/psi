@@ -527,6 +527,19 @@ namespace Psi.Compiler.Intermediate
                     throw new NotSupportedException("multi-variables are not supported yet!");
                 return new SymbolReference(syms[0]);
             }
+            else if(value is BinaryOperation binop)
+            {
+                var funname = binop.Operator.ToSymbolName();
+
+                var lhs = ConvertExpression(unit, scope, binop.LeftHandSide);
+                var rhs = ConvertExpression(unit, scope, binop.RightHandSide);
+                if ((lhs == null) || (rhs == null))
+                    return null;
+
+                throw new NotSupportedException("zu müde");
+                
+
+            }
             else
             {
                 throw new NotSupportedException($"The expression type '{value?.GetType()?.Name ?? "?"}' is not supported yet.");

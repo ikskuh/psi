@@ -52,6 +52,7 @@ namespace Psi.Compiler.Intermediate
     public sealed class BuiltinType : Type
     {
         public static readonly EnumType Boolean = new EnumType(new[] { "false", "true" });
+        public static readonly BuiltinType Byte = new BuiltinType("byte");
         public static readonly BuiltinType Integer = new BuiltinType("int");
         public static readonly BuiltinType UnsignedInteger = new BuiltinType("uint");
         public static readonly BuiltinType Real = new BuiltinType("real");
@@ -146,5 +147,34 @@ namespace Psi.Compiler.Intermediate
         }
 
         public override int GetHashCode() =>this.ReturnType.GetHashCode() ^  this.Parameters.Select(x => x.GetHashCode()).Aggregate(0, (a, b) => a ^ b);
+
+
+        public static FunctionType CreateBinaryOperator(Type allType) => CreateBinaryOperator(allType, allType, allType);
+
+        public static FunctionType CreateBinaryOperator(Type returnType, Type paramType) => CreateBinaryOperator(returnType, paramType, paramType);
+
+        public static FunctionType CreateBinaryOperator(Type returnType, Type leftType, Type rightType, ParameterFlags lhsFlags = ParameterFlags.In, ParameterFlags rhsFlags = ParameterFlags.In)
+        {
+            var fun = new FunctionType
+            {
+                ReturnType = returnType ?? throw new ArgumentNullException(nameof(ReturnType))
+            };
+            fun.Parameters = new List<Parameter>()
+            {
+                new Parameter(fun, "lhs", 0)
+                {
+                    Flags = lhsFlags,
+                    Type = leftType ?? throw new ArgumentNullException(nameof(leftType)),
+                    Initializer = null,
+                },
+                new Parameter(fun, "rhs", 1)
+                {
+                    Flags = rhsFlags,
+                    Type = rightType ?? throw new ArgumentNullException(nameof(rightType)),
+                    Initializer = null,
+                }
+            };
+            return fun;
+        }
     }
 }

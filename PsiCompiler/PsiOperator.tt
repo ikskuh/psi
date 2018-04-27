@@ -63,11 +63,22 @@
 #>
 using System;
 using CompilerKit;
+using Psi.Compiler.Grammar;
 
-namespace Psi.Compiler.Grammar
+namespace Psi.Compiler
 {
-	internal static class Converter
+	public enum PsiOperator
+	{	
+<#	foreach(var pair in tokens) { 
+#>		<#=pair.Item2#>,
+<#	} #>
+}
+
+	internal static class PsiOperatorConverter
 	{
+		/// <summary>
+		/// Converts a token into an operator.
+		/// </summary>
 		public static PsiOperator? ToOperator(this Token<PsiTokenType> token)
 		{
 			switch(token.Type)
@@ -79,7 +90,15 @@ namespace Psi.Compiler.Grammar
 			}
 		}
 		
-		public static string ToString(this PsiOperator op)
+		/// <summary>
+		/// Converts the operator into its symbol form (Plus will be operator '+').
+		/// </summary>
+		public static string ToSymbolName(this PsiOperator op) => "operator '" + ToSyntax(op) + "'";
+		
+		/// <summary>
+		/// Converts the operator into its syntactical form (Plus will be +).
+		/// </summary>
+		public static string ToSyntax(this PsiOperator op)
 		{
 			switch(op)
 			{

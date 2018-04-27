@@ -31,8 +31,9 @@ namespace Psi.Compiler
 			{
 				var printer = new ModulePrinter(Console.Out);
 				printer.Print(module);
-                
-                var globalScope = new SimpleScope
+
+
+                var declarableGlobalScope = new SimpleScope
                 {
                     new Symbol(Type.ModuleType, "std")
                     {
@@ -41,7 +42,12 @@ namespace Psi.Compiler
                         IsExported = false
                     }
                 };
+                InitializeGlobalOperators(declarableGlobalScope);
 
+                var globalScope = new StackableScope();
+                globalScope.Push(new AutoGlobalScope());
+                globalScope.Push(declarableGlobalScope);
+                
                 var astConverter = new ASTConverter(globalScope);
                 astConverter.AddModule(module);
                 astConverter.Convert();
@@ -57,7 +63,46 @@ namespace Psi.Compiler
 				Console.ReadLine();
 		}
 
-		private static Grammar.Module Load(string fileName)
+        private static void InitializeGlobalOperators(SimpleScope scope)
+        {
+            // Initialize numeric types
+            foreach (var type in new[] { BuiltinType.Byte, BuiltinType.Integer, BuiltinType.UnsignedInteger, BuiltinType.Real })
+            {
+                // TODO: Add unary operators
+
+                scope.AddOperator(PsiOperator.Plus, FunctionType.CreateBinaryOperator(type));
+                scope.AddOperator(PsiOperator.Minus, FunctionType.CreateBinaryOperator(type));
+                scope.AddOperator(PsiOperator.Multiply, FunctionType.CreateBinaryOperator(type));
+                scope.AddOperator(PsiOperator.Divide, FunctionType.CreateBinaryOperator(type));
+                scope.AddOperator(PsiOperator.Modulo, FunctionType.CreateBinaryOperator(type));
+
+                scope.AddOperator(PsiOperator.Equals, FunctionType.CreateBinaryOperator(BuiltinType.Boolean, type));
+                scope.AddOperator(PsiOperator.NotEquals, FunctionType.CreateBinaryOperator(BuiltinType.Boolean, type));
+                scope.AddOperator(PsiOperator.Less, FunctionType.CreateBinaryOperator(BuiltinType.Boolean, type));
+                scope.AddOperator(PsiOperator.LessOrEqual, FunctionType.CreateBinaryOperator(BuiltinType.Boolean, type));
+                scope.AddOperator(PsiOperator.More, FunctionType.CreateBinaryOperator(BuiltinType.Boolean, type));
+                scope.AddOperator(PsiOperator.MoreOrEqual, FunctionType.CreateBinaryOperator(BuiltinType.Boolean, type));
+            }
+
+            // Initialize integral types
+            foreach (var type in new[] { BuiltinType.Byte, BuiltinType.Integer, BuiltinType.UnsignedInteger})
+            {
+                // TODO: Add unary operators
+
+                scope.AddOperator(PsiOperator.And, FunctionType.CreateBinaryOperator(type));
+                scope.AddOperator(PsiOperator.Or, FunctionType.CreateBinaryOperator(type));
+                scope.AddOperator(PsiOperator.Xor, FunctionType.CreateBinaryOperator(type));
+                scope.AddOperator(PsiOperator.ShiftRight, FunctionType.CreateBinaryOperator(type));
+                scope.AddOperator(PsiOperator.ArithmeticShiftRight, FunctionType.CreateBinaryOperator(type));
+            }
+
+            // Initialize real type
+            {
+                scope.AddOperator(PsiOperator.Exponentiate, FunctionType.CreateBinaryOperator(BuiltinType.Real));
+            }
+        }
+
+        private static Grammar.Module Load(string fileName)
 		{
 			using (var lexer = new PsiLexer(fileName))
 			{
@@ -76,6 +121,7 @@ namespace Psi.Compiler
         {
             var std = new Intermediate.Module(null, "std");
             std.AddType("bool", BuiltinType.Boolean, true);
+            std.AddType("byte", BuiltinType.Byte, true);
             std.AddType("int", BuiltinType.Integer, true);
             std.AddType("uint", BuiltinType.UnsignedInteger, true);
             std.AddType("char", BuiltinType.Character, true);
@@ -101,4 +147,20 @@ namespace Psi.Compiler
             return std;
         }
 	}
+
+        static class ScopeExt
+        {
+            public static Symbol AddOperator(this SimpleScope scope, PsiOperator op, FunctionType type)
+            {
+                var sym = new Symbol(type, op)
+                {
+                    Initializer = new Intermediate.FunctionLiteral(new BuiltinFunction(type)),
+                    IsConst = true,
+                    IsExported = false,
+                    Kind = SymbolKind.Builtin
+                };
+                scope.Add(sym);
+                return sym;
+            }
+        }
 }

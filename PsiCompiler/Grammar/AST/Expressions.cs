@@ -109,7 +109,7 @@ namespace Psi.Compiler.Grammar
 
 		public Expression Operand { get; }
 
-		public override string ToString() => Converter.ToString(Operator) + " " + Operand;
+		public override string ToString() => Operator.ToSyntax() + " " + Operand;
 	}
 
 	public sealed class BinaryOperation : Expression
@@ -125,7 +125,7 @@ namespace Psi.Compiler.Grammar
 		public Expression LeftHandSide { get; }
 		public Expression RightHandSide { get; }
 
-		public override string ToString() => "(" + LeftHandSide + " " + Converter.ToString(Operator) + " " + RightHandSide + ")";
+		public override string ToString() => "(" + LeftHandSide + " " + Operator.ToSyntax() + " " + RightHandSide + ")";
 	}
 
 	public sealed class ArrayIndexingExpression : Expression
