@@ -4,9 +4,32 @@
 
 import std;
 
-var a = 1 * b + 3;
+// Tests 'out' params
+const set = fn(out dst : int, src : int) { dst = src; };
 
-var b = 10;
+// Tests return values
+const limit = fn() -> int { return 38; }
+
+// Tests closures and flow control
+const main = fn()
+{
+	var i : int;
+	set(i, 42);
+	
+	while(i > limit())
+	{
+		i = i - 1;
+	}
+
+	const print = fn()
+	{
+		print("i = ");
+		print(i);
+		print("\n");
+	};
+
+	print();
+};
 
 /*
 var foo : int = 10;
@@ -33,7 +56,7 @@ const main = fn()
 		i = i - 1;
 	}
 
-	const print = fn() 
+	const print = fn()
 	{
 		print("i = ");
 		print(i);

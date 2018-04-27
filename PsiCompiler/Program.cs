@@ -68,7 +68,8 @@ namespace Psi.Compiler
             // Initialize numeric types
             foreach (var type in new[] { BuiltinType.Byte, BuiltinType.Integer, BuiltinType.UnsignedInteger, BuiltinType.Real })
             {
-                // TODO: Add unary operators
+                scope.AddOperator(PsiOperator.Plus, FunctionType.CreateUnaryOperator(type));
+                scope.AddOperator(PsiOperator.Minus, FunctionType.CreateUnaryOperator(type));
 
                 scope.AddOperator(PsiOperator.Plus, FunctionType.CreateBinaryOperator(type));
                 scope.AddOperator(PsiOperator.Minus, FunctionType.CreateBinaryOperator(type));
@@ -87,7 +88,7 @@ namespace Psi.Compiler
             // Initialize integral types
             foreach (var type in new[] { BuiltinType.Byte, BuiltinType.Integer, BuiltinType.UnsignedInteger})
             {
-                // TODO: Add unary operators
+                scope.AddOperator(PsiOperator.Invert, FunctionType.CreateUnaryOperator(type));
 
                 scope.AddOperator(PsiOperator.And, FunctionType.CreateBinaryOperator(type));
                 scope.AddOperator(PsiOperator.Or, FunctionType.CreateBinaryOperator(type));
@@ -99,6 +100,14 @@ namespace Psi.Compiler
             // Initialize real type
             {
                 scope.AddOperator(PsiOperator.Exponentiate, FunctionType.CreateBinaryOperator(BuiltinType.Real));
+            }
+
+            // Initialize boolean type
+            {
+                scope.AddOperator(PsiOperator.Invert, FunctionType.CreateUnaryOperator(BuiltinType.Boolean));
+                scope.AddOperator(PsiOperator.And, FunctionType.CreateBinaryOperator(BuiltinType.Boolean));
+                scope.AddOperator(PsiOperator.Or, FunctionType.CreateBinaryOperator(BuiltinType.Boolean));
+                scope.AddOperator(PsiOperator.Xor, FunctionType.CreateBinaryOperator(BuiltinType.Boolean));
             }
         }
 

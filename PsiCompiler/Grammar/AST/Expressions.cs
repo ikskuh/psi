@@ -166,6 +166,7 @@ namespace Psi.Compiler.Grammar
 		public Expression Value { get; }
 
 		public IReadOnlyList<PositionalArgument> PositionalArguments { get; }
+
 		public IReadOnlyList<NamedArgument> NamedArguments { get; }
 
 		public IEnumerable<Argument> Arguments => this.PositionalArguments.Cast<Argument>().Concat(this.NamedArguments);

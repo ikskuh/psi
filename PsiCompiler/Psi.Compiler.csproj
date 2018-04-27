@@ -53,6 +53,7 @@
     <Compile Include="Intermediate\Function.cs" />
     <Compile Include="Intermediate\FunctionCall.cs" />
     <Compile Include="Intermediate\ITypeSignature.cs" />
+    <Compile Include="Intermediate\ReturnStatement.cs" />
     <Compile Include="Intermediate\SymbolReference.cs" />
     <Compile Include="Intermediate\TypeMapper.cs" />
     <Compile Include="Intermediate\UserFunction.cs" />

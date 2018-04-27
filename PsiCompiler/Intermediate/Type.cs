@@ -160,7 +160,7 @@ namespace Psi.Compiler.Intermediate
     {
         public Type ReturnType { get; set; }
 
-        public IList<Parameter> Parameters { get; set; }
+        public Parameter[] Parameters { get; set; }
 
         protected override bool TypeEquals(Type other)
         {
@@ -173,6 +173,26 @@ namespace Psi.Compiler.Intermediate
         public override int GetHashCode() => this.ReturnType.GetHashCode() ^ this.Parameters.Select(x => x.GetHashCode()).Aggregate(0, (a, b) => a ^ b);
 
 
+        public static FunctionType CreateUnaryOperator(Type allType) => CreateUnaryOperator(allType, allType);
+
+        public static FunctionType CreateUnaryOperator(Type returnType, Type paramType, ParameterFlags paramFlags = ParameterFlags.In)
+        {
+            var fun = new FunctionType
+            {
+                ReturnType = returnType ?? throw new ArgumentNullException(nameof(ReturnType))
+            };
+            fun.Parameters = new Parameter[]
+            {
+                new Parameter(fun, "operand", 0)
+                {
+                    Flags = paramFlags,
+                    Type = paramType ?? throw new ArgumentNullException(nameof(paramType)),
+                    Initializer = null,
+                },
+            };
+            return fun;
+        }
+
         public static FunctionType CreateBinaryOperator(Type allType) => CreateBinaryOperator(allType, allType, allType);
 
         public static FunctionType CreateBinaryOperator(Type returnType, Type paramType) => CreateBinaryOperator(returnType, paramType, paramType);
@@ -183,7 +203,7 @@ namespace Psi.Compiler.Intermediate
             {
                 ReturnType = returnType ?? throw new ArgumentNullException(nameof(ReturnType))
             };
-            fun.Parameters = new List<Parameter>()
+            fun.Parameters = new Parameter[]
             {
                 new Parameter(fun, "lhs", 0)
                 {
@@ -202,31 +222,46 @@ namespace Psi.Compiler.Intermediate
         }
 
         protected override ITypeSignature CreateSignature() => new FunctionSignature(this);
+    }
 
-        /// <summary>
-        /// Implements parameter list matching, but ignores return type.
-        /// </summary>
-        private class FunctionSignature : ITypeSignature, IEquatable<FunctionSignature>
+    /// <summary>
+    /// Implements parameter list matching, but ignores return type.
+    /// </summary>
+    public sealed class FunctionSignature : ITypeSignature, IEquatable<FunctionSignature>
+    {
+        private FunctionType functionType;
+
+        public FunctionSignature(FunctionType functionType)
         {
-            private FunctionType functionType;
+            this.functionType = functionType ?? throw new ArgumentNullException(nameof(functionType));
+        }
 
-            public FunctionSignature(FunctionType functionType)
+        public override bool Equals(object obj) => Equals(obj as FunctionSignature);
+
+        public bool Equals(ITypeSignature obj) => Equals(obj as FunctionSignature);
+
+        public bool Equals(FunctionSignature other)
+        {
+            if (other == null)
+                return false;
+            return Enumerable.SequenceEqual(this.functionType.Parameters, other.functionType.Parameters, new ParSigComparer());
+        }
+
+        public override int GetHashCode() => this.functionType.Parameters.Select(x => x.GetHashCode()).Aggregate(0, (a, b) => a ^ b);
+
+        public IReadOnlyList<Parameter> Parameters => this.functionType.Parameters;
+
+        private class ParSigComparer : IEqualityComparer<Parameter>
+        {
+            public bool Equals(Parameter x, Parameter y)
             {
-                this.functionType = functionType ?? throw new ArgumentNullException(nameof(functionType));
+                if ((x == null) || (y == null))
+                    return false; // Parameters should not be null!
+                return object.Equals(x.Position, y.Position)
+                    && object.Equals(x.Type, y.Type);
             }
 
-            public override bool Equals(object obj) => Equals(obj as FunctionSignature);
-
-            public bool Equals(ITypeSignature obj) => Equals(obj as FunctionSignature);
-
-            public bool Equals(FunctionSignature other)
-            {
-                if (other == null)
-                    return false;
-                return Enumerable.SequenceEqual(this.functionType.Parameters, other.functionType.Parameters);
-            }
-
-            public override int GetHashCode() => this.functionType.Parameters.Select(x => x.GetHashCode()).Aggregate(0, (a, b) => a ^ b);
+            public int GetHashCode(Parameter obj) => obj.Position.GetHashCode() ^ (obj.Type?.GetHashCode() ?? 0);
         }
     }
 }

@@ -9,13 +9,13 @@ namespace Psi.Compiler.Intermediate
     {
         public Signature(Type type, string id)
         {
-            this.Type = type?.Signature ?? throw new ArgumentNullException(nameof(type));
+            this.TypeSignature = type?.Signature ?? throw new ArgumentNullException(nameof(type));
             this.ID = id ?? throw new ArgumentNullException(nameof(id));
         }
 
         public Signature(ITypeSignature type, string id)
         {
-            this.Type = type ?? throw new ArgumentNullException(nameof(type));
+            this.TypeSignature = type ?? throw new ArgumentNullException(nameof(type));
             this.ID = id ?? throw new ArgumentNullException(nameof(id));
         }
 
@@ -29,7 +29,7 @@ namespace Psi.Compiler.Intermediate
 
         }
 
-        public ITypeSignature Type { get; set; }
+        public ITypeSignature TypeSignature { get; set; }
 
         public string ID { get; set; }
 
@@ -41,12 +41,12 @@ namespace Psi.Compiler.Intermediate
                 return true;
             if (other is null)
                 return false;
-            return Type.Equals(other.Type) && ID.Equals(other.ID);
+            return TypeSignature.Equals(other.TypeSignature) && ID.Equals(other.ID);
         }
 
-        public override int GetHashCode() => Type.GetHashCode() ^ ID.GetHashCode();
+        public override int GetHashCode() => TypeSignature.GetHashCode() ^ ID.GetHashCode();
         
-        public override string ToString() => $"({ID} : {Type})";
+        public override string ToString() => $"({ID} : {TypeSignature})";
 
         public static bool operator ==(Signature lhs, Signature rhs) => lhs?.Equals(rhs) ?? false;
         public static bool operator !=(Signature lhs, Signature rhs) => !(lhs == rhs);

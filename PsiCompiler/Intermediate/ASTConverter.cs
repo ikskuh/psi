@@ -444,17 +444,17 @@ namespace Psi.Compiler.Intermediate
                 else if (double.TryParse(num.Value, NumberStyles.Number, SystemFormat, out double dbl))
                     return new Literal<double>(dbl);
                 else
-                return null;
+                    return null;
             }
             else if (value is StringLiteral str)
             {
                 return new Literal<string>(str.Text);
             }
-            else if(value is ArrayLiteral array)
+            else if (value is ArrayLiteral array)
             {
                 var expr = new ArrayExpression();
                 expr.Items = new Expression[array.Values.Count];
-                for(int i = 0; i  < expr.Items.Length; i++)
+                for (int i = 0; i < expr.Items.Length; i++)
                 {
                     int idx = i;
                     unit.AddTask(() =>
@@ -493,7 +493,7 @@ namespace Psi.Compiler.Intermediate
                 var fun = new UserFunction(type);
 
                 var paramscope = new SimpleScope();
-                foreach(var param in type.Parameters)
+                foreach (var param in type.Parameters)
                 {
                     paramscope.Add(new Symbol(param.Type, param.Name)
                     {
@@ -512,10 +512,10 @@ namespace Psi.Compiler.Intermediate
                     fun.Body = body;
                     return Error.None;
                 });
-                
+
                 return new FunctionLiteral(fun);
             }
-            else if(value is VariableReference vref)
+            else if (value is VariableReference vref)
             {
                 var syms = scope.Where(s => s.Name.ID == vref.Variable).ToArray();
                 if (syms.Length == 0)
@@ -527,7 +527,27 @@ namespace Psi.Compiler.Intermediate
                     throw new NotSupportedException("multi-variables are not supported yet!");
                 return new SymbolReference(syms[0]);
             }
-            else if(value is BinaryOperation binop)
+            else if (value is UnaryOperation unop)
+            {
+                var val = ConvertExpression(unit, scope, unop.Operand);
+                if (val == null)
+                    return null;
+
+                var type = FunctionType.CreateUnaryOperator(Type.UnknownType, val.Type);
+
+                var sig = new Signature(type, unop.Operator);
+
+                if (scope.HasSymbol(sig) == false)
+                {
+                    Error.UnknownOperator(unop);
+                    return null;
+                }
+
+                var sym = scope[sig];
+
+                return new FunctionCall(new SymbolReference(sym), new[] { val });
+            }
+            else if (value is BinaryOperation binop)
             {
                 var lhs = ConvertExpression(unit, scope, binop.LeftHandSide);
                 var rhs = ConvertExpression(unit, scope, binop.RightHandSide);
@@ -551,6 +571,10 @@ namespace Psi.Compiler.Intermediate
 
                 return new FunctionCall(new SymbolReference(sym), new[] { lhs, rhs });
             }
+            else if (value is FunctionCallExpression fncall)
+            {
+                throw new NotImplementedException("hunger");
+            }
             else
             {
                 throw new NotSupportedException($"The expression type '{value?.GetType()?.Name ?? "?"}' is not supported yet.");
@@ -566,9 +590,9 @@ namespace Psi.Compiler.Intermediate
                 {
                     var sequence = new List<Statement>();
                     var blockscope = scope;
-                    foreach(var sub in block)
+                    foreach (var sub in block)
                     {
-                        if(sub is Declaration decl)
+                        if (sub is Declaration decl)
                         {
                             // TODO: Allow CreateSymbol initializer to access the self-defined symbol
                             var err = CreateSymbol(unit, blockscope, decl, out var sym);
@@ -576,8 +600,18 @@ namespace Psi.Compiler.Intermediate
                                 return err;
                             sym.Kind = SymbolKind.Local;
                             blockscope = new ExtendingScope(blockscope, sym);
-                            if (sym.Initializer != null)
-                                sequence.Add(new ExpressionStatement(sym.Initializer));
+                            if (decl.Value != null)
+                            {
+                                var init = new ExpressionStatement();
+                                unit.AddTask(() =>
+                                {
+                                    if (sym.Initializer == null)
+                                        return Error.InvalidExpression(decl.Value);
+                                    init.Expression = sym.Initializer;
+                                    return Error.None;
+                                });
+                                sequence.Add(init);
+                            }
                         }
                         else
                         {
@@ -591,6 +625,41 @@ namespace Psi.Compiler.Intermediate
                     return Error.None;
                 });
                 return result;
+            }
+            else if (stmt is Grammar.ExpressionStatement expr)
+            {
+                var exec = new ExpressionStatement();
+                unit.AddTask(() =>
+                {
+                    exec.Expression = ConvertExpression(unit, scope, expr.Expression);
+                    if (exec.Expression == null)
+                        return Error.InvalidExpression(expr.Expression);
+                    return Error.None;
+                });
+                return exec;
+            }
+            else if (stmt is Grammar.FlowBreakStatement flow)
+            {
+                switch (flow.Type)
+                {
+                    case FlowBreakType.Return:
+                        {
+                            var @return = new ReturnStatement();
+                            if (flow.Value != null)
+                            {
+                                unit.AddTask(() =>
+                                {
+                                    @return.Result = ConvertExpression(unit, scope, flow.Value);
+                                    if (@return.Result == null)
+                                        return Error.InvalidExpression(flow.Value);
+                                    return Error.None;
+                                });
+                            }
+                            return @return;
+                        }
+                    default:
+                        throw new NotSupportedException($"{flow.Type} is not supported yet.");
+                }
             }
             else
             {
@@ -630,7 +699,7 @@ namespace Psi.Compiler.Intermediate
                         this.Tasks.Enqueue(task);
                     return (error == null);
                 }
-                catch(Exception)
+                catch (Exception)
                 {
                     this.Tasks.Enqueue(task);
                     return false;

@@ -108,6 +108,11 @@ namespace Psi.Compiler.Intermediate
             throw new NotImplementedException();
         }
 
+        internal void UnknownOperator(UnaryOperation unop)
+        {
+            throw new NotImplementedException();
+        }
+
         #endregion
     }
 }
