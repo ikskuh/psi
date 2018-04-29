@@ -432,8 +432,7 @@ namespace Psi.Compiler.Intermediate
             }
         }
 
-
-        private Expression ConvertExpression(TranslationUnit unit, IScope scope, Grammar.Expression value)
+        private Expression ConvertExpression(TranslationUnit unit, IScope scope, Grammar.Expression value, ExpressionContext context = null)
         {
             if (value is NumberLiteral num)
             {
@@ -523,9 +522,10 @@ namespace Psi.Compiler.Intermediate
                     Error.SymbolNotFound(vref.Variable);
                     return null;
                 }
-                if (syms.Length != 1)
-                    throw new NotSupportedException($"multi-variable {vref.Variable} not found: multi-variables not supported yet!");
-                return new SymbolReference(syms[0]);
+                if (syms.Length == 1)
+                    return new SymbolReference(syms[0]);
+                
+                throw new NotSupportedException($"multi-variable {vref.Variable} not found: multi-variables not supported yet!");
             }
             else if (value is UnaryOperation unop)
             {
