@@ -25,11 +25,11 @@ const main = fn()
 	const print = fn()
 	{
 		print("i = ");
-		print(i);
+	// 	print(i);
 		print("\n");
 	};
 
-	print();
+	// print();
 };
 
 /*

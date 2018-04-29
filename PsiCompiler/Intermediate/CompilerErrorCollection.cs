@@ -101,7 +101,7 @@ namespace Psi.Compiler.Intermediate
 
         public CompilerError UntranslatableStatement(Grammar.Statement body) => Add($"The statement {body} was not translatable.");
 
-        public CompilerError SymbolNotFound(string variable) => Add($"The variable {variable} could not be found!");
+        public CompilerError SymbolNotFound(string variable) => Add($"The variable '{variable}' could not be found!");
 
         internal void UnknownOperator(BinaryOperation binop)
         {
@@ -118,6 +118,14 @@ namespace Psi.Compiler.Intermediate
         public CompilerError UnknownArgument(FunctionType type, NamedArgument arg) => Add($"Argument {arg.Name} does not exist in {type}.");
 
         public CompilerError UnknownArgument(FunctionType type, PositionalArgument arg) => Add($"Argument {arg.Position} does not exist in {type}.");
+
+        public CompilerError AmbiguousExpression(Grammar.Expression expr, IReadOnlyCollection<Expression> functions)
+        {
+            if (functions.Count == 0)
+                return Add($"Failed to deduce type for expression {expr}");
+            else
+                return Add($"Ambigious expression: {expr}");
+        }
 
         #endregion
     }

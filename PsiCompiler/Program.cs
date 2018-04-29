@@ -13,10 +13,11 @@ namespace Psi.Compiler
         {
             // primitives
             TypeMapper.Add(typeof(bool), BuiltinType.Boolean);
-            TypeMapper.Add(typeof(int), BuiltinType.Integer);
+            TypeMapper.Add(typeof(long), BuiltinType.Integer);
+            TypeMapper.Add(typeof(ulong), BuiltinType.UnsignedInteger);
             TypeMapper.Add(typeof(double), BuiltinType.Real);
             TypeMapper.Add(typeof(string), BuiltinType.String);
-            TypeMapper.Add(typeof(char), BuiltinType.Character); // TODO: this is wrong for now, but works. replace with int32 later!
+            TypeMapper.Add(typeof(int), BuiltinType.Character);
 
             // required types
             TypeMapper.Add(typeof(void), Type.VoidType);
@@ -152,7 +153,15 @@ namespace Psi.Compiler
             std.AddModule("math", math);
 
             var io = new Intermediate.Module(std, "io");
-            var typelist = new Type[] { BuiltinType.String, BuiltinType.Real, BuiltinType.UnsignedInteger, BuiltinType.Byte, BuiltinType.Boolean, BuiltinType.Integer };
+            var typelist = new Type[] {
+                BuiltinType.Character,
+                BuiltinType.String,
+                BuiltinType.Real,
+                BuiltinType.UnsignedInteger,
+                BuiltinType.Byte,
+                BuiltinType.Boolean,
+                BuiltinType.Integer
+            };
             foreach (var type in typelist)
                 io.AddBuiltin(new FunctionType(Type.VoidType, type), "print");
             std.AddModule("io", io);

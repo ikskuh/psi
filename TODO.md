@@ -18,3 +18,9 @@
 - Define Standard-Library-API
 
 ## Actual programming tasks
+- Refactor ASTConverter:
+	- Each function literal can be separatly converted
+		- Separates out symbol definitions
+	- The body of each literal can be converted in a "success-or-fail" manner without having to consider parts of expressions
+		- Fail when not all referenced symbols are fully defined
+		- Succeed when all referenced symbols compile and the code is unambigious

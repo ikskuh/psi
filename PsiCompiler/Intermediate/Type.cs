@@ -40,6 +40,8 @@ namespace Psi.Compiler.Intermediate
             return this.TypeEquals(other);
         }
 
+        public virtual bool IsCompatibleTo(Type returnType) => false;
+
         protected abstract ITypeSignature CreateSignature();
 
         /// <summary>
@@ -261,6 +263,8 @@ namespace Psi.Compiler.Intermediate
         public override int GetHashCode() => this.functionType.Parameters.Select(x => x.GetHashCode()).Aggregate(0, (a, b) => a ^ b);
 
         public IReadOnlyList<Parameter> Parameters => this.functionType.Parameters;
+
+        public override string ToString() => "fnsig(" + string.Join(",", Parameters) + ")";
 
         private class ParSigComparer : IEqualityComparer<Parameter>
         {

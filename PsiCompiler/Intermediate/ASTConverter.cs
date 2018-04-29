@@ -198,7 +198,7 @@ namespace Psi.Compiler.Intermediate
             if (def.Value != null)
             {
                 // TODO: A type hint should be passed into convert expression here
-                initializer = ConvertExpression(unit, scope, def.Value);
+                initializer = ConvertExpression(unit, scope, def.Value).Single();
                 if (initializer == null)
                     return Error.InvalidExpression(def.Value);
             }
@@ -356,7 +356,7 @@ namespace Psi.Compiler.Intermediate
                     {
                         unit.AddTask(() =>
                         {
-                            mem.Initializer = ConvertExpression(unit, scope, m.Value);
+                            mem.Initializer = ConvertExpression(unit, scope, m.Value).Single();
                             if (mem.Initializer == null)
                                 return Error.InvalidExpression(m.Value);
                             return Error.None;
@@ -413,7 +413,7 @@ namespace Psi.Compiler.Intermediate
                     {
                         unit.AddTask(() =>
                         {
-                            p.Initializer = ConvertExpression(unit, scope, par.Value);
+                            p.Initializer = ConvertExpression(unit, scope, par.Value).Single();
                             if (p.Initializer == null)
                                 return Error.InvalidExpression(par.Value);
                             return CompilerError.None;
@@ -432,22 +432,46 @@ namespace Psi.Compiler.Intermediate
             }
         }
 
-        private Expression ConvertExpression(TranslationUnit unit, IScope scope, Grammar.Expression value, ExpressionContext context = null)
+        private IReadOnlyList<Expression> ConvertExpression(TranslationUnit unit, IScope scope, Grammar.Expression value, ExpressionContext context = null)
         {
             if (value is NumberLiteral num)
             {
-                if (int.TryParse(num.Value, NumberStyles.HexNumber, SystemFormat, out int i))
-                    return new Literal<int>(i);
-                else if (int.TryParse(num.Value, NumberStyles.Integer, SystemFormat, out i))
-                    return new Literal<int>(i);
-                else if (double.TryParse(num.Value, NumberStyles.Number, SystemFormat, out double dbl))
-                    return new Literal<double>(dbl);
-                else
-                    return null;
+                var literals = new List<Expression>();
+
+                // try hex first, then decimal
+                if (ulong.TryParse(num.Value, NumberStyles.HexNumber, SystemFormat, out ulong u))
+                    literals.Add(new Literal<ulong>(u));
+                else if (ulong.TryParse(num.Value, NumberStyles.Integer, SystemFormat, out u))
+                    literals.Add(new Literal<ulong>(u));
+
+                // try hex first, then decimal
+                if (long.TryParse(num.Value, NumberStyles.HexNumber, SystemFormat, out long i))
+                    literals.Add(new Literal<long>(i));
+                else if (long.TryParse(num.Value, NumberStyles.Integer, SystemFormat, out i))
+                    literals.Add(new Literal<long>(i));
+
+                // also try double separated
+                if (double.TryParse(num.Value, NumberStyles.Number, SystemFormat, out double dbl))
+                    literals.Add(new Literal<double>(dbl));
+
+                return literals.ToArray();
             }
             else if (value is StringLiteral str)
             {
-                return new Literal<string>(str.Text);
+                var text = str.Text;
+                if (text.Length > 0)
+                {
+                    var codepoint = char.ConvertToUtf32(text, 0);
+                    if (char.ConvertFromUtf32(codepoint).Length == text.Length)
+                    {
+                        return new Expression[]
+                        {
+                            new Literal<int>(codepoint),
+                            new Literal<string>(str.Text),
+                        };
+                    }
+                }
+                return new[] { new Literal<string>(str.Text) };
             }
             else if (value is ArrayLiteral array)
             {
@@ -461,7 +485,7 @@ namespace Psi.Compiler.Intermediate
                         var elem = ConvertExpression(unit, scope, array.Values[idx]);
                         if (elem == null)
                             return Error.InvalidExpression(value);
-                        expr.Items[idx] = elem;
+                        expr.Items[idx] = elem.Single();
                         return Error.None;
                     });
                 }
@@ -478,7 +502,7 @@ namespace Psi.Compiler.Intermediate
 
                     return Error.None;
                 });
-                return expr;
+                return new[] { expr };
             }
             else if (value is Grammar.FunctionLiteral function)
             {
@@ -503,33 +527,32 @@ namespace Psi.Compiler.Intermediate
                 fun.Scope.Push(scope);
                 fun.Scope.Push(paramscope);
 
+                var ctx = new BlockContext
+                {
+                    EnclosingType = type
+                };
+
                 unit.AddTask(() =>
                 {
-                    var body = ConvertStatement(unit, fun.Scope, function.Body);
+                    var body = ConvertStatement(unit, fun.Scope, function.Body, ctx);
                     if (body == null)
                         return Error.UntranslatableStatement(function.Body);
                     fun.Body = body;
                     return Error.None;
                 });
 
-                return new FunctionLiteral(fun);
+                return new[] { new FunctionLiteral(fun) };
             }
             else if (value is VariableReference vref)
             {
                 var syms = scope.Where(s => s.Name.ID == vref.Variable).ToArray();
                 if (syms.Length == 0)
-                {
                     Error.SymbolNotFound(vref.Variable);
-                    return null;
-                }
-                if (syms.Length == 1)
-                    return new SymbolReference(syms[0]);
-                
-                throw new NotSupportedException($"multi-variable {vref.Variable} not found: multi-variables not supported yet!");
+                return syms.Select(s => new SymbolReference(s)).ToArray();
             }
             else if (value is UnaryOperation unop)
             {
-                var val = ConvertExpression(unit, scope, unop.Operand);
+                var val = ConvertExpression(unit, scope, unop.Operand).Single();
                 if (val == null)
                     return null;
 
@@ -545,48 +568,55 @@ namespace Psi.Compiler.Intermediate
 
                 var sym = scope[sig];
 
-                return new FunctionCall(new SymbolReference(sym), new[] { val });
+                return new[] { new FunctionCall(new SymbolReference(sym), new[] { val }) };
             }
             else if (value is BinaryOperation binop)
             {
-                var lhs = ConvertExpression(unit, scope, binop.LeftHandSide);
-                var rhs = ConvertExpression(unit, scope, binop.RightHandSide);
-                if ((lhs == null) || (rhs == null))
-                    return null;
+                var lhslist = ConvertExpression(unit, scope, binop.LeftHandSide);
+                var rhslist = ConvertExpression(unit, scope, binop.RightHandSide);
 
-                var type = FunctionType.CreateBinaryOperator(
-                    returnType: Type.UnknownType,
-                    leftType: lhs.Type,
-                    rightType: rhs.Type);
+                var results = new List<FunctionCall>();
 
-                var sig = new Signature(type, binop.Operator);
-
-                if (scope.HasSymbol(sig) == false)
+                foreach (var lhs in lhslist)
                 {
-                    Error.UnknownOperator(binop);
-                    return null;
+                    foreach (var rhs in rhslist)
+                    {
+                        var type = FunctionType.CreateBinaryOperator(
+                            returnType: Type.UnknownType,
+                            leftType: lhs.Type,
+                            rightType: rhs.Type);
+
+                        var sig = new Signature(type, binop.Operator);
+
+                        if (scope.HasSymbol(sig) == false)
+                            continue;
+
+                        var sym = scope[sig];
+
+                        results.Add(new FunctionCall(new SymbolReference(sym), new[] { lhs, rhs }));
+                    }
                 }
-
-                var sym = scope[sig];
-
-                return new FunctionCall(new SymbolReference(sym), new[] { lhs, rhs });
+                if (results.Count == 0)
+                    Error.UnknownOperator(binop);
+                return results;
             }
             else if (value is FunctionCallExpression fncall)
             {
-                var call = new FunctionCall();
-                unit.AddTask(() =>
+                var results = new List<FunctionCall>();
+                var functions = ConvertExpression(unit, scope, fncall.Value);
+                foreach (var func in functions)
                 {
-                    call.Functor = ConvertExpression(unit, scope, fncall.Value);
-                    if (call.Functor == null)
-                        return Error.InvalidExpression(fncall.Value);
-                    var type = call.Functor.Type as FunctionType;
+                    var type = func.Type as FunctionType;
                     if (type == null)
-                        return Error.InvalidType(call.Type, "Expected function type!");
+                        continue;
+
+                    var call = new FunctionCall();
+                    call.Functor = func;
 
                     var arglist = new Expression[type.Parameters.Length];
                     var paramset = new HashSet<Parameter>(type.Parameters);
 
-                    foreach(var arg in fncall.PositionalArguments)
+                    foreach (var arg in fncall.PositionalArguments)
                     {
                         unit.AddTask(() =>
                         {
@@ -594,7 +624,9 @@ namespace Psi.Compiler.Intermediate
                             if (param == null)
                                 return Error.UnknownArgument(type, arg);
 
-                            arglist[param.Position] = ConvertExpression(unit, scope, arg.Value);
+                            arglist[param.Position] = SelectFitting(
+                                ConvertExpression(unit, scope, arg.Value),
+                                param.Type);
                             if (arglist[param.Position] == null)
                                 return Error.InvalidExpression(arg.Value);
 
@@ -603,7 +635,7 @@ namespace Psi.Compiler.Intermediate
                         });
                     }
 
-                    foreach(var arg in fncall.NamedArguments)
+                    foreach (var arg in fncall.NamedArguments)
                     {
                         unit.AddTask(() =>
                         {
@@ -611,7 +643,7 @@ namespace Psi.Compiler.Intermediate
                             if (param == null)
                                 return Error.UnknownArgument(type, arg);
 
-                            arglist[param.Position] = ConvertExpression(unit, scope, arg.Value);
+                            arglist[param.Position] = ConvertExpression(unit, scope, arg.Value).Single();
                             if (arglist[param.Position] == null)
                                 return Error.InvalidExpression(arg.Value);
 
@@ -621,9 +653,9 @@ namespace Psi.Compiler.Intermediate
                     }
 
                     call.Arguments = arglist;
-                    return Error.None;
-                });
-                return call;
+                    results.Add(call);
+                }
+                return results;
             }
             else
             {
@@ -631,7 +663,7 @@ namespace Psi.Compiler.Intermediate
             }
         }
 
-        private Statement ConvertStatement(TranslationUnit unit, IScope scope, Grammar.Statement stmt)
+        private Statement ConvertStatement(TranslationUnit unit, IScope scope, Grammar.Statement stmt, BlockContext context)
         {
             if (stmt is Grammar.Block block)
             {
@@ -665,7 +697,7 @@ namespace Psi.Compiler.Intermediate
                         }
                         else
                         {
-                            var substmt = ConvertStatement(unit, blockscope, sub);
+                            var substmt = ConvertStatement(unit, blockscope, sub, context);
                             if (substmt == null)
                                 return Error.UntranslatableStatement(sub);
                             sequence.Add(substmt);
@@ -681,7 +713,8 @@ namespace Psi.Compiler.Intermediate
                 var exec = new ExpressionStatement();
                 unit.AddTask(() =>
                 {
-                    exec.Expression = ConvertExpression(unit, scope, expr.Expression);
+                    var list = ConvertExpression(unit, scope, expr.Expression);
+                    exec.Expression = list.Single();
                     if (exec.Expression == null)
                         return Error.InvalidExpression(expr.Expression);
                     return Error.None;
@@ -699,7 +732,8 @@ namespace Psi.Compiler.Intermediate
                             {
                                 unit.AddTask(() =>
                                 {
-                                    @return.Result = ConvertExpression(unit, scope, flow.Value);
+                                    var options = ConvertExpression(unit, scope, flow.Value);
+                                    @return.Result = SelectFitting(options, context.EnclosingType.ReturnType);
                                     if (@return.Result == null)
                                         return Error.InvalidExpression(flow.Value);
                                     return Error.None;
@@ -716,14 +750,14 @@ namespace Psi.Compiler.Intermediate
                 var s = new WhileLoop();
                 unit.AddTask(() =>
                 {
-                    s.Condition = ConvertExpression(unit, scope, loop.Condition);
+                    s.Condition = ConvertExpression(unit, scope, loop.Condition).Single();
                     if (s.Condition == null)
                         return Error.InvalidExpression(loop.Condition);
                     return Error.None;
                 });
                 unit.AddTask(() =>
                 {
-                    s.Body = ConvertStatement(unit, scope, loop.Body);
+                    s.Body = ConvertStatement(unit, scope, loop.Body, context);
                     if (s.Body == null)
                         return Error.UntranslatableStatement(loop.Body);
                     return Error.None;
@@ -734,6 +768,18 @@ namespace Psi.Compiler.Intermediate
             {
                 throw new NotSupportedException($"The statement type {stmt?.GetType()?.Name ?? "?"} is not supported yet.");
             }
+        }
+
+        private Expression SelectFitting(IReadOnlyCollection<Expression> options, Type returnType)
+        {
+            if (options == null)
+                throw new ArgumentNullException(nameof(options));
+            if (returnType == null)
+                throw new ArgumentNullException(nameof(returnType));
+            if (options.Count == 0)
+                return null;
+            return options.FirstOrDefault(e => (e.Type == returnType))
+                ?? options.FirstOrDefault(e => (e.Type.IsCompatibleTo(returnType)));
         }
 
         private Type FindCommonType(IEnumerable<Type> enumerable)
