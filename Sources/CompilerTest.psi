@@ -25,56 +25,28 @@ const main = fn()
 	const print = fn()
 	{
 		print("i = ");
-	// 	print(i);
-		print("\n");
-	};
-
-	// print();
-};
-
-/*
-var foo : int = 10;
-
-var bar : int = foo;
-
-var v0 : person;
-var v1 : record(x : string, y : int) = v0;
-
-// Tests 'out' params
-const set = fn(out dst : int, src : int) { dst = src; };
-
-// Tests return values
-const limit = fn() -> int { return 38; }
-
-// Tests closures and flow control
-const main = fn()
-{
-	var i : int;
-	set(i, 42);
-	
-	while(i > limit())
-	{
-		i = i - 1;
-	}
-
-	const print = fn()
-	{
-		print("i = ");
-		print(i);
-		print("\n");
+	 	print(i);
+		print(`\n`);
 	};
 
 	print();
 };
-*/
 
-/*
+/*****************************************************************************
+* Compiler Test Snippets                                                     *
+*****************************************************************************/
 
+var foo : int = 10;
 
-// TODO: Implement support for complex compound names
-// module submodule.inception { }
+var bar : int = foo;
 
-import std;
+type person = record
+(
+	age    : std.int,
+	name   : std.string,
+	gender : gender
+);
+
 type myint = int; // requires "import std;"
 
 type stringlist = array<string>;
@@ -87,13 +59,6 @@ type gender = enum(none,male,female,ah64);
 type builtin = std.int;
 
 type backref = gender;
-
-type person = record
-(
-	age    : std.int,
-	name   : std.string,
-	gender : gender
-);
 
 type recursive = record
 	(
@@ -120,11 +85,6 @@ type bunchOfPeople = array<ref<person> >;
 
 type mainFunc = fn(argc : int, argv : array<string>) -> int;
 
-*/
-
-/*
-lexical scope test
-
 type a = std.int;
 
 module submodule
@@ -140,4 +100,3 @@ module submodule
 		type e2 = submodule.inception.c;
 	}
 }
-*/

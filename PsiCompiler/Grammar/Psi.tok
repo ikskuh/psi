@@ -127,6 +127,9 @@ XOR        := \^
 # negative numbers are made via operator
 NUMBER     := 0x[A-Fa-f0-9]+|\d+(\.\d+)?
 
+# Allow any escaped or unescaped char literal
+CHAR       := \`(?:\\\`|.){1,10}\`
+
 STRING     := "(?:\\"|.)*?"
 
 # Must not start with a number, but is allowed to any word character

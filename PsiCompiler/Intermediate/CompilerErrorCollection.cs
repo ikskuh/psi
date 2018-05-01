@@ -103,15 +103,9 @@ namespace Psi.Compiler.Intermediate
 
         public CompilerError SymbolNotFound(string variable) => Add($"The variable '{variable}' could not be found!");
 
-        internal void UnknownOperator(BinaryOperation binop)
-        {
-            throw new NotImplementedException();
-        }
+        public CompilerError UnknownOperator(BinaryOperation binop) => Add($"Unknown binary operator {binop.Operator}.");
 
-        internal void UnknownOperator(UnaryOperation unop)
-        {
-            throw new NotImplementedException();
-        }
+        public CompilerError UnknownOperator(UnaryOperation unop) => Add($"Unknown unary operator {unop.Operator}.");
 
         public CompilerError InvalidType(Type type, string message) => Add($"Invalid type {type}. {message}");
 

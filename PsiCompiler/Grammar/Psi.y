@@ -27,7 +27,7 @@
 %left <PsiOperator> WB_AND, WB_OR, WB_XOR, WB_CONCAT, WB_EXP, WB_MOD
 %left <PsiOperator> WB_ASR, WB_SHL, WB_SHR
 
-%token <String> NUMBER, STRING, ENUMVAL, IDENT
+%token <String> NUMBER, STRING, CHAR, ENUMVAL, IDENT
 
 // lexer ignored tokens:
 %token Comment,	LongComment, Whitespace
@@ -452,6 +452,10 @@ value       : value DOT identifier
 			{
 				$$ = new LambdaLiteral($3, new ExpressionStatement($6));
 			}
+            | CHAR
+			{
+				$$ = new CharacterLiteral($1);
+            }
             | STRING
 			{
 				$$ = new StringLiteral($1);

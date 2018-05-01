@@ -12,5 +12,7 @@ namespace Psi.Compiler.Intermediate
         public override Type Type => this.Symbol.Type;
 
         public Symbol Symbol { get; }
+
+        public override string ToString() => Symbol.ToString();
     }
 }

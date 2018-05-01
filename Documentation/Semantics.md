@@ -1,28 +1,3 @@
-
-Typen:
-- Builtin-Typen
-	- Integer
-		: Ganzzahliger Datentyp, welcher keine Größenbeschränkung besitzt.
-		: Wird intern als "big integer" gehandhabt.
-	- Char
-		: Datentyp, welcher einen Unicode-Codepoint enthält und damit ein
-		: einzelnes Zeichen darstellt.
-		: Wird intern als 32 bit Zahl gehandhabt.
-	- Real
-		: Datentyp für reelle Zahlen. Wird intern als IEEE754(binary64)
-		: behandelt.
-	- Array
-		: Dynamisches Array, welches eine geordnete Menge an Elementen
-		: eines bestimmten Types enthält.
-- Vordefinierte (notwendige) Typen
-	- Type
-		: Ein Typ, welcher eine Beschreibung für die in Psi verwendeten
-		: Datentypen bereitstellt.
-- Benutzerdefinierte Typen (Vorlage)
-	- Record
-	- Enum
-	- Funktionstypen
-
 # Begriffe
 
 ## Objekt
@@ -43,6 +18,15 @@ abstrakte Definition liefern. Bei einem Funktionsaufruf wird ein Argument in ein
 übergeben. Das heißt, dass ein Argument den Wert festlegt, welcher in einen Parameter übergeben
 wird.
 
+## Statisch
+In Psi bedeutet "statisch", dass etwas zur Zeit der Compilierung bekannt ist und auch schon
+ausgewertet werden kann.
+
+## Feld
+Ein Feld ist ein Bestandteil bzw. eine Eigenschaft eines Objektes. Felder können beispielsweise
+Informationen über die Länge eines Objekts (`myarray.length`) enthalten oder aber bei Records
+vom Benutzer festgelegte "Unterobjekte" sein.
+
 # Operatoren:
 
 ## Zuweisung (`=`):
@@ -51,14 +35,17 @@ ohne Umformung in das Objekt `a` übertragen. Die beiden Objekte sind danach
 als *gleich* anzusehen.
 
 ## Meta-Operator (`'field`):
-Der Meta-Operator greift auf statische Daten eines Objektes
+Der Meta-Operator greift auf statische Informationen eines Symbols zu
+
+## Feld-Operator (`.field`)
+Der Feld-Operator greift auf die Felder eines Objektes zu.
 
 ## Heap-Operator (`new`):
 Bei der Ausführung des Heap-Operators `new a` wird ein neuer Wert des Typs
 von `a` auf dem Heap alloziert und mit den Werten aus `a` initialisiert.
 Zurückgegeben wird ein Wert des Typs `ref<a'type>`.
 
-# Speicherorte für Werte
+# Speicherorte für Objekte
 
 ## Globaler Speicher
 Alle Variablen, welche in einem Modul liegen, sind im globalen Speicher.
@@ -71,7 +58,7 @@ Das Ergebnis eines Ausdrucks kann in den Heap-Speicher für längerfristige, dyn
 Hierzu erhält der Wert eine einzigartige Speicheradresse (Pointer)
 
 ## Temporärer Speicher
-Werte, die bei der Auswertung eines Ausdrucks entstehen und dafür als Zwischenergebnis gespeichert werden müssen,
+Objekte, die bei der Auswertung eines Ausdrucks entstehen und dafür als Zwischenergebnis gespeichert werden müssen,
 liegen im temporären Speicher. Dieser Speicher kann nicht referenziert werden.
 
 # Funktionen

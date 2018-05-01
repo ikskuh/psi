@@ -1,10 +1,12 @@
-﻿namespace Psi.Compiler.Intermediate
+﻿using System;
+
+namespace Psi.Compiler.Intermediate
 {
-    public class CompilerError
+    public class CompilerError : Exception
     {
         public static readonly CompilerError None = null;
 
-        public CompilerError(string description)
+        public CompilerError(string description) : base(description)
         {
             this.Description = description;
         }

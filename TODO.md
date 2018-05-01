@@ -10,6 +10,8 @@
 	```
 - Integrate checked/unchecked blocks into Psi (straight from C#)
 - Integrate useful exception handling.
+- `std.char` literal different from a `std.string` literal sounds useful
+	- ``X`` instead of `"X"` for `std.char`?
 
 ## Documentation tasks
 - Document ref<T> with all its quirks (especially with `inout param : ref<T>`)

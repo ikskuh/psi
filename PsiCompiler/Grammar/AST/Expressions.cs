@@ -45,6 +45,27 @@ namespace Psi.Compiler.Grammar
         public override string ToString() => "\"" + Text + "\"";
     }
 
+    public sealed class CharacterLiteral : Expression
+    {
+        /// <summary>
+        /// Takes an escaped string literal
+        /// </summary>
+        /// <param name="value">Value.</param>
+        public CharacterLiteral(string value)
+        {
+            var text = value.NotNull();
+            this.Codepoint = char.ConvertToUtf32(PsiString.Unescape(text), 0);
+        }
+
+        /// <summary>
+        /// Unescaped string literal
+        /// </summary>
+        /// <value>The text.</value>
+        public int Codepoint { get; }
+
+        public override string ToString() => "0x" + Convert.ToString(Codepoint, 16) + " `" + char.ConvertFromUtf32(Codepoint) + "`";
+    }
+
     public sealed class EnumLiteral : Expression
     {
         public EnumLiteral(string value)
