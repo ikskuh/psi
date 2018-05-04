@@ -36,6 +36,7 @@ const main = fn()
 * Compiler Test Snippets                                                     *
 *****************************************************************************/
 
+/*
 var foo : int = 10;
 
 var bar : int = foo;
@@ -100,3 +101,4 @@ module submodule
 		type e2 = submodule.inception.c;
 	}
 }
+*/

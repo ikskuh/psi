@@ -77,7 +77,10 @@ namespace Psi.Compiler.Intermediate
             .Where(s => s.Type == Type.MetaType)
             .ToDictionary(s => s.Name.ID, s => (s.Initializer as TypeLiteral).Value);
 
+        public ICollection<UserFunction> Functions { get; } = new HashSet<UserFunction>();
+
         public Module Parent { get; }
+
         public string Name { get; }
 
         public string LocalName { get; }

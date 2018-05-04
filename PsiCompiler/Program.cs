@@ -3,6 +3,7 @@ using System.IO;
 
 namespace Psi.Compiler
 {
+    using Psi.Compiler.Codegen;
     using Psi.Compiler.Grammar;
     using Psi.Compiler.Intermediate;
     using System.Diagnostics;
@@ -10,6 +11,13 @@ namespace Psi.Compiler
     class MainClass
     {
         public static void Main(string[] args)
+        {
+            WrappedMain(args);
+            if (Debugger.IsAttached && Environment.OSVersion.Platform != PlatformID.Unix)
+                Console.ReadLine();
+        }
+
+        public static void WrappedMain(string[] args)
         {
             // primitives
             TypeMapper.Add(typeof(bool), BuiltinType.Boolean);
@@ -24,17 +32,20 @@ namespace Psi.Compiler
             TypeMapper.Add(typeof(Type), Type.MetaType);
             TypeMapper.Add(typeof(Intermediate.Module), Type.ModuleType);
 
-
             var std = CreateStd();
-            var module = Load("../../../Sources/CompilerTest.psi");
 
-            if (module != null)
+            var syntaxModule = Load("../../../Sources/CompilerTest.psi");
+
+            if (syntaxModule == null)
             {
-                var printer = new ModulePrinter(Console.Out);
-                printer.Print(module);
+                Console.WriteLine("Failed to parse!");
+                return;
+            }
 
+            var printer = new ModulePrinter(Console.Out);
+            printer.Print(syntaxModule);
 
-                var declarableGlobalScope = new SimpleScope
+            var declarableGlobalScope = new SimpleScope
                 {
                     new Symbol(Type.ModuleType, "std")
                     {
@@ -43,25 +54,21 @@ namespace Psi.Compiler
                         IsExported = false
                     }
                 };
-                InitializeGlobalOperators(declarableGlobalScope);
+            InitializeGlobalOperators(declarableGlobalScope);
 
-                var globalScope = new StackableScope();
-                globalScope.Push(new AutoGlobalScope());
-                globalScope.Push(declarableGlobalScope);
+            // TODO: Add "linked libraries" to declarableGlobalScope
 
-                var astConverter = new ASTConverter(globalScope);
-                astConverter.AddModule(module);
-                astConverter.Convert();
+            var globalScope = new StackableScope();
+            globalScope.Push(new AutoGlobalScope());
+            globalScope.Push(declarableGlobalScope);
 
-                var output = astConverter.GetModule(module);
-            }
-            else
-            {
-                Console.WriteLine("Failed to parse!");
-            }
+            var astConverter = new ASTConverter(globalScope);
+            astConverter.AddModule(syntaxModule);
+            astConverter.Convert();
 
-            if (Debugger.IsAttached && Environment.OSVersion.Platform != PlatformID.Unix)
-                Console.ReadLine();
+            var output = astConverter.GetModule(syntaxModule);
+
+            CodeGenerator.GenerateIL(output);
         }
 
         private static void InitializeGlobalOperators(SimpleScope scope)

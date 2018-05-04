@@ -69,10 +69,7 @@ namespace Psi.Compiler.Intermediate
             if (target?.Name != name)
                 throw new InvalidOperationException("An error happened in module name resolvation!");
 
-            var tu = new TranslationUnit(module, target)
-            {
-                IsComplete = false
-            };
+            var tu = new TranslationUnit(module, target);
 
             // Initialize the base scope of the translation unit
             if (parent == null)
@@ -134,6 +131,10 @@ namespace Psi.Compiler.Intermediate
             // Prepare rest of the symbols
             foreach (var unit in this.units)
                 this.CreateVariables(unit);
+
+            // Now set each unit to prepared
+            foreach (var unit in this.units)
+                unit.IsCompletlyPrepared = true;
 
             // Step 2: Run tasks until all tasks are done:
             while (this.units.Sum(u => u.Tasks.Count) > 0)
@@ -553,6 +554,8 @@ namespace Psi.Compiler.Intermediate
                     return Error.None;
                 });
 
+                unit.Module.Functions.Add(fun);
+
                 return new[] { new FunctionLiteral(fun) };
             }
             else if (value is VariableReference vref)
@@ -838,7 +841,9 @@ namespace Psi.Compiler.Intermediate
 
             public Module Module { get; }
 
-            public bool IsComplete { get; set; }
+            public bool IsComplete => (IsCompletlyPrepared && (Tasks.Count == 0));
+
+            public bool IsCompletlyPrepared { get;  set; }
 
             public Queue<CompilationTask> Tasks { get; } = new Queue<CompilationTask>();
 
