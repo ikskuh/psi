@@ -1,4 +1,14 @@
-﻿using System;
+﻿
+
+
+
+
+
+
+
+
+
+using System;
 using System.Collections.Generic;
 using CompilerKit;
 
@@ -57,6 +67,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(Expression value)
@@ -85,6 +96,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(AstType value)
@@ -113,6 +125,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(Module value)
@@ -141,6 +154,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(Assertion value)
@@ -169,6 +183,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(CompoundName value)
@@ -197,6 +212,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(Declaration value)
@@ -225,6 +241,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(TypeDeclaration value)
@@ -253,6 +270,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(bool? value)
@@ -281,6 +299,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(PsiOperator? value)
@@ -309,6 +328,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(string value)
@@ -337,6 +357,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(List<Expression> value)
@@ -365,6 +386,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(List<Argument> value)
@@ -393,6 +415,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(Argument value)
@@ -421,6 +444,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(List<Parameter> value)
@@ -449,6 +473,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(Parameter value)
@@ -477,6 +502,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(ParameterFlags? value)
@@ -505,6 +531,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(FunctionTypeLiteral value)
@@ -533,6 +560,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(Statement value)
@@ -561,6 +589,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(List<Statement> value)
@@ -589,6 +618,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(List<string> value)
@@ -617,6 +647,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(List<Declaration> value)
@@ -645,6 +676,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = value.NotNull();
 			this._SelectOption = null;
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(SelectOption value)
@@ -673,6 +705,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = value.NotNull();
 			this._SelectOptions = null;
+
 		}
 		
 		public ParserNode(List<SelectOption> value)
@@ -701,6 +734,7 @@ namespace Psi.Compiler.Grammar
 			this._FieldList = null;
 			this._SelectOption = null;
 			this._SelectOptions = value.NotNull();
+
 		}
 		
 		public Token<PsiTokenType> Token
@@ -737,6 +771,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -774,6 +809,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -811,6 +847,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -848,6 +885,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -885,6 +923,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -922,6 +961,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -959,6 +999,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -996,6 +1037,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -1033,6 +1075,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -1070,6 +1113,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -1107,6 +1151,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -1144,6 +1189,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -1181,6 +1227,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -1218,6 +1265,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -1255,6 +1303,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -1292,6 +1341,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -1329,6 +1379,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -1366,6 +1417,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -1403,6 +1455,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -1440,6 +1493,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -1477,6 +1531,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -1514,6 +1569,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = value;
 				this._SelectOption = null;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -1551,6 +1607,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = value;
 				this._SelectOptions = null;
+
 			}
 		}
 		
@@ -1588,6 +1645,7 @@ namespace Psi.Compiler.Grammar
 				this._FieldList = null;
 				this._SelectOption = null;
 				this._SelectOptions = value;
+
 			}
 		}
 		
@@ -1638,6 +1696,7 @@ namespace Psi.Compiler.Grammar
 		public static implicit operator ParserNode(SelectOption value) => new ParserNode(value);
 		
 		public static implicit operator ParserNode(List<SelectOption> value) => new ParserNode(value);
+
 		
 		public override string ToString()
 		{
@@ -1689,6 +1748,7 @@ namespace Psi.Compiler.Grammar
 				return "Node(SelectOption): " + _SelectOption.ToString();
 			if(this._SelectOptions != null)
 				return "Node(SelectOptions): " + _SelectOptions.ToString();
+
 			return "<???>";
 		}
 	}

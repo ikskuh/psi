@@ -48,11 +48,5 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Psi.Runtime\Psi.Runtime.csproj">
-      <Project>{2DE09E76-9796-420A-A350-C8B6C6CEC6EC}</Project>
-      <Name>Psi.Runtime</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -59,10 +59,6 @@
     <Folder Include="Parser\Statements\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PsiCompiler\Psi.Compiler.csproj">
-      <Project>{C3F22A9A-EDFD-489C-A722-B100B05A9602}</Project>
-      <Name>Psi.Compiler</Name>
-    </ProjectReference>
     <ProjectReference Include="..\Psi.Runtime\Psi.Runtime.csproj">
       <Project>{2DE09E76-9796-420A-A350-C8B6C6CEC6EC}</Project>
       <Name>Psi.Runtime</Name>

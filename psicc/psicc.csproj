@@ -1,0 +1,65 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>TRACE;EXPORT_GPPG</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>TRACE;DEBUG;EXPORT_GPPG</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Backend\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\CompilerKit\CompilerKit.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Grammar\ParserNode.cs">
+      <DependentUpon>ParserNode.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Grammar\PsiLanguage.gen.cs">
+      <DependentUpon>PsiLanguage.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="PsiOperator.cs">
+      <DependentUpon>PsiOperator.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Grammar\ParserNode.tt">
+      <LastGenOutput>ParserNode.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="Grammar\PsiLanguage.tt">
+      <LastGenOutput>PsiLanguage.gen.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="PsiOperator.tt">
+      <LastGenOutput>PsiOperator.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="$(SolutionDir)Tools\GPPG\Gppg.exe $(ProjectDir)Grammar\Psi.y" />
+  </Target>
+
+</Project>

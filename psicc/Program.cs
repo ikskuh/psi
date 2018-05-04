@@ -34,7 +34,7 @@ namespace Psi.Compiler
 
             var std = CreateStd();
 
-            var syntaxModule = Load("../../../Sources/CompilerTest.psi");
+            var syntaxModule = Load("../Sources/CompilerTest.psi");
 
             if (syntaxModule == null)
             {
