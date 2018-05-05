@@ -3,6 +3,7 @@ using System.IO;
 
 namespace Psi.Compiler
 {
+    using LLVMSharp;
     using Psi.Compiler.Codegen;
     using Psi.Compiler.Grammar;
     using Psi.Compiler.Intermediate;
@@ -19,8 +20,11 @@ namespace Psi.Compiler
 
         public static void WrappedMain(string[] args)
         {
+            CodeGenerator.module = LLVM.ModuleCreateWithName("psi.result");
+
             // primitives
             TypeMapper.Add(typeof(bool), BuiltinType.Boolean);
+            TypeMapper.Add(typeof(byte), BuiltinType.Byte);
             TypeMapper.Add(typeof(long), BuiltinType.Integer);
             TypeMapper.Add(typeof(ulong), BuiltinType.UnsignedInteger);
             TypeMapper.Add(typeof(double), BuiltinType.Real);
@@ -49,7 +53,7 @@ namespace Psi.Compiler
                 {
                     new Symbol(Type.ModuleType, "std")
                     {
-                        Initializer = new Literal<Intermediate.Module>(std),
+                        Initializer = new ModuleLiteral(std),
                         IsConst = true,
                         IsExported = false
                     }
@@ -145,8 +149,8 @@ namespace Psi.Compiler
             std.AddType("real", BuiltinType.Real, true);
             std.AddType("string", BuiltinType.String, true);
 
-            std.AddConst("true", BuiltinType.Boolean, new Literal<bool>(true), true);
-            std.AddConst("false", BuiltinType.Boolean, new Literal<bool>(false), true);
+            std.AddConst("true", BuiltinType.Boolean, new BoolLiteral(true), true);
+            std.AddConst("false", BuiltinType.Boolean, new BoolLiteral(false), true);
 
             var compiler = new Intermediate.Module(std, "compiler");
             compiler.AddType("type", Type.MetaType, true);
@@ -155,11 +159,11 @@ namespace Psi.Compiler
             std.AddModule("compiler", compiler);
 
             var math = new Intermediate.Module(std, "math");
-            math.AddConst("pi", BuiltinType.Real, new Literal<double>(3.14159265358979323846), true);
-            math.AddConst("e", BuiltinType.Real, new Literal<double>(2.71828182845904523536), true);
+            math.AddConst("pi", BuiltinType.Real, new RealLiteral(3.14159265358979323846), true);
+            math.AddConst("e", BuiltinType.Real, new RealLiteral(2.71828182845904523536), true);
             std.AddModule("math", math);
 
-            var io = new Intermediate.Module(std, "io");
+            /*
             var typelist = new Type[] {
                 BuiltinType.Character,
                 BuiltinType.String,
@@ -170,8 +174,39 @@ namespace Psi.Compiler
                 BuiltinType.Integer
             };
             foreach (var type in typelist)
-                io.AddBuiltin(new FunctionType(Type.VoidType, type), "print");
-            std.AddModule("io", io);
+                io.AddExtern(new FunctionType(Type.VoidType, type), "print");
+            */
+            { // Input/Output Module
+                var io = new Intermediate.Module(std, "io");
+
+                var mod = CodeGenerator.module;
+                var putchar = LLVM.AddFunction(mod, "putchar", LLVM.FunctionType(LLVM.VoidType(), new[] { LLVM.Int32Type() }, false));
+                LLVM.SetLinkage(putchar, LLVMLinkage.LLVMExternalLinkage);
+
+                var printfun = LLVM.AddFunction(mod, "print(byte)", LLVM.FunctionType(LLVM.VoidType(), new[] { LLVM.Int8Type() }, false));
+                LLVM.SetLinkage(printfun, LLVMLinkage.LLVMExternalLinkage);
+
+                var builder = LLVM.CreateBuilder();
+
+                // Create a new basic block to start insertion into.
+                LLVM.PositionBuilderAtEnd(builder, LLVM.AppendBasicBlock(printfun, "entry"));
+
+                var arg = LLVM.BuildZExt(builder, LLVM.GetParam(printfun, 0), LLVM.Int32Type(), "c");
+
+                LLVM.BuildCall (builder, putchar, new[] { arg }, "");
+
+                // Finish off the function with a default return value
+                LLVM.BuildRetVoid(builder);
+
+                LLVM.DisposeBuilder(builder);
+
+                // Validate the generated code, checking for consistency.
+                LLVM.VerifyFunction(printfun, LLVMVerifierFailureAction.LLVMPrintMessageAction);
+
+                io.AddExtern("print", new BuiltinFunction(new FunctionType(Type.VoidType, BuiltinType.Byte), printfun));
+
+                std.AddModule("io", io);
+            }
 
             return std;
         }
@@ -187,6 +222,19 @@ namespace Psi.Compiler
                 IsExported = false,
                 Kind = SymbolKind.Builtin,
                 Initializer = new Intermediate.FunctionLiteral(new BuiltinFunction(type)),
+            };
+            mod.Symbols.Add(sym);
+            return sym;
+        }
+
+        public static Symbol AddExtern(this Intermediate.Module mod, string name, BuiltinFunction value)
+        {
+            var sym = new Symbol(value.Type, name)
+            {
+                IsConst = true,
+                IsExported = false,
+                Kind = SymbolKind.Extern,
+                Initializer = new Intermediate.FunctionLiteral(value),
             };
             mod.Symbols.Add(sym);
             return sym;

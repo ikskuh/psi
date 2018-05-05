@@ -35,6 +35,11 @@ namespace Psi.Compiler.Intermediate
 
         public SymbolKind Kind { get; set; }
 
+        /// <summary>
+        /// Gets or sets the index of the parameter if the symbol is of kind Parameter.
+        /// </summary>
+        public int ParameterIndex { get; set; } = -1;
+
         public T GetValue<T>() => (this.Initializer as Literal<T>).Value;
 
         public override string ToString() => $"{Kind} {this.Name}";
@@ -46,5 +51,6 @@ namespace Psi.Compiler.Intermediate
         Parameter = 1,
         Local = 2,
         Builtin = 3,
+        Extern = 4,
     }
 }

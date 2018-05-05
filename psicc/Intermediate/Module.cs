@@ -24,7 +24,7 @@ namespace Psi.Compiler.Intermediate
         {
             var sym = new Symbol(Type.MetaType, name)
             {
-                Initializer = new Literal<Type>(type),
+                Initializer = new TypeLiteral(type),
                 IsConst = true,
                 IsExported = isExported,
             };
@@ -36,7 +36,7 @@ namespace Psi.Compiler.Intermediate
         {
             var sym = new Symbol(Type.ModuleType, name)
             {
-                Initializer = new Literal<Module>(submodule),
+                Initializer = new ModuleLiteral(submodule),
                 IsConst = true,
                 IsExported = true,
             };

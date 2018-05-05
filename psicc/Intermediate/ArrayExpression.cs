@@ -2,11 +2,13 @@
 
 namespace Psi.Compiler.Intermediate
 {
-    internal class ArrayExpression : Expression
+    public sealed class ArrayExpression : Expression
     {
         public ArrayExpression()
         {
         }
+
+        public override LLVMSharp.LLVMValueRef Visit(Psi.Compiler.Codegen.IExpressionVisitor visitor) => visitor.Visit(this);
 
         public Expression[] Items { get; set; }
 

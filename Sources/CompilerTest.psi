@@ -5,6 +5,29 @@
 import std;
 import std.io;
 
+const main = fn()
+{
+	// Prints "Hi!\n"
+	print(0x48);
+	print(0x69);
+	print(0x21);
+	print(0x0A);
+
+	/*
+	print(`H`);
+	print(`e`);
+	print(`l`);
+	print(`l`);
+	print(`!`);
+	print(`\n`);
+	*/
+};
+
+/*
+
+import std;
+import std.io;
+
 // Tests 'out' params
 const set = fn(out dst : int, src : int) { dst = src; };
 
@@ -32,73 +55,4 @@ const main = fn()
 	print();
 };
 
-/*****************************************************************************
-* Compiler Test Snippets                                                     *
-*****************************************************************************/
-
-/*
-var foo : int = 10;
-
-var bar : int = foo;
-
-type person = record
-(
-	age    : std.int,
-	name   : std.string,
-	gender : gender
-);
-
-type myint = int; // requires "import std;"
-
-type stringlist = array<string>;
-type matrix = array<std.int, 2>;
-
-type fwdref = gender;
-
-type gender = enum(none,male,female,ah64);
-
-type builtin = std.int;
-
-type backref = gender;
-
-type recursive = record
-	(
-		age : int,
-		next : recursive
-	);
-
-// tests dependencies
-type bam = bar;
-
-type baz = bam;
-
-type foo = std.int;
-
-type bar = foo;
-
-type someType = std.compiler.type;
-
-type family = array<foo>;
-
-type someone = ref<person>;
-
-type bunchOfPeople = array<ref<person> >;
-
-type mainFunc = fn(argc : int, argv : array<string>) -> int;
-
-type a = std.int;
-
-module submodule
-{
-	type b = a;
-
-	module inception
-	{
-		type c = a;
-		type d1 = b;
-		type d2 = submodule.b;
-		type e1 = c;
-		type e2 = submodule.inception.c;
-	}
-}
 */

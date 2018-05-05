@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Psi.Compiler.Intermediate;
 
-namespace Psi.Compiler
+namespace Psi.Compiler.Intermediate
 {
     internal class AutoGlobalScope : IScope
     {

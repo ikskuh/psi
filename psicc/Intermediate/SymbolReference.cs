@@ -13,6 +13,8 @@ namespace Psi.Compiler.Intermediate
 
         public Symbol Symbol { get; }
 
+        public override LLVMSharp.LLVMValueRef Visit(Psi.Compiler.Codegen.IExpressionVisitor visitor) => visitor.Visit(this);
+
         public override string ToString() => Symbol.ToString();
     }
 }

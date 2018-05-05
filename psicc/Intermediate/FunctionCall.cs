@@ -25,5 +25,7 @@ namespace Psi.Compiler.Intermediate
         public IReadOnlyList<Expression> Arguments { get;set;  }
 
         public override Type Type => (Functor.Type as FunctionType)?.ReturnType;
+
+        public override LLVMSharp.LLVMValueRef Visit(Psi.Compiler.Codegen.IExpressionVisitor visitor) => visitor.Visit(this);
     }
 }

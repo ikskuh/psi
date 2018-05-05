@@ -57,7 +57,7 @@ namespace Psi.Compiler.Intermediate
                         {
                             target.Symbols.Add(new Symbol(Type.ModuleType, child.LocalName)
                             {
-                                Initializer = new Literal<Module>(child),
+                                Initializer = new ModuleLiteral(child),
                                 IsConst = true,
                                 IsExported = true
                             });
@@ -178,8 +178,7 @@ namespace Psi.Compiler.Intermediate
             // Step 3: Postprocess the converted modules
 
             // Step 4: Validate all assertions
-
-            Console.WriteLine("Compilation successful.");
+            
         }
 
         private CompilerError CreateSymbol(TranslationUnit unit, IScope scope, Declaration def, out Symbol sym)
@@ -306,7 +305,7 @@ namespace Psi.Compiler.Intermediate
                     {
                         IsConst = true,
                         IsExported = decl.IsExported,
-                        Initializer = new Literal<Type>(type),
+                        Initializer = new TypeLiteral(type),
                     });
                     return CompilerError.None;
                 });
@@ -465,30 +464,40 @@ namespace Psi.Compiler.Intermediate
                 var literals = new List<Expression>();
 
                 // try hex first, then decimal
-                if (ulong.TryParse(num.Value, NumberStyles.HexNumber, SystemFormat, out ulong u))
-                    literals.Add(new Literal<ulong>(u));
+                if (ulong.TryParse(num.Value.Substring(2), NumberStyles.HexNumber, SystemFormat, out ulong u))
+                {
+                    if(u <= 0xFF)
+                        literals.Add(new ByteLiteral((byte)u));
+                    literals.Add(new UIntLiteral(u));
+                }
                 else if (ulong.TryParse(num.Value, NumberStyles.Integer, SystemFormat, out u))
-                    literals.Add(new Literal<ulong>(u));
+                {
+                    if (u <= 0xFF)
+                        literals.Add(new ByteLiteral((byte)u));
+                    literals.Add(new UIntLiteral(u));
+                }
 
                 // try hex first, then decimal
-                if (long.TryParse(num.Value, NumberStyles.HexNumber, SystemFormat, out long i))
-                    literals.Add(new Literal<long>(i));
+                if (long.TryParse(num.Value.Substring(2), NumberStyles.HexNumber, SystemFormat, out long i))
+                    literals.Add(new IntLiteral(i));
                 else if (long.TryParse(num.Value, NumberStyles.Integer, SystemFormat, out i))
-                    literals.Add(new Literal<long>(i));
+                    literals.Add(new IntLiteral(i));
 
                 // also try double separated
                 if (double.TryParse(num.Value, NumberStyles.Number, SystemFormat, out double dbl))
-                    literals.Add(new Literal<double>(dbl));
+                    literals.Add(new RealLiteral(dbl));
 
                 return literals.ToArray();
             }
-            else if (value is StringLiteral str)
+            else if (value is Grammar.StringLiteral str)
             {
-                return new[] { new Literal<string>(str.Text) };
+                // this could be translated into an ArrayLiteral,
+                // but this allows a certain degree of optimization 
+                return new[] { new StringLiteral(str.Text) };
             }
             else if (value is CharacterLiteral chr)
             {
-                return new[] { new Literal<int>(chr.Codepoint) };
+                return new[] { new CharLiteral(chr.Codepoint) };
             }
             else if (value is ArrayLiteral array)
             {
@@ -526,11 +535,13 @@ namespace Psi.Compiler.Intermediate
                 var fun = new UserFunction(type);
 
                 var paramscope = new SimpleScope();
-                foreach (var param in type.Parameters)
+                for(int i = 0; i < type.Parameters.Length; i++)
                 {
+                    var param = type.Parameters[i];
                     paramscope.Add(new Symbol(param.Type, param.Name)
                     {
-                        Kind = SymbolKind.Parameter
+                        Kind = SymbolKind.Parameter,
+                        ParameterIndex = i,
                     });
                 }
 

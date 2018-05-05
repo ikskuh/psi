@@ -2,5 +2,6 @@
 {
     public abstract class Statement
     {
+        public abstract void Visit(Codegen.IStatementVisitor visitor);
     }
 }

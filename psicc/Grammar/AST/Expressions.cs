@@ -54,7 +54,7 @@ namespace Psi.Compiler.Grammar
         public CharacterLiteral(string value)
         {
             var text = value.NotNull();
-            this.Codepoint = char.ConvertToUtf32(PsiString.Unescape(text), 0);
+            this.Codepoint = char.ConvertToUtf32(PsiString.Unescape(text), 1);
         }
 
         /// <summary>

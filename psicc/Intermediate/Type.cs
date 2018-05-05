@@ -2,6 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using LLVMSharp;
+using Psi.Compiler.Codegen;
 
 namespace Psi.Compiler.Intermediate
 {
@@ -10,22 +12,22 @@ namespace Psi.Compiler.Intermediate
         /// <summary>
         /// A type that marks a non-value
         /// </summary>
-        public static readonly BuiltinType VoidType = new BuiltinType("void");
+        public static readonly BuiltinType VoidType = new BuiltinType("void", LLVM.VoidType());
 
         /// <summary>
         /// A marker type that marks "unknown" types that have to be deduced
         /// </summary>
-        public static readonly Type UnknownType = new BuiltinType("?");
+        public static readonly Type UnknownType = new BuiltinType("?", new LLVMTypeRef(IntPtr.Zero));
 
         /// <summary>
         /// The type that represents a Psi type.
         /// </summary>
-        public static readonly BuiltinType MetaType = new BuiltinType("type");
+        public static readonly BuiltinType MetaType = new BuiltinType("type", new LLVMTypeRef(IntPtr.Zero));
 
         /// <summary>
         /// The type that represents a module.
         /// </summary>
-        public static readonly BuiltinType ModuleType = new BuiltinType("module");
+        public static readonly BuiltinType ModuleType = new BuiltinType("module", new LLVMTypeRef(IntPtr.Zero));
 
         public override int GetHashCode() => base.GetHashCode();
 
@@ -44,6 +46,8 @@ namespace Psi.Compiler.Intermediate
 
         protected abstract ITypeSignature CreateSignature();
 
+        public abstract void Visit(Codegen.ITypeVisitor visitor);
+
         /// <summary>
         /// Compares the two types for equality.
         /// </summary>
@@ -58,21 +62,26 @@ namespace Psi.Compiler.Intermediate
     public sealed class BuiltinType : Type, ITypeSignature
     {
         public static readonly EnumType Boolean = new EnumType(new[] { "false", "true" });
-        public static readonly BuiltinType Byte = new BuiltinType("byte");
-        public static readonly BuiltinType Integer = new BuiltinType("int");
-        public static readonly BuiltinType UnsignedInteger = new BuiltinType("uint");
-        public static readonly BuiltinType Real = new BuiltinType("real");
-        public static readonly BuiltinType Character = new BuiltinType("char");
+        public static readonly BuiltinType Byte = new BuiltinType("byte", LLVM.Int8Type());
+        public static readonly BuiltinType Integer = new BuiltinType("int", LLVM.Int64Type());
+        public static readonly BuiltinType UnsignedInteger = new BuiltinType("uint", LLVM.Int64Type());
+        public static readonly BuiltinType Real = new BuiltinType("real", LLVM.DoubleType());
+        public static readonly BuiltinType Character = new BuiltinType("char", LLVM.Int32Type());
         public static readonly ArrayType String = new ArrayType { ElementType = Character, Dimensions = 1 };
 
-        public BuiltinType(string name)
+        public BuiltinType(string name, LLVMSharp.LLVMTypeRef llvmType)
         {
             this.Name = name;
+            this.LLVMType = llvmType;
         }
+
+        public override void Visit(ITypeVisitor visitor) => visitor.Visit(this);
 
         protected override bool TypeEquals(Type other) => object.ReferenceEquals(this, other);
 
         public string Name { get; }
+
+        public LLVMTypeRef LLVMType { get; }
 
         public override string ToString() => "builtin:" + this.Name;
 
@@ -94,6 +103,8 @@ namespace Psi.Compiler.Intermediate
         {
             return Enumerable.SequenceEqual(this.items, ((EnumType)other).items);
         }
+
+        public override void Visit(ITypeVisitor visitor) => visitor.Visit(this);
 
         public override int GetHashCode() => this.items.Select(x => x.GetHashCode()).Aggregate(0, (a, b) => a ^ b);
 
@@ -117,6 +128,8 @@ namespace Psi.Compiler.Intermediate
                 && other.Members.All(m => this.Members.Contains(m));
         }
 
+        public override void Visit(ITypeVisitor visitor) => visitor.Visit(this);
+
         public override int GetHashCode() => this.Members.Select(x => x.GetHashCode()).Aggregate(0, (a, b) => a ^ b);
 
         public override string ToString() => "record(" + string.Join(", ", Members.Select(m => $"{m.Name} : {m.Type}")) + ")";
@@ -134,6 +147,8 @@ namespace Psi.Compiler.Intermediate
 
         public override int GetHashCode() => ElementType.GetHashCode();
 
+        public override void Visit(ITypeVisitor visitor) => visitor.Visit(this);
+
         protected override bool TypeEquals(Type other)
         {
             var at = (ArrayType)other;
@@ -148,6 +163,8 @@ namespace Psi.Compiler.Intermediate
     public sealed class ReferenceType : Type, ITypeSignature
     {
         public Type ObjectType { get; set; }
+
+        public override void Visit(ITypeVisitor visitor) => visitor.Visit(this);
 
         public override int GetHashCode() => -this.ObjectType.GetHashCode();
 
@@ -174,6 +191,8 @@ namespace Psi.Compiler.Intermediate
             this.ReturnType = returnType;
             this.Parameters = @params.Select((a, i) => new Parameter(this, $"p{i + 1}", i) { Type = a }).ToArray();
         }
+
+        public override void Visit(ITypeVisitor visitor) => visitor.Visit(this);
 
         protected override bool TypeEquals(Type other)
         {
