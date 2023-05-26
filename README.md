@@ -1,2 +1,2 @@
 # psi
-A work-in-progress programming language, focused on safe programming
+A ~~work-in-progress~~ cancelled programming language project, focused on safe programming
